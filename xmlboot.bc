@@ -1,11 +1,14 @@
 % TODO:
-%  - submenus / menu trees
+%  - "back" from submenus
 %  - i18n/L10n
 %  - resolution dependend fonts, indentation and line spacing
 %  - icons
 %  - help/description
 %  - menu entry specific font and line spacing
 %  - different alignments (left, center)
+%
+% test with:
+%  $ gfxboot -p -b isolinux -a bootlogo
 %
 
 %% include properties.inc
@@ -96,7 +99,7 @@
 
   % process key events...
   key keyDown eq {
-    menu.selected_index menu.entries length 1 sub lt {
+    menu.selected_index menu.entries menu.index.entries get length 1 sub lt {
       menu.selected_index menu.deselect
       /menu.selected_index menu.selected_index 1 add def
       menu.selected_index menu.select
@@ -112,25 +115,26 @@
   } if
 
   key keyEnter eq {
-    menu.entries menu.selected_index get
+    menu.entries menu.index.entries get menu.selected_index get
     % check menu entry type
     dup 0 get
     dup menu.type.start eq {
-      % this is a start entry
-      % remove type from stack
       pop
       handle_start_menu_entry
       return
     } {
       dup menu.type.config eq {
-        % this is a config entry
-        % remove type from stack
         pop
         handle_config_menu_entry
       } {
-        menu.type.option eq {
+        dup menu.type.option eq {
+          pop
           handle_option_menu_entry
-        } if
+        } {
+          menu.type.menu eq {
+            handle_submenu_entry
+          } if
+        } ifelse
      } ifelse
     } ifelse
   } if
@@ -169,39 +173,48 @@
 % array: the menu structure
 %
 /config_to_menu {
+  /tmp_config_id exch def
   [
-    exch
-    % search config
-    dup get_configuration
-    % loop over all config options
-    config.options.index get {
-      [
-        exch
-        % option menus are arrays with the following fields:
-        %   0: type == menu.type.option
-        %   1: config id (string, config id)
-        %   2: option id (string, option id)
-        %   3: text (string, config description)
-        %   4: selected (boolean)
+    % type
+    menu.type.menu
 
-        % type
-        menu.type.option
-        exch
-        % config id
-        3 index
-        exch 
-        % option id
-        dup 0 get
-        % text
-        exch dup 1 get
-        % selected
-        exch 4 get
-      ]
-      % keep config id on TOS
-      exch
-    } forall
-    % remove config id from stack (no longer needed)
-    pop
+    % text
+    tmp_config_id get_configuration
+    dup config.index.text get
+    exch
+
+    % options
+    [
+      % loop over all config options
+      exch config.index.options get {
+        [
+          exch
+          % option menus are arrays with the following fields:
+          %   0: type == menu.type.option
+          %   1: config id (string, config id)
+          %   2: option id (string, option id)
+          %   3: text (string, config description)
+          %   4: selected (boolean)
+
+          % type
+          menu.type.option
+          exch
+
+          % config id
+          tmp_config_id
+          exch 
+
+          % option id
+          dup 0 get
+
+          % text
+          exch dup 1 get
+
+          % selected
+          exch 4 get
+        ]
+      } forall
+    ]
   ]
 } def
 
@@ -229,7 +242,7 @@
     /append_line 0 string def
     configurations {
       % get options array of config
-      config.options.index get {
+      config.index.options get {
         % only use selected options
         dup 4 get {
           % option is selected
@@ -282,7 +295,7 @@
   /config.menu.index menu.selected_index def
 
   %find and highlight selected option
-  menu.entries get_selected_option_index
+  menu.entries menu.index.entries get get_selected_option_index
   /menu.selected_index exch def
   menu.selected_index menu.select
 } def
@@ -301,10 +314,10 @@
   % get configuration
   exch 1 get get_configuration
   % get config trigger
-  dup config.trigger.index get
+  dup config.index.trigger get
   /tmp_config_trigger exch def
   % loop through all configuration options
-  config.options.index get {
+  config.index.options get {
     % get id
     dup 0 get
     % check against id of option menu entry
@@ -326,7 +339,7 @@
   tmp_config_trigger "" ne {
     tmp_config_trigger get_configuration
     % loop through all configuration options
-    config.options.index get {
+    config.index.options get {
       % get id
       dup 0 get
       % check against option trigger id
@@ -347,6 +360,26 @@
 
   % select current configuration 
   /menu.selected_index config.menu.index def
+  menu.selected_index menu.select
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% handles a submenu menu entry
+%
+% ( array -- )
+%
+% array: the selected submenu entry
+%
+/handle_submenu_entry {
+  % erase current menu
+  menu.erase
+
+  % paint new submenu
+  /menu.entries exch def
+  paint_menu
+
+  % select first index in submenu
+  /menu.selected_index 0 def
   menu.selected_index menu.select
 } def
 
@@ -391,7 +424,7 @@
   dup
 
   % move to menu position
-  dup menu.entries exch get
+  dup menu.entries menu.index.entries get exch get
   menu_to_text
   centered_x_value
   exch menu.dy mul menu.y add
@@ -403,7 +436,7 @@
   % paint text in highlighted color
   0xFFFFFF setcolor
   rot
-  menu.entries exch get
+  menu.entries menu.index.entries get exch get
   menu_to_text
   dup string_region_reset show
   % jump back
@@ -425,7 +458,7 @@
   dup
 
   % move to menu position
-  dup menu.entries exch get
+  dup menu.entries menu.index.entries get exch get
   menu_to_text
   centered_x_value
   exch menu.dy mul menu.y add
@@ -437,7 +470,7 @@
   % paint text in normal color
   0x000000 setcolor
   rot
-  menu.entries exch get
+  menu.entries menu.index.entries get exch get
   menu_to_text
   dup string_region_reset show
   % jump back
@@ -456,7 +489,7 @@
 %
 /menu.erase {
   % erase highlight marker
-  menu.entries menu.selected_index get
+  menu.entries menu.index.entries get menu.selected_index get
   menu_to_text
   centered_x_value
   menu.selected_index menu.dy mul menu.y add
@@ -466,7 +499,7 @@
 
   % erase all menu entries
   /y_offset menu.y def
-  menu.entries {
+  menu.entries menu.index.entries get {
     menu_to_text
     dup centered_x_value
     y_offset
@@ -498,7 +531,7 @@
 %
 /get_configuration {
   configurations {
-    dup config.id.index get
+    dup config.index.id get
     2 index eq {
       % this is the config we were searching for
       % remove config id from stack
@@ -523,7 +556,7 @@
 %
 /get_selected_option_text {
   % loop over all config options
-  config.options.index get {
+  config.index.options get {
     % check, if option is selected
     dup 4 get {
       % selected option found, leave text on stack
@@ -561,18 +594,26 @@
       % get configuration by id
       1 get get_configuration
       % get configuration text
-      dup config.text.index get
+      dup config.index.text get
       % show currently selected option
       ": " concatenate_strings
       exch
       get_selected_option_text
       concatenate_strings
     } {
-      menu.type.option eq {
+      dup menu.type.option eq {
         % this is an option entry
+        % remove type from stack
+        pop
         % get option menu text
         3 get
-      } if
+      } {
+        menu.type.menu eq {
+          % this is a (sub)menu entry
+          % get (sub)menu text
+          menu.index.text get
+        } if
+      } ifelse
     } ifelse
   } ifelse
 } def
@@ -583,15 +624,95 @@
 % ( -- )
 %
 /paint_menu {
-  menu.entries
   menu.font findfile setfont
   0x000000 setcolor
   /y_offset menu.y def
-  {
+  menu.entries menu.index.entries get {
     menu_to_text
     y_offset exch show_centered
     /y_offset y_offset menu.dy add def
   } forall
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% parse menu structure
+%
+% ( array1 -- array2 )
+%
+% array1: the menu definition in an xml structure
+%
+% array2: the parsed menu
+%
+% menus are arrays with the following fields:
+%   0: type == menu.type.menu
+%   1: text (string, the title of the menu) 
+%   2: entries (array of start/config entries and/or other menus)
+%
+% start menus are arrays with the following fields:
+%   0: type == menu.type.start
+%   1: text (string, the text to display in the start menu)
+%   2: index (string, the index in the syslinux config file to start)
+%   3: label (string, the label in the syslinux config file to start)
+%   4: append_config (bool, if the config should be appended to the label when booting)
+%
+% config menus are arrays with the following fields:
+%   0: type == menu.type.config
+%   1: id (string, config id)
+%
+/parse_menu {
+  [
+    exch
+    % menu type
+    menu.type.menu
+
+    % menu text
+    exch dup "text" get_attribute_value
+
+    % menu entries
+    exch
+    [
+      exch get_entity_children {
+        dup gettype t_arr eq {
+          % child is another entity
+          % check, if entitiy is supported
+          dup get_entity_name "start" eq {
+            [
+              exch
+              menu.type.start
+              exch dup "text" get_attribute_value
+              exch dup "index" get_attribute_value string_to_int
+              exch dup "label" get_attribute_value
+              exch "append_config" get_attribute_value
+              "true" eq {
+                true
+              } {
+                false
+              } ifelse
+            ]
+          } {
+            dup get_entity_name "config" eq {
+              [
+                exch
+                menu.type.config
+                exch "id" get_attribute_value
+              ]
+            } {
+              dup get_entity_name "menu" eq {
+                % parse submenu (recursively)
+                parse_menu
+              } {
+                % entity is not supported
+                pop
+              } ifelse
+            } ifelse
+          } ifelse
+        } {
+          % child is just some text
+          pop
+        } ifelse
+      } forall
+    ]
+  ]
 } def
 
 % set a good video mode and a splash screen
@@ -616,10 +737,10 @@ moveto
 show
 
 % some config specifig constants
-/config.id.index      0 def
-/config.text.index    1 def
-/config.trigger.index 2 def
-/config.options.index 3 def
+/config.index.id      0 def
+/config.index.text    1 def
+/config.index.trigger 2 def
+/config.index.options 3 def
 
 % get config options from XML structure
 %
@@ -691,64 +812,22 @@ xml_structure "configs" get_entity_child
 /menu.type.start  0 def
 /menu.type.config 1 def
 /menu.type.option 2 def
+/menu.type.menu   3 def
+
+% menu specifig indices
+/menu.index.type    0 def
+/menu.index.text    1 def
+/menu.index.entries 2 def
 
 % get menu from XML structure
-%
-% start menus are arrays with the following fields:
-%   0: type == menu.type.start
-%   1: text (string, the text to display in the start menu)
-%   2: index (string, the index in the syslinux config file to start)
-%   3: label (string, the label in the syslinux config file to start)
-%   4: append_config (bool, if the config should be appended to the label when booting)
-%
-% config menus are arrays with the following fields:
-%   0: type == menu.type.config
-%   1: id (string, config id)
 %   
 xml_structure "menu" get_entity_child
 /xmlboot_menu exch def
 /menu.font xmlboot_menu "font" get_attribute_value def
 /menu.y xmlboot_menu "y" get_attribute_value string_to_int def
 /menu.dy xmlboot_menu "dy" get_attribute_value string_to_int def
-/menu.entries
-[
-  xmlboot_menu get_entity_children {
-    dup gettype t_arr eq {
-      % child is another entity
-      % check, if entitiy is supported
-      dup get_entity_name "start" eq {
-        [
-          exch
-          menu.type.start
-          exch dup "text" get_attribute_value
-          exch dup "index" get_attribute_value string_to_int
-          exch dup "label" get_attribute_value
-          exch "append_config" get_attribute_value
-          "true" eq {
-            true
-          } {
-            false
-          } ifelse
-        ]
-      } {
-        dup get_entity_name "config" eq {
-          [
-            exch
-            menu.type.config
-            exch "id" get_attribute_value
-          ]
-        } {
-          % entity is not supported
-          pop
-        } ifelse
-      } ifelse
-    } {
-      % child is just some text
-      pop
-    } ifelse
-  } forall
-] def
-
+xmlboot_menu parse_menu
+/menu.entries exch def
 /main.menu menu.entries def
 
 % paint menu texts
