@@ -1,15 +1,11 @@
-% example_03.bc
-%
-% Very minimalistic demo. Writes a short message in graphics mode and lets you
-% boot linux or start from local disk.
-%
-% Notes:
-%  - the video mode number is no longer hardcoded and we exit if the video mode
-%    could not be set
-%
-%  - we use a background picture
-%
-% Test with (from top level dir [/usr/share/gfxboot]) 'gfxtest -t example_03'.
+% TODO:
+%  - submenus / menu trees
+%  - i18n/L10n
+%  - resolution dependend fonts, indentation and line spacing
+%  - icons
+%  - help/description
+%  - menu entry specific font and line spacing
+%  - different alignments (left, center)
 %
 
 %% include properties.inc
@@ -126,27 +122,22 @@
       handle_start_menu_entry
       return
     } {
-      menu.type.config eq {
+      dup menu.type.config eq {
         % this is a config entry
-        % erase existing menu
-        menu.erase
-
-        % paint config options menu
-        1 get
-        config_to_menu
-        /menu.entries exch def
-        menu.entries paint_menu
-
-        %find and highlight selected option
-        menu.entries get_selected_option_index
-        /menu.selected_index exch def
-        menu.selected_index menu.select
-      } if
+        % remove type from stack
+        pop
+        handle_config_menu_entry
+      } {
+        menu.type.option eq {
+          handle_option_menu_entry
+        } if
+     } ifelse
     } ifelse
   } if
 
  "" 0 0
 } def
+
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % gets the selected index of a config options menu
@@ -183,7 +174,7 @@
     % search config
     dup get_configuration
     % loop over all config options
-    2 get {
+    config.options.index get {
       [
         exch
         % option menus are arrays with the following fields:
@@ -204,9 +195,9 @@
         % text
         exch dup 1 get
         % selected
-        exch 3 get
+        exch 4 get
       ]
-      % keep config id on top of stack
+      % keep config id on TOS
       exch
     } forall
     % remove config id from stack (no longer needed)
@@ -215,7 +206,7 @@
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% handles the start menu entry
+% handles a start menu entry
 %
 % ( array -- string int int )
 %
@@ -223,7 +214,7 @@
 %
 % string: the label and append line for syslinux
 % int: the index for syslinux
-% int: the action for syslinux (2 == boot)
+% int: the action for syslinux (always 2 == boot)
 %
 /handle_start_menu_entry {
   % get menu label
@@ -236,11 +227,11 @@
     % get currently selected config options and
     % assemble them in one large append line
     /append_line 0 string def
-    config.options {
+    configurations {
       % get options array of config
-      2 get {
+      config.options.index get {
         % only use selected options
-        dup 3 get {
+        dup 4 get {
           % option is selected
           % get option specific append line
           2 get
@@ -267,6 +258,96 @@
 
   % "2" means that we want to boot
   2
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% handles a config menu entry
+%
+% ( array -- )
+%
+% array: the selected config menu entry
+%
+/handle_config_menu_entry {
+  % erase existing menu
+  menu.erase
+
+  % paint config options menu
+  1 get
+  config_to_menu
+  /menu.entries exch def
+  paint_menu
+
+  % remember config menu index for later use
+  % (when returning after selecting an option)
+  /config.menu.index menu.selected_index def
+
+  %find and highlight selected option
+  menu.entries get_selected_option_index
+  /menu.selected_index exch def
+  menu.selected_index menu.select
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% handles a config option menu entry
+%
+% ( array -- )
+%
+% array: the selected config option menu entry
+%
+/handle_option_menu_entry {
+  % update configuration
+  % get option id
+  dup 2 get
+  % get configuration
+  exch 1 get get_configuration
+  % get config trigger
+  dup config.trigger.index get
+  /tmp_config_trigger exch def
+  % loop through all configuration options
+  config.options.index get {
+    % get id
+    dup 0 get
+    % check against id of option menu entry
+    2 index eq {
+      % this is the selected option
+      dup 4 true put
+      % get option trigger
+      3 get
+      /tmp_option_trigger exch def
+    } {
+      % this is not the selected option
+      4 false put
+    } ifelse
+  } forall
+  % remove option id from TOS
+  pop
+
+  % handle config trigger (if any)
+  tmp_config_trigger "" ne {
+    tmp_config_trigger get_configuration
+    % loop through all configuration options
+    config.options.index get {
+      % get id
+      dup 0 get
+      % check against option trigger id
+      tmp_option_trigger eq {
+        % this is the selected option
+        4 true put
+      } {
+        % this is not the selected option
+        4 false put
+      } ifelse
+    } forall
+  } if
+
+  % repaint main menu
+  menu.erase
+  /menu.entries main.menu def
+  paint_menu
+
+  % select current configuration 
+  /menu.selected_index config.menu.index def
+  menu.selected_index menu.select
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -416,14 +497,13 @@
 % array: the configuration
 %
 /get_configuration {
-  config.options {
-    dup 0 get
+  configurations {
+    dup config.id.index get
     2 index eq {
       % this is the config we were searching for
       % remove config id from stack
       exch pop
-      % exit forall loop
-      exit
+      return
     } {
       % this is another config...
       % just remove it from the stack
@@ -443,10 +523,9 @@
 %
 /get_selected_option_text {
   % loop over all config options
-  2 get
-  {
+  config.options.index get {
     % check, if option is selected
-    dup 3 get {
+    dup 4 get {
       % selected option found, leave text on stack
       1 get return
     } {
@@ -482,7 +561,7 @@
       % get configuration by id
       1 get get_configuration
       % get configuration text
-      dup 1 get
+      dup config.text.index get
       % show currently selected option
       ": " concatenate_strings
       exch
@@ -501,12 +580,11 @@
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % paints a menu on screen
 %
-% ( array -- )
-%
-% array: a menu
+% ( -- )
 %
 /paint_menu {
-  "font_size_20.fnt" findfile setfont
+  menu.entries
+  menu.font findfile setfont
   0x000000 setcolor
   /y_offset menu.y def
   {
@@ -537,15 +615,22 @@ exch sub
 moveto
 show
 
+% some config specifig constants
+/config.id.index      0 def
+/config.text.index    1 def
+/config.trigger.index 2 def
+/config.options.index 3 def
+
 % get config options from XML structure
 %
 % configurations are arrays with the following fields:
 %   0: id (string)
 %   1: text (string)
-%   2: options (array)
+%   2: trigger_config (string, another configuration that gets triggered)
+%   3: options (array)
 xml_structure "configs" get_entity_child
 /xmlboot_config exch def
-/config.options
+/configurations
 [
   xmlboot_config get_entity_children {
     dup gettype t_arr eq {
@@ -555,6 +640,7 @@ xml_structure "configs" get_entity_child
         [
           exch dup "id" get_attribute_value
           exch dup "text" get_attribute_value
+          exch dup "trigger_config" get_attribute_value
           exch
           % parse all options
           [
@@ -565,11 +651,13 @@ xml_structure "configs" get_entity_child
                   %   0: id (string)
                   %   1: text (string)
                   %   2: append (string)
-                  %   3: selected (boolean)
+                  %   3: trigger_option (string)
+                  %   4: selected (boolean)
                   [
                     exch dup "id" get_attribute_value
                     exch dup "text" get_attribute_value
                     exch dup "append" get_attribute_value
+                    exch dup "trigger_option" get_attribute_value
                     exch "selected" get_attribute_value "true" eq {
                       true
                     } {
@@ -600,9 +688,6 @@ xml_structure "configs" get_entity_child
 
 % menu variables
 /menu.selected_index 0 def
-/menu.y 300 def
-/menu.dy 50 def
-
 /menu.type.start  0 def
 /menu.type.config 1 def
 /menu.type.option 2 def
@@ -622,6 +707,9 @@ xml_structure "configs" get_entity_child
 %   
 xml_structure "menu" get_entity_child
 /xmlboot_menu exch def
+/menu.font xmlboot_menu "font" get_attribute_value def
+/menu.y xmlboot_menu "y" get_attribute_value string_to_int def
+/menu.dy xmlboot_menu "dy" get_attribute_value string_to_int def
 /menu.entries
 [
   xmlboot_menu get_entity_children {
@@ -661,8 +749,10 @@ xml_structure "menu" get_entity_child
   } forall
 ] def
 
+/main.menu menu.entries def
+
 % paint menu texts
-menu.entries paint_menu
+paint_menu
 
 % select first entry in menu list
 menu.selected_index menu.select

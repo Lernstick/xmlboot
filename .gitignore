@@ -1,0 +1,8 @@
+bootlogo
+bootlogo.dir/
+bootlogo.log
+font.log
+font_size_10.fnt
+font_size_15.fnt
+font_size_20.fnt
+.xmlboot.config.swp
