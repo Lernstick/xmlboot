@@ -1,5 +1,5 @@
 % TODO:
-%  - "back" from submenus
+%  - show breadcrumbs
 %  - i18n/L10n
 %  - resolution dependend fonts, indentation and line spacing
 %  - icons
@@ -131,9 +131,14 @@
           pop
           handle_option_menu_entry
         } {
-          menu.type.menu eq {
+          dup menu.type.menu eq {
+            pop
             handle_submenu_entry
-          } if
+          } {
+            menu.type.back eq {
+              handle_back_entry
+            } if
+          } ifelse
         } ifelse
      } ifelse
     } ifelse
@@ -378,8 +383,43 @@
   /menu.entries exch def
   paint_menu
 
+  % add submenu to breadcrumbs
+  /last_breadcrumb [
+    last_breadcrumb
+    menu.entries
+    menu.selected_index
+  ] def
+
   % select first index in submenu
   /menu.selected_index 0 def
+  menu.selected_index menu.select
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% handles a back entry
+%
+% ( array -- )
+%
+% array: the selected back entry
+%
+/handle_back_entry {
+  % there is nothing in the back entry that we need now...
+  pop
+
+  % repaint main menu
+  menu.erase
+
+  % restore selected index from breadcrumbs
+  /menu.selected_index last_breadcrumb 2 get def
+  
+  % get previous menu from breadcrumbs
+  last_breadcrumb
+  /last_breadcrumb last_breadcrumb 0 get def
+  free
+  /menu.entries last_breadcrumb 1 get def
+  
+  % repaint menu 
+  paint_menu
   menu.selected_index menu.select
 } def
 
@@ -581,15 +621,11 @@
   % check menu entry type
   dup 0 get
   dup menu.type.start eq {
-    % this is a start entry
-    % remove type from stack
     pop
     % leave start menu text on stack
     1 get
   } {
     dup menu.type.config eq {
-      % this is a config entry
-      % remove type from stack
       pop
       % get configuration by id
       1 get get_configuration
@@ -602,17 +638,20 @@
       concatenate_strings
     } {
       dup menu.type.option eq {
-        % this is an option entry
-        % remove type from stack
         pop
         % get option menu text
         3 get
       } {
-        menu.type.menu eq {
-          % this is a (sub)menu entry
+        dup menu.type.menu eq {
+          pop
           % get (sub)menu text
           menu.index.text get
-        } if
+        } {
+          menu.type.back eq {
+            % get back entry text
+            1 get
+          } if
+        } ifelse
       } ifelse
     } ifelse
   } ifelse
@@ -648,7 +687,7 @@
 %   1: text (string, the title of the menu) 
 %   2: entries (array of start/config entries and/or other menus)
 %
-% start menus are arrays with the following fields:
+% start menu entries are arrays with the following fields:
 %   0: type == menu.type.start
 %   1: text (string, the text to display in the start menu)
 %   2: index (string, the index in the syslinux config file to start)
@@ -658,6 +697,10 @@
 % config menus are arrays with the following fields:
 %   0: type == menu.type.config
 %   1: id (string, config id)
+%
+% back entries are arrays with the following fields:
+%   0: type == menu.type.back
+%   1: text (string, the text to display in the menu)
 %
 /parse_menu {
   [
@@ -701,8 +744,16 @@
                 % parse submenu (recursively)
                 parse_menu
               } {
-                % entity is not supported
-                pop
+                dup get_entity_name "back" eq {
+                  [
+                    exch
+                    menu.type.back
+                    exch "text" get_attribute_value
+                  ]
+                } {
+                  % entity is not supported
+                  pop
+                } ifelse
               } ifelse
             } ifelse
           } ifelse
@@ -813,6 +864,7 @@ xml_structure "configs" get_entity_child
 /menu.type.config 1 def
 /menu.type.option 2 def
 /menu.type.menu   3 def
+/menu.type.back   4 def
 
 % menu specifig indices
 /menu.index.type    0 def
@@ -835,6 +887,17 @@ paint_menu
 
 % select first entry in menu list
 menu.selected_index menu.select
+
+% support for breadcrumbs
+% a breadrumb is an array with the following fields:
+%   0: previous breadcrumb
+%   1: this menu
+%   2: the index of this menu in the previous menu
+/last_breadcrumb [
+  0
+  main.menu
+  0
+] def
 
 % say we're fine ('false' tells bootloader not to use gfxboot)
 true
