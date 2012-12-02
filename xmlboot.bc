@@ -1,5 +1,8 @@
 % TODO:
-%  - show breadcrumbs
+%  - fix index restoring and highlighting when selecting an option
+%  - config index handling in conflict with breadcrumbs index handling ?
+%  - highlight with bold font
+%  - checkboxes
 %  - i18n/L10n
 %  - resolution dependend fonts, indentation and line spacing
 %  - icons
@@ -286,13 +289,19 @@
 % array: the selected config menu entry
 %
 /handle_config_menu_entry {
-  % erase existing menu
-  menu.erase
-
   % paint config options menu
   1 get
   config_to_menu
   /menu.entries exch def
+
+  % add config menu to breadcrumbs
+  /last_breadcrumb [
+    last_breadcrumb
+    menu.entries
+    menu.selected_index
+  ] def
+
+  % repaint menu
   paint_menu
 
   % remember config menu index for later use
@@ -358,10 +367,16 @@
     } forall
   } if
 
-  % repaint main menu
-  menu.erase
-  /menu.entries main.menu def
+  % get previous menu from breadcrumbs
+  last_breadcrumb
+  /last_breadcrumb last_breadcrumb 0 get def
+  free
+  /menu.entries last_breadcrumb 1 get def
+  
+  % repaint menu 
+  % !!! breadcrumbs must be updated before repainting the menu !!!
   paint_menu
+  menu.selected_index menu.select
 
   % select current configuration 
   /menu.selected_index config.menu.index def
@@ -376,12 +391,8 @@
 % array: the selected submenu entry
 %
 /handle_submenu_entry {
-  % erase current menu
-  menu.erase
-
-  % paint new submenu
+  % update pointer to menu entries
   /menu.entries exch def
-  paint_menu
 
   % add submenu to breadcrumbs
   /last_breadcrumb [
@@ -389,6 +400,10 @@
     menu.entries
     menu.selected_index
   ] def
+
+  % paint new submenu
+  % !!! breadcrumbs must be updated before repainting the menu !!!
+  paint_menu
 
   % select first index in submenu
   /menu.selected_index 0 def
@@ -406,9 +421,6 @@
   % there is nothing in the back entry that we need now...
   pop
 
-  % repaint main menu
-  menu.erase
-
   % restore selected index from breadcrumbs
   /menu.selected_index last_breadcrumb 2 get def
   
@@ -419,6 +431,7 @@
   /menu.entries last_breadcrumb 1 get def
   
   % repaint menu 
+  % !!! breadcrumbs must be updated before repainting the menu !!!
   paint_menu
   menu.selected_index menu.select
 } def
@@ -467,14 +480,14 @@
   dup menu.entries menu.index.entries get exch get
   menu_to_text
   centered_x_value
-  exch menu.dy mul menu.y add
+  exch 1 add menu.dy mul menu.y add
   % keep position copy on stack so that we can jump back later
   1 index
   1 index
   moveto
 
   % paint text in highlighted color
-  0xFFFFFF setcolor
+  0x0000FF setcolor
   rot
   menu.entries menu.index.entries get exch get
   menu_to_text
@@ -501,7 +514,7 @@
   dup menu.entries menu.index.entries get exch get
   menu_to_text
   centered_x_value
-  exch menu.dy mul menu.y add
+  exch 1 add menu.dy mul menu.y add
   % keep position copy on stack so that we can jump back later
   1 index
   1 index
@@ -528,25 +541,21 @@
 %
 %
 /menu.erase {
-  % erase highlight marker
-  menu.entries menu.index.entries get menu.selected_index get
-  menu_to_text
-  centered_x_value
-  menu.selected_index menu.dy mul menu.y add
-  moveto
-  ">" dup strsize pop neg 10 sub 0 rmoveto
-  currentpoint rot strsize image
+  % clear screen
+  0 0 moveto
+  0 0 image.size image
 
-  % erase all menu entries
-  /y_offset menu.y def
-  menu.entries menu.index.entries get {
-    menu_to_text
-    dup centered_x_value
-    y_offset
-    moveto
-    string_region_reset
-    /y_offset y_offset menu.dy add def
-  } forall
+  % repaint version info
+  "font_size_10.fnt" findfile setfont
+  0x000000 setcolor
+  version_info
+  dup strsize exch pop
+  screen.size exch pop
+  exch sub
+  10 sub
+  10 exch
+  moveto
+  show
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -663,9 +672,53 @@
 % ( -- )
 %
 /paint_menu {
-  menu.font findfile setfont
-  0x000000 setcolor
+  % reset screen
+  menu.erase
+
+  % determine breadcrumbs text
+  ""
+  last_breadcrumb
+  {
+    % get breadcrumb menu
+    dup 1 get
+
+    % get menu text
+    1 get
+    % concatenate
+    rot
+    dup "" eq {
+      % this is the last breadcrumb
+      % just leave its text on stack
+      % and ignore the previous text
+      pop
+    }  {
+      % this is not the last breadcrumb
+      % put its text *in front* of the already existing
+      % breadcrumbs text
+      " > " exch concatenate_strings
+      concatenate_strings
+    } ifelse
+
+    % move to previous breadcrumb
+    exch 
+    0 get
+    dup 0 eq {
+      % this is the first breadcrumb
+      pop
+      exit
+    } if
+  } loop
+
+  % reset y_offset, color and font
   /y_offset menu.y def
+  0x000000 setcolor
+  menu.font findfile setfont
+
+  % paint breadcrumbs text
+  y_offset exch show_centered
+  /y_offset y_offset menu.dy add def
+
+  % paint all menu entries
   menu.entries menu.index.entries get {
     menu_to_text
     y_offset exch show_centered
@@ -776,16 +829,8 @@ parse_xml_file
 /xml_structure exch def
 
 % paint version info in the lower left screen corner
-"font_size_10.fnt" findfile setfont
-0x000000 setcolor
 xml_structure "system" get_entity_child "version" get_attribute_value
-dup strsize exch pop
-screen.size exch pop
-exch sub
-10 sub
-10 exch
-moveto
-show
+/version_info exch def
 
 % some config specifig constants
 /config.index.id      0 def
@@ -882,12 +927,6 @@ xmlboot_menu parse_menu
 /menu.entries exch def
 /main.menu menu.entries def
 
-% paint menu texts
-paint_menu
-
-% select first entry in menu list
-menu.selected_index menu.select
-
 % support for breadcrumbs
 % a breadrumb is an array with the following fields:
 %   0: previous breadcrumb
@@ -898,6 +937,13 @@ menu.selected_index menu.select
   main.menu
   0
 ] def
+
+% paint menu texts
+% !!! last_breadcrumb must already be defined for paint_menu to work !!!
+paint_menu
+
+% select first entry in menu list
+menu.selected_index menu.select
 
 % say we're fine ('false' tells bootloader not to use gfxboot)
 true
