@@ -11,7 +11,6 @@
 % 	attributes (array)
 %       texts (string) and/or child entities (array) (array)
 %
-
 /parse_xml_file {
 
   /xml_file_pointer exch def
