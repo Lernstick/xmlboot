@@ -1,6 +1,5 @@
 % TODO:
-%  - fix index restoring and highlighting when selecting an option
-%  - config index handling in conflict with breadcrumbs index handling ?
+%  - breadcrumb config in xml file (y, font, color)
 %  - highlight with bold font
 %  - checkboxes
 %  - i18n/L10n
@@ -304,10 +303,6 @@
   % repaint menu
   paint_menu
 
-  % remember config menu index for later use
-  % (when returning after selecting an option)
-  /config.menu.index menu.selected_index def
-
   %find and highlight selected option
   menu.entries menu.index.entries get get_selected_option_index
   /menu.selected_index exch def
@@ -367,7 +362,10 @@
     } forall
   } if
 
-  % get previous menu from breadcrumbs
+  % restore selected index from breadcrumbs
+  /menu.selected_index last_breadcrumb 2 get def
+
+   % get previous menu from breadcrumbs
   last_breadcrumb
   /last_breadcrumb last_breadcrumb 0 get def
   free
@@ -378,9 +376,6 @@
   paint_menu
   menu.selected_index menu.select
 
-  % select current configuration 
-  /menu.selected_index config.menu.index def
-  menu.selected_index menu.select
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
