@@ -11,6 +11,10 @@
 /menu.index.text    1 def
 /menu.index.entries 2 def
 
+/menu.alignment.left   0 def
+/menu.alignment.center 1 def
+/menu.alignment menu.alignment.center def
+
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % parse menu structure
 %
@@ -255,6 +259,7 @@
   ] def
 
   % repaint menu
+  /menu.alignment menu.alignment.left def
   paint_menu
 
   %find and highlight selected option
@@ -327,6 +332,7 @@
   
   % repaint menu 
   % !!! breadcrumbs must be updated before repainting the menu !!!
+  /menu.alignment menu.alignment.center def
   paint_menu
   menu.selected_index menu.select
 
@@ -423,29 +429,40 @@
 % int: the index to highlight
 %
 /menu.select {
-  dup
-
   % move to menu position
-  dup menu.entries menu.index.entries get exch get
-  menu_to_text
-  centered_x_value
+  dup 
+  menu.alignment menu.alignment.center eq {
+    dup menu.entries menu.index.entries get exch get
+    menu_to_text centered_x_value
+  } {
+    left_align_x
+  } ifelse
   exch menu.dy mul menu.y add
-  % keep position copy on stack so that we can jump back later
-  1 index
-  1 index
   moveto
 
-  % paint text in highlighted color
-  0x0000FF setcolor
-  rot
+  % reset menu entry region
   menu.entries menu.index.entries get exch get
   menu_to_text
-  dup string_region_reset show
-  % jump back
-  moveto
- 
-  % paint highlight marker
-  ">" dup strsize pop neg 10 sub 0 rmoveto
+  dup string_region_reset
+
+  % paint focus rectangle
+  dup strsize
+  8 mul 10 div
+  exch
+  10 add
+  exch
+  -5 0 rmoveto
+  0x000000 setcolor
+  1 index
+  1 index
+  fillrect
+  -1 -1 rmoveto
+  0xc7d9f0 setcolor
+  fillrect
+  6 1 rmoveto
+
+  % paint text in highlighted color
+  0xFFFFFF setcolor
   show
 } def
 
@@ -457,30 +474,34 @@
 % int: the index where to remove the highlight
 %
 /menu.deselect {
-  dup
-
   % move to menu position
-  dup menu.entries menu.index.entries get exch get
-  menu_to_text
-  centered_x_value
+  dup 
+  menu.alignment menu.alignment.center eq {
+    dup menu.entries menu.index.entries get exch get
+    menu_to_text centered_x_value
+  } {
+    left_align_x
+  } ifelse
   exch menu.dy mul menu.y add
-  % keep position copy on stack so that we can jump back later
-  1 index
-  1 index
   moveto
+
+  % reset menu entry region
+  menu.entries menu.index.entries get exch get
+  menu_to_text
+  dup strsize
+  exch
+  11 add
+  exch
+  0xc7d9f0 setcolor
+  -6 -1 rmoveto
+  currentpoint
+  4 2 roll
+  image
+  6 1 rmoveto
 
   % paint text in normal color
   0x000000 setcolor
-  rot
-  menu.entries menu.index.entries get exch get
-  menu_to_text
-  dup string_region_reset show
-  % jump back
-  moveto
- 
-  % remove highlight marker
-  ">" dup strsize pop neg 10 sub 0 rmoveto
-  currentpoint rot strsize image
+  show
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -597,13 +618,29 @@
     } {
       dup menu.type.option eq {
         pop
+
+        % get radio button
+        dup 4 get {
+          % this is the selected option
+          % add selected radiobutton prefix
+          "◉ "
+        } {
+          % this is a nonselected option
+          % add nonselected radiobutton prefix
+          "○ "
+        } ifelse
+
         % get option menu text
-        3 get
+        exch 3 get
+
+        % concatenate radio button with text
+        concatenate_strings
       } {
         dup menu.type.menu eq {
           pop
           % get (sub)menu text
           menu.index.text get
+          breadcrumbs.delimiter concatenate_strings
         } {
           menu.type.back eq {
             % get back entry text
@@ -667,11 +704,44 @@
   0x000000 setcolor
   /y_offset menu.y def
   menu.font findfile setfont
-  menu.entries menu.index.entries get {
-    menu_to_text
-    y_offset exch show_centered
-    /y_offset y_offset menu.dy add def
-  } forall
+
+  menu.alignment menu.alignment.center eq {
+    % center all texts
+    menu.entries menu.index.entries get {
+      menu_to_text
+      y_offset exch show_centered
+      /y_offset y_offset menu.dy add def
+    } forall
+  } {
+    % left align all texts
+    update_left_align_x
+    menu.entries menu.index.entries get {
+      menu_to_text
+      left_align_x y_offset moveto show
+      /y_offset y_offset menu.dy add def
+    } forall
+  } ifelse
 } def
 
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% updates the x position if the current menu would be left aligned
+%
+% ( -- )
+%
+/update_left_align_x {
+  % determine longest text in menu
+  /max_width 0 def
+  menu.entries menu.index.entries get {
+    menu_to_text strsize pop
+    dup max_width gt {
+      /max_width exch def
+    } {
+      pop
+    } ifelse
+  } forall
+  screen.size pop
+  max_width sub
+  2 div
+  /left_align_x exch def
+} def
 

@@ -25,6 +25,7 @@ font:
 	$(GFXBOOT_FONT) -v -a 0-65535 -p /usr/share/fonts/truetype/ttf-dejavu/ -f DejaVuSans:size=10 font_size_10.fnt >font.log
 	$(GFXBOOT_FONT) -v -a 0-65535 -p /usr/share/fonts/truetype/ttf-dejavu/ -f DejaVuSans:size=12 font_size_12.fnt >font.log
 	$(GFXBOOT_FONT) -v -a 0-65535 -p /usr/share/fonts/truetype/ttf-dejavu/ -f DejaVuSans:size=15 font_size_15.fnt >font.log
+	$(GFXBOOT_FONT) -v -a 0-65535 -p /usr/share/fonts/truetype/ttf-dejavu/ -f DejaVuSans:size=15:bold=1 font_size_15_bold.fnt >font.log
 	$(GFXBOOT_FONT) -v -a 0-65535 -p /usr/share/fonts/truetype/ttf-dejavu/ -f DejaVuSans:size=20 font_size_20.fnt >font.log
 
 clean:
