@@ -121,6 +121,10 @@ xml_structure "menu" get_entity_child
 /menu.font xmlboot_menu "font" get_attribute_value def
 /menu.y xmlboot_menu "y" get_attribute_value string_to_int def
 /menu.dy xmlboot_menu "dy" get_attribute_value string_to_int def
+/menu.color xmlboot_menu "color" get_attribute_value string_to_int def
+/menu.selected_color xmlboot_menu "selected_color" get_attribute_value string_to_int def
+/menu.rectangle_color xmlboot_menu "rectangle_color" get_attribute_value string_to_int def
+
 xmlboot_menu parse_menu
 /menu.entries exch def
 /main.menu menu.entries def

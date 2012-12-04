@@ -457,12 +457,12 @@
   1 index
   fillrect
   -1 -1 rmoveto
-  0xc7d9f0 setcolor
+  menu.rectangle_color setcolor
   fillrect
   6 1 rmoveto
 
   % paint text in highlighted color
-  0xFFFFFF setcolor
+  menu.selected_color setcolor
   show
 } def
 
@@ -500,7 +500,7 @@
   6 1 rmoveto
 
   % paint text in normal color
-  0x000000 setcolor
+  menu.color setcolor
   show
 } def
 
@@ -701,7 +701,7 @@
   breadcrumbs.y exch show_centered
 
   % paint all menu entries
-  0x000000 setcolor
+  menu.color setcolor
   /y_offset menu.y def
   menu.font findfile setfont
 

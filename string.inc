@@ -25,6 +25,30 @@
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% converts a character into an integer
+%
+% ( int1 -- int1 )
+%
+% int1: the input character
+%
+% int2: the integer representation of the character
+%
+/char_to_int {
+  % characters within range "0".."9"
+  dup 47 gt exch dup 58 lt rot and {
+    48 sub return
+  } if
+  
+  % characters within range "A".."F"
+  dup 64 gt exch dup 71 lt rot and {
+    55 sub return
+  } if
+
+  % assume characters within range "a".."f"
+  87 sub
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % converts a string into an integer
 %
 % ( string -- int )
@@ -54,7 +78,7 @@
   exch
   {
     rot 2 index mul exch
-    48 sub add
+    char_to_int add
     exch
   } forall
 
