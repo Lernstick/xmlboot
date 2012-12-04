@@ -1,10 +1,12 @@
 % menu variables
 /menu.selected_index 0 def
-/menu.type.start  0 def
-/menu.type.config 1 def
-/menu.type.option 2 def
-/menu.type.menu   3 def
-/menu.type.back   4 def
+
+/menu.type.start         0 def
+/menu.type.config        1 def
+/menu.type.config_option 2 def
+/menu.type.option        3 def
+/menu.type.menu          4 def
+/menu.type.back          5 def
 
 % menu specifig indices
 /menu.index.type    0 def
@@ -13,7 +15,7 @@
 
 /menu.alignment.left   0 def
 /menu.alignment.center 1 def
-/menu.alignment menu.alignment.center def
+/menu.alignment menu.alignment.left def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % parse menu structure
@@ -39,6 +41,10 @@
 % config menus are arrays with the following fields:
 %   0: type == menu.type.config
 %   1: id (string, config id)
+%
+% options are arrays with the following fields:
+%   0: type == menu.type.option
+%   1: id (string, option id)
 %
 % back entries are arrays with the following fields:
 %   0: type == menu.type.back
@@ -82,19 +88,27 @@
                 exch "id" get_attribute_value
               ]
             } {
-              dup get_entity_name "menu" eq {
-                % parse submenu (recursively)
-                parse_menu
+              dup get_entity_name "option" eq {
+                [
+                  exch
+                  menu.type.option
+                  exch "id" get_attribute_value
+                ]
               } {
-                dup get_entity_name "back" eq {
-                  [
-                    exch
-                    menu.type.back
-                    exch "text" get_attribute_value
-                  ]
+                  dup get_entity_name "menu" eq {
+                  % parse submenu (recursively)
+                  parse_menu
                 } {
-                  % entity is not supported
-                  pop
+                  dup get_entity_name "back" eq {
+                    [
+                      exch
+                      menu.type.back
+                      exch "text" get_attribute_value
+                    ]
+                  } {
+                    % entity is not supported
+                    pop
+                  } ifelse
                 } ifelse
               } ifelse
             } ifelse
@@ -154,15 +168,15 @@
       exch config.index.options get {
         [
           exch
-          % option menus are arrays with the following fields:
-          %   0: type == menu.type.option
+          % config option menus are arrays with the following fields:
+          %   0: type == menu.type.config_option
           %   1: config id (string, config id)
           %   2: option id (string, option id)
           %   3: text (string, config description)
           %   4: selected (boolean)
 
           % type
-          menu.type.option
+          menu.type.config_option
           exch
 
           % config id
@@ -225,6 +239,27 @@
       } forall
     } forall
 
+    % append currently selected options
+    options {
+      % get option specific append line
+      dup
+      option.index.selected get {
+        % option is selected
+        option.index.append_selected get
+      } {
+        % option is not selected
+        option.index.append_nonselected get
+      } ifelse
+      
+      % concatenate with global append line
+      dup "" ne {
+        append_line " " concatenate_strings
+        exch
+        concatenate_strings
+        /append_line exch def
+      } if
+    } forall
+
     % concatenate label and append line
     exch append_line concatenate_strings
     % get menu entry back to top of stack
@@ -275,7 +310,7 @@
 %
 % array: the selected config option menu entry
 %
-/handle_option_menu_entry {
+/handle_config_option_menu_entry {
   % update configuration
   % get option id
   dup 2 get
@@ -332,10 +367,30 @@
   
   % repaint menu 
   % !!! breadcrumbs must be updated before repainting the menu !!!
-  /menu.alignment menu.alignment.center def
+  % /menu.alignment menu.alignment.center def
   paint_menu
   menu.selected_index menu.select
 
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% handles an option menu entry
+%
+% ( array -- )
+%
+% array: the selected option menu entry
+%
+/handle_option_menu_entry {
+  % toggle option
+  1 get get_option
+  dup 4 get {
+    4 false put
+  } {
+    4 true put
+  } ifelse
+  
+  % repaint option in menu
+  menu.selected_index menu.select
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -565,6 +620,31 @@
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% gets an option by id
+%
+% ( string -- array )
+%
+% string: the option id
+%
+% array: the configuration
+%
+/get_option {
+  options {
+    dup option.index.id get
+    2 index eq {
+      % this is the option we were searching for
+      % remove option id from stack
+      exch pop
+      return
+    } {
+      % this is another option...
+      % just remove it from the stack
+      pop
+    } ifelse
+  } forall
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % gets the textual representation of the selected option of a configuration
 %
 % ( array -- string )
@@ -603,22 +683,27 @@
     pop
     % leave start menu text on stack
     1 get
+    
   } {
     dup menu.type.config eq {
       pop
+      
       % get configuration by id
       1 get get_configuration
+      
       % get configuration text
       dup config.index.text get
+      
       % show currently selected option
       ": " concatenate_strings
       exch
       get_selected_option_text
       concatenate_strings
+      
     } {
-      dup menu.type.option eq {
+      dup menu.type.config_option eq {
         pop
-
+        
         % get radio button
         dup 4 get {
           % this is the selected option
@@ -635,17 +720,45 @@
 
         % concatenate radio button with text
         concatenate_strings
+        
       } {
-        dup menu.type.menu eq {
-          pop
-          % get (sub)menu text
-          menu.index.text get
-          breadcrumbs.delimiter concatenate_strings
+        dup menu.type.option eq {
+          pop        
+
+          % get option by id
+          1 get get_option
+
+          % get checkbox
+          dup 4 get {
+            % this is a selected option
+            % add selected checkbox prefix
+            "☑ "
+          } {
+            % this is a nonselected option
+            % add nonselected checkbox prefix
+            "☐ "
+          } ifelse
+          
+          % get option text
+          exch option.index.text get
+          
+          % concatenate checkbox with text
+          concatenate_strings
         } {
-          menu.type.back eq {
-            % get back entry text
-            1 get
-          } if
+        
+          dup menu.type.menu eq {
+            pop
+            
+            % get (sub)menu text
+            menu.index.text get
+            breadcrumbs.delimiter concatenate_strings
+            
+          } {
+            menu.type.back eq {
+              % get back entry text
+              1 get
+            } if
+          } ifelse
         } ifelse
       } ifelse
     } ifelse
@@ -744,4 +857,3 @@
   2 div
   /left_align_x exch def
 } def
-

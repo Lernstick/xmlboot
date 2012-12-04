@@ -58,17 +58,22 @@
         pop
         handle_config_menu_entry
       } {
-        dup menu.type.option eq {
+        dup menu.type.config_option eq {
           pop
-          handle_option_menu_entry
+          handle_config_option_menu_entry
         } {
-          dup menu.type.menu eq {
+          dup menu.type.option eq {
             pop
-            handle_submenu_entry
+            handle_option_menu_entry
           } {
-            menu.type.back eq {
-              handle_back_entry
-            } if
+            dup menu.type.menu eq {
+              pop
+              handle_submenu_entry
+            } {
+              menu.type.back eq {
+                handle_back_entry
+              } if
+            } ifelse
           } ifelse
         } ifelse
      } ifelse

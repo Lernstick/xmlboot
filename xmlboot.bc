@@ -1,11 +1,9 @@
 % TODO:
-%  - checkboxes
+%  - icons
 %  - i18n/L10n
 %  - resolution dependend fonts, indentation and line spacing
-%  - icons
 %  - help/description (with screenshots?)
 %  - menu entry specific font and line spacing
-%  - different alignments (left, center)
 %
 % test with:
 %  $ gfxboot -p -b isolinux -a bootlogo
@@ -33,13 +31,13 @@ free
 xml_structure "system" get_entity_child "version" get_attribute_value
 /version_info exch def
 
-% some config specifig constants
+% some config specific constants
 /config.index.id      0 def
 /config.index.text    1 def
 /config.index.trigger 2 def
 /config.index.options 3 def
 
-% get config options from XML structure
+% get configurations from XML structure
 %
 % configurations are arrays with the following fields:
 %   0: id (string)
@@ -47,10 +45,10 @@ xml_structure "system" get_entity_child "version" get_attribute_value
 %   2: trigger_config (string, another configuration that gets triggered)
 %   3: options (array)
 xml_structure "configs" get_entity_child
-/xmlboot_config exch def
 /configurations
 [
-  xmlboot_config get_entity_children {
+  rot
+  get_entity_children {
     dup gettype t_arr eq {
       % child is another entity
       % check, if entitiy is supported
@@ -92,6 +90,52 @@ xml_structure "configs" get_entity_child
               } ifelse
             } forall
           ]
+        ]
+      } {
+        % entity is not supported
+        pop
+      } ifelse
+    } {
+      % child is just some text
+      pop
+    } ifelse
+  } forall
+] def
+
+% some config specific constants
+/option.index.id                 0 def
+/option.index.text               1 def
+/option.index.append_selected    2 def
+/option.index.append_nonselected 3 def
+/option.index.selected           4 def
+
+% get options from XML structure
+%
+% options are arrays with the following fields:
+%   0: id (string)
+%   1: text (string)
+%   2: append_selected (string)
+%   3: append_nonselected (string)
+%   4: selected (boolean)
+xml_structure "options" get_entity_child
+/options
+[
+  rot
+  get_entity_children {
+    dup gettype t_arr eq {
+      % child is another entity
+      % check, if entitiy is supported
+      dup get_entity_name "option" eq {
+        [
+          exch dup "id" get_attribute_value
+          exch dup "text" get_attribute_value
+          exch dup "append_selected" get_attribute_value
+          exch dup "append_nonselected" get_attribute_value
+          exch "selected" get_attribute_value "true" eq {
+            true
+          } {
+            false
+          } ifelse
         ]
       } {
         % entity is not supported
