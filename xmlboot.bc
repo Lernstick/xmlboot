@@ -1,10 +1,9 @@
 % TODO:
-%  - free after findfile?
 %  - checkboxes
 %  - i18n/L10n
 %  - resolution dependend fonts, indentation and line spacing
 %  - icons
-%  - help/description
+%  - help/description (with screenshots?)
 %  - menu entry specific font and line spacing
 %  - different alignments (left, center)
 %
@@ -25,9 +24,10 @@ trymodes
 paint_splash
 
 % parse xml file
-"xmlboot.config" findfile
+"xmlboot.config" findfile dup
 parse_xml_file
 /xml_structure exch def
+free
 
 % paint version info in the lower left screen corner
 xml_structure "system" get_entity_child "version" get_attribute_value

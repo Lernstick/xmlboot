@@ -516,7 +516,7 @@
   0 0 image.size image
 
   % repaint version info
-  "font_size_10.fnt" findfile setfont
+  "font_size_10.fnt" findfile dup setfont free
   0x000000 setcolor
   version_info
   dup strsize exch pop
@@ -697,13 +697,13 @@
 
   % paint breadcrumbs text
   breadcrumbs.color setcolor
-  breadcrumbs.font findfile setfont
+  breadcrumbs.font findfile dup setfont free
   breadcrumbs.y exch show_centered
 
   % paint all menu entries
   menu.color setcolor
   /y_offset menu.y def
-  menu.font findfile setfont
+  menu.font findfile dup setfont free
 
   menu.alignment menu.alignment.center eq {
     % center all texts

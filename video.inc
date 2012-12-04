@@ -74,7 +74,7 @@
       } ifelse
     } ifelse
   } ifelse
-  findfile setimage
+  findfile dup setimage free
   0 0 moveto
   0 0 image.size image
 } def
