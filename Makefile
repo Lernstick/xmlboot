@@ -18,7 +18,7 @@ bootlogo: xmlboot.bc font
 	@rm -rf $@.dir
 	@mkdir $@.dir
 	$(GFXBOOT_COMPILE) $(BFLAGS) -l $@.log -c $< $@.dir/init
-	@cp splash*.jpg xmlboot.config font*.fnt $@.dir
+	@cp *.jpg xmlboot.config font*.fnt $@.dir
 	$(GFXBOOT) --archive $@.dir --pack-archive $@
 
 font:

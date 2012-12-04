@@ -13,6 +13,17 @@
 /menu.index.text    1 def
 /menu.index.entries 2 def
 
+% start menu specifig indices
+/startmenu.index.icon           1 def
+/startmenu.index.text           2 def
+/startmenu.index.syslinux_index 3 def
+/startmenu.index.label          4 def
+/startmenu.index.append_config  5 def
+
+% config menu specifig indices
+/configmenu.index.id   1 def
+/configmenu.index.icon 2 def
+
 /menu.alignment.left   0 def
 /menu.alignment.center 1 def
 /menu.alignment menu.alignment.left def
@@ -33,14 +44,16 @@
 %
 % start menu entries are arrays with the following fields:
 %   0: type == menu.type.start
-%   1: text (string, the text to display in the start menu)
-%   2: index (string, the index in the syslinux config file to start)
-%   3: label (string, the label in the syslinux config file to start)
-%   4: append_config (bool, if the config should be appended to the label when booting)
+%   1: icon (string, the name of the icon file)
+%   2: text (string, the text to display in the start menu)
+%   3: index (string, the index in the syslinux config file to start)
+%   4: label (string, the label in the syslinux config file to start)
+%   5: append_config (bool, if the config should be appended to the label when booting)
 %
 % config menus are arrays with the following fields:
 %   0: type == menu.type.config
 %   1: id (string, config id)
+%   2: icon (string, the name of the icon file)
 %
 % options are arrays with the following fields:
 %   0: type == menu.type.option
@@ -70,6 +83,7 @@
             [
               exch
               menu.type.start
+              exch dup "icon" get_attribute_value
               exch dup "text" get_attribute_value
               exch dup "index" get_attribute_value string_to_int
               exch dup "label" get_attribute_value
@@ -85,7 +99,8 @@
               [
                 exch
                 menu.type.config
-                exch "id" get_attribute_value
+                exch dup "id" get_attribute_value
+                exch "icon" get_attribute_value
               ]
             } {
               dup get_entity_name "option" eq {
@@ -210,10 +225,10 @@
 %
 /handle_start_menu_entry {
   % get menu label
-  dup 3 get
+  dup startmenu.index.label get
 
   % check, if the config should be appended to the label
-  exch dup 4 get {
+  exch dup startmenu.index.append_config get {
     % yes, append config to label
 
     % get currently selected config options and
@@ -250,14 +265,17 @@
         % option is not selected
         option.index.append_nonselected get
       } ifelse
-      
+
       % concatenate with global append line
-      dup "" ne {
+      dup "" eq {
+        % ignore empty options
+        pop
+      } {
         append_line " " concatenate_strings
         exch
         concatenate_strings
-        /append_line exch def
-      } if
+        /append_line exch def        
+      } ifelse
     } forall
 
     % concatenate label and append line
@@ -266,8 +284,8 @@
     exch
   } if
 
-  % get menu index
-  2 get 
+  % get syslinux index
+  startmenu.index.syslinux_index get 
 
   % "2" means that we want to boot
   2
@@ -364,7 +382,7 @@
   /last_breadcrumb last_breadcrumb 0 get def
   free
   /menu.entries last_breadcrumb 1 get def
-  
+
   % repaint menu 
   % !!! breadcrumbs must be updated before repainting the menu !!!
   % /menu.alignment menu.alignment.center def
@@ -388,7 +406,7 @@
   } {
     4 true put
   } ifelse
-  
+
   % repaint option in menu
   menu.selected_index menu.select
 } def
@@ -433,13 +451,13 @@
 
   % restore selected index from breadcrumbs
   /menu.selected_index last_breadcrumb 2 get def
-  
+
   % get previous menu from breadcrumbs
   last_breadcrumb
   /last_breadcrumb last_breadcrumb 0 get def
   free
   /menu.entries last_breadcrumb 1 get def
-  
+
   % repaint menu 
   % !!! breadcrumbs must be updated before repainting the menu !!!
   paint_menu
@@ -475,7 +493,7 @@
   rot moveto
   show
 } def
- 
+
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % add highlight to menu item.
 %
@@ -678,32 +696,32 @@
 %
 /menu_to_text {
   % check menu entry type
-  dup 0 get
+  dup menu.index.type get
   dup menu.type.start eq {
     pop
     % leave start menu text on stack
-    1 get
-    
+    startmenu.index.text get
+
   } {
     dup menu.type.config eq {
       pop
-      
+
       % get configuration by id
-      1 get get_configuration
-      
+      configmenu.index.id get get_configuration
+
       % get configuration text
       dup config.index.text get
-      
+
       % show currently selected option
       ": " concatenate_strings
       exch
       get_selected_option_text
       concatenate_strings
-      
+
     } {
       dup menu.type.config_option eq {
         pop
-        
+
         % get radio button
         dup 4 get {
           % this is the selected option
@@ -720,16 +738,16 @@
 
         % concatenate radio button with text
         concatenate_strings
-        
+
       } {
         dup menu.type.option eq {
-          pop        
+          pop
 
           % get option by id
           1 get get_option
 
           % get checkbox
-          dup 4 get {
+          dup option.index.selected get {
             % this is a selected option
             % add selected checkbox prefix
             "☑ "
@@ -738,21 +756,21 @@
             % add nonselected checkbox prefix
             "☐ "
           } ifelse
-          
+
           % get option text
           exch option.index.text get
-          
+
           % concatenate checkbox with text
           concatenate_strings
         } {
-        
+
           dup menu.type.menu eq {
             pop
-            
+
             % get (sub)menu text
             menu.index.text get
             breadcrumbs.delimiter concatenate_strings
-            
+
           } {
             menu.type.back eq {
               % get back entry text
@@ -766,15 +784,12 @@
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% paints a menu on screen
+% paints the breadcrumbs text on screen
 %
 % ( -- )
 %
-/paint_menu {
-  % reset screen
-  menu.erase
-
-  % determine breadcrumbs text
+/paint_breadcrumbs {
+  % assemble breadcrumbs text
   ""
   last_breadcrumb
   {
@@ -812,6 +827,17 @@
   breadcrumbs.color setcolor
   breadcrumbs.font findfile dup setfont free
   breadcrumbs.y exch show_centered
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% paints a menu on screen
+%
+% ( -- )
+%
+/paint_menu {
+
+  menu.erase
+  paint_breadcrumbs
 
   % paint all menu entries
   menu.color setcolor
@@ -821,6 +847,7 @@
   menu.alignment menu.alignment.center eq {
     % center all texts
     menu.entries menu.index.entries get {
+      % TODO: icon support
       menu_to_text
       y_offset exch show_centered
       /y_offset y_offset menu.dy add def
@@ -829,7 +856,57 @@
     % left align all texts
     update_left_align_x
     menu.entries menu.index.entries get {
-      menu_to_text
+
+      % get text
+      dup menu_to_text
+
+      % paint icon
+      left_align_x y_offset moveto
+      exch
+      % determine index of icon element in this menu entry
+      dup menu.index.type get
+      dup menu.type.start eq {
+        pop
+        startmenu.index.icon
+      } {
+        dup menu.type.config eq {
+          pop
+          configmenu.index.icon
+        } {
+          pop
+          % menu type is not (yet) supported
+          -1
+        } ifelse
+      } ifelse
+      dup -1 ne {
+        get
+        dup "" ne {
+          findfile setimage
+          % get text height
+          dup strsize exch pop 8 mul 10 div
+          % get icon height
+          image.size exch pop
+          % get offset
+          sub
+          % move to a good position
+          image.size pop 10 add neg exch rmoveto
+          % paint icon
+          0 0 image.size image
+          % reset image
+          default_image setimage
+        } {
+          % file could not be found
+          pop
+        } ifelse
+      } {
+        % menu type is not (yet) supported
+        % remove index (-1) from stack
+        pop
+        % remove menu entry from stack
+        pop
+      } ifelse
+
+      % paint text
       left_align_x y_offset moveto show
       /y_offset y_offset menu.dy add def
     } forall

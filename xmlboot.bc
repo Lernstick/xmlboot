@@ -1,5 +1,10 @@
+% HINT:
+%  - findfile seems to have a bug that only files with names that are longer than 12 characters
+%    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
+%
 % TODO:
-%  - icons
+%  - use savescreen/restorescreen?
+%  - icon insets in xml file
 %  - i18n/L10n
 %  - resolution dependend fonts, indentation and line spacing
 %  - help/description (with screenshots?)
@@ -20,6 +25,8 @@
 % set a good video mode and a splash screen
 trymodes
 paint_splash
+% remember default image
+/default_image currentimage def
 
 % parse xml file
 "xmlboot.config" findfile dup
