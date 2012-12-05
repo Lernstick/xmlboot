@@ -183,6 +183,9 @@
     % type
     menu.type.menu
 
+    % icon
+    ""
+
     % text
     tmp_config_id get_configuration
     dup config.index.text get
@@ -595,21 +598,8 @@
 %
 %
 /menu.erase {
-  % clear screen
   0 0 moveto
-  0 0 image.size image
-
-  % repaint version info
-  "font_size_10.fnt" findfile dup setfont free
-  0x000000 setcolor
-  version_info
-  dup strsize exch pop
-  screen.size exch pop
-  exch sub
-  10 sub
-  10 exch
-  moveto
-  show
+  default_background restorescreen
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

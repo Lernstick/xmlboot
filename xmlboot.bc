@@ -3,7 +3,6 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
-%  - use savescreen/restorescreen?
 %  - timeout
 %  - editor for custom options
 %  - i18n/L10n
@@ -37,7 +36,19 @@ free
 
 % paint version info in the lower left screen corner
 xml_structure "system" get_entity_child "version" get_attribute_value
-/version_info exch def
+"font_size_10.fnt" findfile dup setfont free
+0x000000 setcolor
+dup strsize exch pop
+screen.size exch pop
+exch sub
+10 sub
+10 exch
+moveto
+show
+
+% store current image as default background image
+0 0 moveto screen.size savescreen
+/default_background exch def
 
 % some config specific constants
 /config.index.id      0 def
