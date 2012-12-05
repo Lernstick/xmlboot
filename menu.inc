@@ -16,7 +16,8 @@
 /menu.index.show_edit   4 def
 /menu.index.edit_x      5 def
 /menu.index.edit_y      6 def
-/menu.index.edit_prompt 7 def
+/menu.index.edit_width  7 def
+/menu.index.edit_prompt 8 def
 
 % start menu specific indices
 /startmenu.index.icon           1 def
@@ -167,6 +168,9 @@
     % y position of edit input field
     exch dup "edit_y" get_attribute_value string_to_int
 
+    % width of edit input field
+    exch dup "edit_width" get_attribute_value string_to_int
+
     % edit input field prompt
     exch "edit_prompt" get_attribute_value
   ]
@@ -253,6 +257,9 @@
 
     % x,y position of edit input field
     0 0
+
+    % width of edit input field
+    0
 
     % prompt of edit input field
     ""
@@ -972,11 +979,11 @@
 
     % show editable input line
     /edit_obj [
-      currentpoint exch 10 add exch  % x,y
-      600 fontheight savescreen      % background image, defines input field size
-      edit_input_buffer              % input buffer
-      dup cvp length 1 sub           % buffer size
-      .undef                         % for internal use
+      currentpoint exch 10 add exch                                 % x,y
+      current.menu menu.index.edit_width get fontheight savescreen  % background image, defines input field size
+      edit_input_buffer                                             % input buffer
+      dup cvp length 1 sub                                          % buffer size
+      .undef                                                        % for internal use
     ] def
     0x000000 setcolor
     edit_obj edit_input_buffer edit.init
