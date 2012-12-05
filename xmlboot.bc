@@ -4,7 +4,6 @@
 %
 % TODO:
 %  - timeout
-%  - editor for custom options
 %  - i18n/L10n
 %  - resolution dependend fonts, indentation and line spacing
 %  - help/description (with screenshots?)
@@ -21,6 +20,16 @@
 %% include string.inc
 %% include video.inc
 %% include xml.inc
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Convert integer to pointer.
+%
+% ( int1 -- ptr1 )
+%
+/cvp { t_ptr settype } def
+
+% buffer for holding the edit input string
+/edit_input_buffer 1024 string def
 
 % set a good video mode and a splash screen
 trymodes
@@ -188,10 +197,13 @@ xml_structure "menu" get_entity_child
 /menu.selected_color xmlboot_menu "selected_color" get_attribute_value string_to_int def
 /menu.rectangle_color xmlboot_menu "rectangle_color" get_attribute_value string_to_int def
 /menu.icon_inset xmlboot_menu "icon_inset" get_attribute_value string_to_int def
-
 xmlboot_menu parse_menu
-/menu.entries exch def
-/main.menu menu.entries def
+/current.menu exch def
+
+% custom options
+xml_structure "custom_options" get_entity_child
+"text" get_attribute_value
+"%s" edit_input_buffer sprintf
 
 % support for breadcrumbs
 % a breadrumb is an array with the following fields:
@@ -200,12 +212,12 @@ xmlboot_menu parse_menu
 %   2: the index of this menu in the previous menu
 /last_breadcrumb [
   0
-  main.menu
+  current.menu
   0
 ] def
 
 % paint menu texts
-% !!! last_breadcrumb must already be defined for paint_menu to work !!!
+% !!! last_breadcrumb and edit_input_buffer must already be defined for paint_menu to work !!!
 paint_menu
 
 % select first entry in menu list

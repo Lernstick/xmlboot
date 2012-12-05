@@ -30,7 +30,7 @@
 
   % process key events...
   key keyDown eq {
-    menu.selected_index menu.entries menu.index.entries get length 1 sub lt {
+    menu.selected_index current.menu menu.index.entries get length 1 sub lt {
       menu.selected_index menu.deselect
       /menu.selected_index menu.selected_index 1 add def
       menu.selected_index menu.select
@@ -46,7 +46,7 @@
   } if
 
   key keyEnter eq {
-    menu.entries menu.index.entries get menu.selected_index get
+    current.menu menu.index.entries get menu.selected_index get
     % check menu entry type
     dup 0 get
     dup menu.type.start eq {
@@ -80,5 +80,11 @@
     } ifelse
   } if
 
- "" 0 0
+  % use key for editable input line (if available)
+  edit_obj 0 0 settype ne {
+    0x000000 setcolor
+    edit_obj key edit.input
+  } if
+
+  "" 0 0
 } def

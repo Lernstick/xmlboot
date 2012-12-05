@@ -9,10 +9,14 @@
 /menu.type.back          5 def
 
 % menu specific indices
-/menu.index.type    0 def
-/menu.index.icon    1 def
-/menu.index.text    2 def
-/menu.index.entries 3 def
+/menu.index.type        0 def
+/menu.index.icon        1 def
+/menu.index.text        2 def
+/menu.index.entries     3 def
+/menu.index.show_edit   4 def
+/menu.index.edit_x      5 def
+/menu.index.edit_y      6 def
+/menu.index.edit_prompt 7 def
 
 % start menu specific indices
 /startmenu.index.icon           1 def
@@ -47,6 +51,10 @@
 %   1: icon (string, the name of the icon file)
 %   2: text (string, the title of the menu) 
 %   3: entries (array of start/config entries and/or other menus)
+%   4: show_edit (boolean, if the edit input field should be visible when showing this menu)
+%   5: edit_x (int, the x position of the edit field)
+%   6: edit_y (int, the y position of the edit field)
+%   7: edit_prompt (string, the prompt to show in front of the edit field)
 %
 % start menu entries are arrays with the following fields:
 %   0: type == menu.type.start
@@ -83,7 +91,7 @@
     exch dup "text" get_attribute_value
 
     % menu entries
-    exch
+    exch dup
     [
       exch get_entity_children {
         dup gettype t_arr eq {
@@ -145,6 +153,22 @@
         } ifelse
       } forall
     ]
+
+    % visibility of edit input field
+    exch dup "show_edit" get_attribute_value "true" eq {
+      true
+    } {
+      false
+    } ifelse
+
+    % x position of edit input field
+    exch dup "edit_x" get_attribute_value string_to_int
+
+    % y position of edit input field
+    exch dup "edit_y" get_attribute_value string_to_int
+
+    % edit input field prompt
+    exch "edit_prompt" get_attribute_value
   ]
 } def
 
@@ -183,7 +207,7 @@
     % type
     menu.type.menu
 
-    % icon
+    % (no) icon
     ""
 
     % text
@@ -223,6 +247,15 @@
         ]
       } forall
     ]
+
+    % visibility of edit input field (invisible)
+    false
+
+    % x,y position of edit input field
+    0 0
+
+    % prompt of edit input field
+    ""
   ]
 } def
 
@@ -288,9 +321,14 @@
         append_line " " concatenate_strings
         exch
         concatenate_strings
-        /append_line exch def        
+        /append_line exch def
       } ifelse
     } forall
+
+    % append custom options
+    append_line " custom_options " concatenate_strings
+    edit_input_buffer concatenate_strings
+    /append_line exch def
 
     % concatenate label and append line
     exch append_line concatenate_strings
@@ -316,12 +354,12 @@
   % paint config options menu
   1 get
   config_to_menu
-  /menu.entries exch def
+  /current.menu exch def
 
   % add config menu to breadcrumbs
   /last_breadcrumb [
     last_breadcrumb
-    menu.entries
+    current.menu
     menu.selected_index
   ] def
 
@@ -330,7 +368,7 @@
   paint_menu
 
   %find and highlight selected option
-  menu.entries menu.index.entries get get_selected_option_index
+  current.menu menu.index.entries get get_selected_option_index
   /menu.selected_index exch def
   menu.selected_index menu.select
 } def
@@ -395,7 +433,7 @@
   last_breadcrumb
   /last_breadcrumb last_breadcrumb 0 get def
   free
-  /menu.entries last_breadcrumb 1 get def
+  /current.menu last_breadcrumb 1 get def
 
   % repaint menu 
   % !!! breadcrumbs must be updated before repainting the menu !!!
@@ -434,12 +472,12 @@
 %
 /handle_submenu_entry {
   % update pointer to menu entries
-  /menu.entries exch def
+  /current.menu exch def
 
   % add submenu to breadcrumbs
   /last_breadcrumb [
     last_breadcrumb
-    menu.entries
+    current.menu
     menu.selected_index
   ] def
 
@@ -470,7 +508,7 @@
   last_breadcrumb
   /last_breadcrumb last_breadcrumb 0 get def
   free
-  /menu.entries last_breadcrumb 1 get def
+  /current.menu last_breadcrumb 1 get def
 
   % repaint menu 
   % !!! breadcrumbs must be updated before repainting the menu !!!
@@ -519,7 +557,7 @@
   % move to menu position
   dup 
   menu.alignment menu.alignment.center eq {
-    dup menu.entries menu.index.entries get exch get
+    dup current.menu menu.index.entries get exch get
     menu_to_text centered_x_value
   } {
     left_align_x
@@ -528,7 +566,7 @@
   moveto
 
   % reset menu entry region
-  menu.entries menu.index.entries get exch get
+  current.menu menu.index.entries get exch get
   menu_to_text
   dup string_region_reset
 
@@ -564,7 +602,7 @@
   % move to menu position
   dup 
   menu.alignment menu.alignment.center eq {
-    dup menu.entries menu.index.entries get exch get
+    dup current.menu menu.index.entries get exch get
     menu_to_text centered_x_value
   } {
     left_align_x
@@ -573,7 +611,7 @@
   moveto
 
   % reset menu entry region
-  menu.entries menu.index.entries get exch get
+  current.menu menu.index.entries get exch get
   menu_to_text
   dup strsize
   exch
@@ -847,7 +885,7 @@
 
   menu.alignment menu.alignment.center eq {
     % center all texts
-    menu.entries menu.index.entries get {
+    current.menu menu.index.entries get {
       % TODO: icon support
       menu_to_text
       y_offset exch show_centered
@@ -856,7 +894,7 @@
   } {
     % left align all texts
     update_left_align_x
-    menu.entries menu.index.entries get {
+    current.menu menu.index.entries get {
 
       % get text
       dup menu_to_text
@@ -922,6 +960,32 @@
       /y_offset y_offset menu.dy add def
     } forall
   } ifelse
+
+  % handle edit input field
+  current.menu menu.index.show_edit get {
+    % show prompt
+    current.menu menu.index.edit_x get
+    current.menu menu.index.edit_y get
+    moveto
+    current.menu menu.index.edit_prompt get
+    show
+
+    % show editable input line
+    /edit_obj [
+      currentpoint exch 10 add exch  % x,y
+      600 fontheight savescreen      % background image, defines input field size
+      edit_input_buffer              % input buffer
+      dup cvp length 1 sub           % buffer size
+      .undef                         % for internal use
+    ] def
+    0x000000 setcolor
+    edit_obj edit_input_buffer edit.init
+  } {
+    % hide editable input line
+    edit_obj 0 0 settype ne {
+      edit_obj edit.done
+    } if
+  } ifelse
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -932,7 +996,7 @@
 /update_left_align_x {
   % determine longest text in menu
   /max_width 0 def
-  menu.entries menu.index.entries get {
+  current.menu menu.index.entries get {
     menu_to_text strsize pop
     dup max_width gt {
       /max_width exch def
