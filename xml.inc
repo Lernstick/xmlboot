@@ -288,7 +288,7 @@
   % remove child name from stack
   pop
   % leave pointer to 0 on stack
-  0 t_ptr settype
+  0 t_none settype
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

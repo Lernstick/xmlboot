@@ -89,7 +89,22 @@
     exch dup "icon" get_attribute_value
 
     % menu text
-    exch dup "text" get_attribute_value
+    exch dup "text" get_entity_child
+    dup 0 t_none settype eq {
+        % there was no text child
+        pop
+        ""
+    } {
+      get_entity_children
+      dup length 0 eq {
+        % text child was empty
+        pop
+        ""
+      } {
+        % get content of text child
+        0 get
+      } ifelse
+    } ifelse
 
     % menu entries
     exch dup
@@ -103,7 +118,8 @@
               exch
               menu.type.start
               exch dup "icon" get_attribute_value
-              exch dup "text" get_attribute_value
+              % get text from child element
+              exch dup get_entity_children 0 get
               exch dup "index" get_attribute_value string_to_int
               exch dup "label" get_attribute_value
               exch "append_config" get_attribute_value
@@ -138,7 +154,8 @@
                       exch
                       menu.type.back
                       exch dup "icon" get_attribute_value
-                      exch "text" get_attribute_value
+                      % get text from child element
+                      exch get_entity_children 0 get
                     ]
                   } {
                     % entity is not supported
