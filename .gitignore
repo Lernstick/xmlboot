@@ -4,4 +4,5 @@ bootlogo.dir/
 bootlogo.log
 font.log
 font_size_*.fnt
+po/*.tr
 .xmlboot.config.swp
