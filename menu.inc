@@ -8,21 +8,26 @@
 /menu.type.menu          4 def
 /menu.type.back          5 def
 
-% menu specifig indices
+% menu specific indices
 /menu.index.type    0 def
-/menu.index.text    1 def
-/menu.index.entries 2 def
+/menu.index.icon    1 def
+/menu.index.text    2 def
+/menu.index.entries 3 def
 
-% start menu specifig indices
+% start menu specific indices
 /startmenu.index.icon           1 def
 /startmenu.index.text           2 def
 /startmenu.index.syslinux_index 3 def
 /startmenu.index.label          4 def
 /startmenu.index.append_config  5 def
 
-% config menu specifig indices
+% config menu specific indices
 /configmenu.index.id   1 def
 /configmenu.index.icon 2 def
+
+% back entry specific indices
+/back.index.icon 1 def
+/back.index.text 2 def
 
 /menu.alignment.left   0 def
 /menu.alignment.center 1 def
@@ -39,8 +44,9 @@
 %
 % menus are arrays with the following fields:
 %   0: type == menu.type.menu
-%   1: text (string, the title of the menu) 
-%   2: entries (array of start/config entries and/or other menus)
+%   1: icon (string, the name of the icon file)
+%   2: text (string, the title of the menu) 
+%   3: entries (array of start/config entries and/or other menus)
 %
 % start menu entries are arrays with the following fields:
 %   0: type == menu.type.start
@@ -61,13 +67,17 @@
 %
 % back entries are arrays with the following fields:
 %   0: type == menu.type.back
-%   1: text (string, the text to display in the menu)
+%   1: icon (string, the name of the icon file)
+%   2: text (string, the text to display in the menu)
 %
 /parse_menu {
   [
     exch
     % menu type
     menu.type.menu
+
+    % menu icon
+    exch dup "icon" get_attribute_value
 
     % menu text
     exch dup "text" get_attribute_value
@@ -110,7 +120,7 @@
                   exch "id" get_attribute_value
                 ]
               } {
-                  dup get_entity_name "menu" eq {
+                  dup get_entity_name "submenu" eq {
                   % parse submenu (recursively)
                   parse_menu
                 } {
@@ -118,6 +128,7 @@
                     [
                       exch
                       menu.type.back
+                      exch dup "icon" get_attribute_value
                       exch "text" get_attribute_value
                     ]
                   } {
@@ -774,7 +785,7 @@
           } {
             menu.type.back eq {
               % get back entry text
-              1 get
+              back.index.text get
             } if
           } ifelse
         } ifelse
@@ -797,7 +808,7 @@
     dup 1 get
 
     % get menu text
-    1 get
+    menu.index.text get
     % concatenate
     rot
     dup "" eq {
@@ -873,9 +884,19 @@
           pop
           configmenu.index.icon
         } {
-          pop
-          % menu type is not (yet) supported
-          -1
+          dup menu.type.menu eq {
+            pop
+            menu.index.icon
+          } {
+            dup menu.type.back eq {
+              pop
+              back.index.icon
+            } {
+              pop
+              % menu type is not (yet) supported
+              -1
+            } ifelse
+          } ifelse
         } ifelse
       } ifelse
       dup -1 ne {

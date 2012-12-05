@@ -5,6 +5,8 @@
 % TODO:
 %  - use savescreen/restorescreen?
 %  - icon insets in xml file
+%  - timeout
+%  - editor for custom options
 %  - i18n/L10n
 %  - resolution dependend fonts, indentation and line spacing
 %  - help/description (with screenshots?)
