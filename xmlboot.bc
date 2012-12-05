@@ -3,10 +3,9 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
-%  - timeout
 %  - i18n/L10n
 %  - resolution dependend fonts, indentation and line spacing
-%  - help/description (with screenshots?)
+%  - help/description (with screenshots?, also how to use this menu (up, down, enter...))
 %  - menu entry specific font and line spacing
 %
 % test with:
@@ -18,6 +17,7 @@
 %% include menu.inc
 %% include properties.inc
 %% include string.inc
+%% include timeout.inc
 %% include video.inc
 %% include xml.inc
 
@@ -189,21 +189,31 @@ dup "delimiter" get_attribute_value
 
 % get menu from XML structure
 xml_structure "menu" get_entity_child
-/xmlboot_menu exch def
-/menu.font xmlboot_menu "font" get_attribute_value def
-/menu.y xmlboot_menu "y" get_attribute_value string_to_int def
-/menu.dy xmlboot_menu "dy" get_attribute_value string_to_int def
-/menu.color xmlboot_menu "color" get_attribute_value string_to_int def
-/menu.selected_color xmlboot_menu "selected_color" get_attribute_value string_to_int def
-/menu.rectangle_color xmlboot_menu "rectangle_color" get_attribute_value string_to_int def
-/menu.icon_inset xmlboot_menu "icon_inset" get_attribute_value string_to_int def
-xmlboot_menu parse_menu
+dup /menu.font exch "font" get_attribute_value def
+dup /menu.y exch "y" get_attribute_value string_to_int def
+dup /menu.dy exch "dy" get_attribute_value string_to_int def
+dup /menu.color exch "color" get_attribute_value string_to_int def
+dup /menu.selected_color exch "selected_color" get_attribute_value string_to_int def
+dup /menu.rectangle_color exch "rectangle_color" get_attribute_value string_to_int def
+dup /menu.icon_inset exch "icon_inset" get_attribute_value string_to_int def
+parse_menu
 /current.menu exch def
 
 % custom options
 xml_structure "custom_options" get_entity_child
 "text" get_attribute_value
 "%s" edit_input_buffer sprintf
+
+% timeout options
+xml_structure "timeout" get_entity_child
+dup /timeout.x exch "x" get_attribute_value string_to_int def
+dup /timeout.y exch "y" get_attribute_value string_to_int def
+dup /timeout.fontfile exch "font" get_attribute_value findfile def
+dup /timeout.color exch "color" get_attribute_value string_to_int def
+dup /timeout.format_singular exch "format_singular" get_attribute_value def
+/timeout.format_plural exch "format_plural" get_attribute_value def
+/timeout.string timeout.format_plural length 10 add string def
+
 
 % support for breadcrumbs
 % a breadrumb is an array with the following fields:
