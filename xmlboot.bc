@@ -4,7 +4,6 @@
 %
 % TODO:
 %  - use savescreen/restorescreen?
-%  - icon insets in xml file
 %  - timeout
 %  - editor for custom options
 %  - i18n/L10n
@@ -177,6 +176,7 @@ xml_structure "menu" get_entity_child
 /menu.color xmlboot_menu "color" get_attribute_value string_to_int def
 /menu.selected_color xmlboot_menu "selected_color" get_attribute_value string_to_int def
 /menu.rectangle_color xmlboot_menu "rectangle_color" get_attribute_value string_to_int def
+/menu.icon_inset xmlboot_menu "icon_inset" get_attribute_value string_to_int def
 
 xmlboot_menu parse_menu
 /menu.entries exch def

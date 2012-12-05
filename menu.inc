@@ -910,7 +910,7 @@
           % get offset
           sub
           % move to a good position
-          image.size pop 10 add neg exch rmoveto
+          image.size pop menu.icon_inset add neg exch rmoveto
           % paint icon
           0 0 image.size image
           % reset image
