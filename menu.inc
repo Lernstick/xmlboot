@@ -692,8 +692,17 @@
 %
 %
 /menu.erase {
+  % restore default background
   0 0 moveto
   default_background restorescreen
+
+  % repaint system info
+  % (this text is non-static, it changes after selecting another locale)
+  system_info gettext
+  system_info_font_file setfont
+  0x000000 setcolor
+  system_info_x system_info_y moveto
+  show
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -3,9 +3,9 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
-%  - resolution dependend fonts, indentation and line spacing
+%  - resolution dependend fonts, indentation and line spacing for all elements (not only for system info)
 %  - help/description (with screenshots?, also how to use this menu (up, down, enter...))
-%  - menu entry specific font and line spacing
+%  - menu entry specific font and line spacing (needed for configs with *lots* of options)
 %
 % test with:
 %  $ gfxboot -p -b isolinux -a bootlogo
@@ -43,17 +43,38 @@ parse_xml_file
 /xml_structure exch def
 free
 
-% paint version info in the lower left screen corner
-xml_structure "system" get_entity_child get_entity_children 0 get
-"font_size_10.fnt" findfile dup setfont free
-0x000000 setcolor
-dup strsize exch pop
-screen.size exch pop
-exch sub
-10 sub
-10 exch
-moveto
-show
+% get system info properties
+xml_structure "system" get_entity_child
+get_entity_children {
+  dup gettype t_arr eq {
+    dup get_entity_name "text" eq {
+      get_entity_children 0 get
+      /system_info exch def
+    } {
+      dup get_entity_name "layout" eq {
+        dup "height" get_attribute_value string_to_int
+        screen.size exch pop eq {
+          % layout config for current screen height found
+          dup "x" get_attribute_value string_to_int
+          /system_info_x exch def
+          dup "y" get_attribute_value string_to_int
+          /system_info_y exch def
+          "font" get_attribute_value findfile
+          /system_info_font_file exch def
+        } {
+          % a layout config for another screen height (ignore)
+          pop
+        } ifelse
+      } {
+        % not (yet) supported
+        pop
+      } ifelse
+    } ifelse
+  } {
+    % child entry was just some text
+    pop
+  } ifelse
+} forall
 
 % store current image as default background image
 0 0 moveto screen.size savescreen
