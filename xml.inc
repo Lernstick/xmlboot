@@ -111,10 +111,10 @@
 % ( array ptr1 -- string ptr2 )
 %
 % array: array with characters that stop reading
-% ptr1: pointer to the current position in the xml file
+% ptr1: pointer to the current position in a file
 %
 % string: the read string
-% ptr2: updated pointer to the current position in the xml file
+% ptr2: updated pointer to the current position in the file
 %
 /read_string {
   dup

@@ -189,7 +189,22 @@
     exch dup "edit_width" get_attribute_value string_to_int
 
     % edit input field prompt
-    exch "edit_prompt" get_attribute_value
+    exch "edit_prompt" get_entity_child
+    dup 0 t_none settype eq {
+        % there was no edit_prompt child
+        pop
+        ""
+    } {
+      get_entity_children
+      dup length 0 eq {
+        % edit_prompt child was empty
+        pop
+        ""
+      } {
+        % get content of edit_prompt child
+        0 get
+      } ifelse
+    } ifelse
   ]
 } def
 
@@ -261,7 +276,7 @@
           dup 0 get
 
           % text
-          exch dup 1 get
+          exch dup 1 get gettext
 
           % selected
           exch 4 get
@@ -408,8 +423,13 @@
   % update configuration
   % get option id
   dup 2 get
+  /tmp_option_id exch def
+  tmp_option_id
   % get configuration
-  exch 1 get get_configuration
+  exch 1 get
+  /tmp_config_id exch def
+  tmp_config_id
+  get_configuration
   % get config trigger
   dup config.index.trigger get
   /tmp_config_trigger exch def
@@ -448,6 +468,12 @@
         4 false put
       } ifelse
     } forall
+  } if
+
+  % handle special options
+  tmp_config_id "language" eq {
+    tmp_option_id ".translation" concatenate_strings
+    read_translation_file
   } if
 
   % restore selected index from breadcrumbs
@@ -763,7 +789,7 @@
   dup menu.type.start eq {
     pop
     % leave start menu text on stack
-    startmenu.index.text get
+    startmenu.index.text get gettext
 
   } {
     dup menu.type.config eq {
@@ -773,12 +799,12 @@
       configmenu.index.id get get_configuration
 
       % get configuration text
-      dup config.index.text get
+      dup config.index.text get gettext
 
       % show currently selected option
       ": " concatenate_strings
       exch
-      get_selected_option_text
+      get_selected_option_text gettext
       concatenate_strings
 
     } {
@@ -821,7 +847,7 @@
           } ifelse
 
           % get option text
-          exch option.index.text get
+          exch option.index.text get gettext
 
           % concatenate checkbox with text
           concatenate_strings
@@ -831,13 +857,13 @@
             pop
 
             % get (sub)menu text
-            menu.index.text get
+            menu.index.text get gettext
             breadcrumbs.delimiter concatenate_strings
 
           } {
             menu.type.back eq {
               % get back entry text
-              back.index.text get
+              back.index.text get gettext
             } if
           } ifelse
         } ifelse
@@ -860,7 +886,7 @@
     dup 1 get
 
     % get menu text
-    menu.index.text get
+    menu.index.text get gettext
     % concatenate
     rot
     dup "" eq {
@@ -991,7 +1017,7 @@
     current.menu menu.index.edit_x get
     current.menu menu.index.edit_y get
     moveto
-    current.menu menu.index.edit_prompt get
+    current.menu menu.index.edit_prompt get gettext
     show
 
     % show editable input line

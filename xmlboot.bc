@@ -3,7 +3,6 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
-%  - i18n/L10n (with itstool!)
 %  - resolution dependend fonts, indentation and line spacing
 %  - help/description (with screenshots?, also how to use this menu (up, down, enter...))
 %  - menu entry specific font and line spacing
@@ -13,6 +12,7 @@
 %
 
 %% include constants.inc
+%% include gettext.inc
 %% include input.inc
 %% include menu.inc
 %% include properties.inc
@@ -83,6 +83,8 @@ xml_structure "configs" get_entity_child
       dup get_entity_name "config" eq {
         [
           exch dup "id" get_attribute_value
+          /tmp_config_id exch def
+          tmp_config_id
           % get text from child element
           exch dup "text" get_entity_child get_entity_children 0 get
           exch dup "trigger_config" get_attribute_value
@@ -100,12 +102,19 @@ xml_structure "configs" get_entity_child
                   %   4: selected (boolean)
                   [
                     exch dup "id" get_attribute_value
+                    /tmp_option_id exch def
+                    tmp_option_id
                     % get text from child element
                     exch dup get_entity_children 0 get
                     exch dup "append" get_attribute_value
                     exch dup "trigger_option" get_attribute_value
                     exch "selected" get_attribute_value "true" eq {
                       true
+                      % gettext support
+                      tmp_config_id "language" eq {
+                        tmp_option_id ".translation" concatenate_strings
+                        read_translation_file
+                      } if
                     } {
                       false
                     } ifelse
@@ -213,8 +222,8 @@ dup /timeout.x exch "x" get_attribute_value string_to_int def
 dup /timeout.y exch "y" get_attribute_value string_to_int def
 dup /timeout.fontfile exch "font" get_attribute_value findfile def
 dup /timeout.color exch "color" get_attribute_value string_to_int def
-dup /timeout.format_singular exch "format_singular" get_entity_child get_entity_children 0 get def
-/timeout.format_plural exch "format_plural" get_entity_child get_entity_children 0 get def
+dup /timeout.format_singular exch "format_singular" get_entity_child get_entity_children 0 get gettext def
+/timeout.format_plural exch "format_plural" get_entity_child get_entity_children 0 get gettext def
 /timeout.string timeout.format_plural length 10 add string def
 
 

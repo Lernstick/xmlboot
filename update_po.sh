@@ -12,7 +12,7 @@ for i in po/*.po; do
 	sed '1,1d' | \
 	sed -e 's|"\(.*\)","\(.*\)","\(.*\)"|\2\x00\3|' | \
 	tr '\n' '\000' | \
-	tr -d '\r' > po/$(basename $i).tr
+	tr -d '\r' > $(echo $i | sed 's|\.po||').translation
 done
 
 rm xmlboot.pot
