@@ -479,6 +479,12 @@
   % restore selected index from breadcrumbs
   /menu.selected_index last_breadcrumb 2 get def
 
+  % free dynamically allocated memory of this menu entry
+  current.menu menu.index.entries get {
+    free
+  } forall
+  current.menu free
+
    % get previous menu from breadcrumbs
   last_breadcrumb
   /last_breadcrumb last_breadcrumb 0 get def
@@ -605,7 +611,7 @@
 %
 /menu.select {
   % move to menu position
-  dup 
+  dup
   menu.alignment menu.alignment.center eq {
     dup current.menu menu.index.entries get exch get
     menu_to_text centered_x_value
@@ -1021,6 +1027,7 @@
     show
 
     % show editable input line
+    edit_obj free
     /edit_obj [
       currentpoint exch 10 add exch                                 % x,y
       current.menu menu.index.edit_width get fontheight savescreen  % background image, defines input field size

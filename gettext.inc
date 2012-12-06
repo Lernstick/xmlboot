@@ -1,3 +1,6 @@
+% array for holding the translations
+/translations [ ] def
+
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % reads translation files
 %
@@ -19,6 +22,12 @@
 %  ]
 %
 /read_translation_file {
+  % free memory of previously loaded translation
+  translations {
+    free
+  } forall
+  translations free
+
   findfile
   dup 0 t_none settype eq {
     % file was not found
