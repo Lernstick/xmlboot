@@ -1,4 +1,4 @@
-% menu variables
+ % menu variables
 /menu.selected_index 0 def
 
 /menu.type.start         0 def
@@ -31,11 +31,12 @@
 /startmenu.index.append_config  5 def
 
 % config menu specific indices
-/configmenu.index.id   1 def
-/configmenu.index.icon 2 def
-/configmenu.index.y    3 def
-/configmenu.index.dy   4 def
-/configmenu.index.font 5 def
+/configmenu.index.id        1 def
+/configmenu.index.icon      2 def
+/configmenu.index.y         3 def
+/configmenu.index.dy        4 def
+/configmenu.index.font      5 def
+/configmenu.index.indention 6 def
 
 % back entry specific indices
 /back.index.icon 1 def
@@ -65,7 +66,7 @@
 %    7: edit_y      (int,     y position of the edit field)
 %    8: edit_width  (int,     width of the edit field)
 %    9: text        (string,  title of the menu) 
-%   10: entries     (array,   start/config entries and/or other menus)
+%   10: entries     (array,   back/start/config/option entries and/or other submenus)
 %   11: show_edit   (boolean, if the edit input field should be visible when showing this menu)
 %   12: edit_prompt (string,  prompt to show in front of the edit field)
 %
@@ -78,12 +79,13 @@
 %   5: append_config (bool, if the config should be appended to the label when booting)
 %
 % config menus are arrays with the following fields:
-%   0: type (int,    always menu.type.config)
-%   1: id   (string, config id)
-%   2: icon (string, the name of the icon file)
-%   2: y    (int,    y position of the config menu on screen)
-%   3: dy   (int,    "line spacing" of the config menu)
-%   5: font (string, name of the font file)
+%   0: type      (int,    always menu.type.config)
+%   1: id        (string, config id)
+%   2: icon      (string, the name of the icon file)
+%   3: y         (int,    y position of the config menu on screen)
+%   4: dy        (int,    "line spacing" of the config menu)
+%   5: font      (string, name of the font file)
+%   6: indention (int, the indention to apply when showing this config menu in upper menu)
 %
 % options are arrays with the following fields:
 %   0: type == menu.type.option
@@ -206,7 +208,8 @@
                         % layout config for current screen height found
                         dup "y" get_attribute_value string_to_int
                         exch dup "dy" get_attribute_value string_to_int
-                        exch "font" get_attribute_value
+                        exch dup "font" get_attribute_value
+                        exch "indention" get_attribute_value string_to_int
                         /tmp_no_layout_found false def
                         exit
                       } {
@@ -700,6 +703,55 @@
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% gets the indention of a menu item
+%
+% ( array -- int )
+%
+% arry: the menu item
+%
+% int: the indention of the menu item
+%
+/get_indention {
+  dup menu.index.type get
+  menu.type.config eq {
+    configmenu.index.indention get
+    return
+  } {
+    % menu entries without indention
+    pop
+    0 return
+  } ifelse
+
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% moves to the location of a menu entry
+%
+% ( int -- )
+%
+% int: the index of the menu entry
+%
+/moveto_menu_coordinates {
+
+  /tmp_index exch def
+
+  % get indention
+  current.menu menu.index.entries get tmp_index get
+  get_indention
+  /indention exch def
+
+  % move to menu position
+  menu.alignment menu.alignment.center eq {
+    current.menu menu.index.entries get tmp_index get
+    menu_to_text centered_x_value
+  } {
+    left_align_x indention add
+  } ifelse
+  tmp_index menu.dy mul menu.y add
+  moveto
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % add highlight to menu item.
 %
 % ( int -- )
@@ -707,16 +759,7 @@
 % int: the index to highlight
 %
 /menu.select {
-  % move to menu position
-  dup
-  menu.alignment menu.alignment.center eq {
-    dup current.menu menu.index.entries get exch get
-    menu_to_text centered_x_value
-  } {
-    left_align_x
-  } ifelse
-  exch menu.dy mul menu.y add
-  moveto
+  dup moveto_menu_coordinates
 
   % reset menu entry region
   current.menu menu.index.entries get exch get
@@ -752,16 +795,8 @@
 % int: the index where to remove the highlight
 %
 /menu.deselect {
-  % move to menu position
-  dup 
-  menu.alignment menu.alignment.center eq {
-    dup current.menu menu.index.entries get exch get
-    menu_to_text centered_x_value
-  } {
-    left_align_x
-  } ifelse
-  exch menu.dy mul menu.y add
-  moveto
+
+  dup moveto_menu_coordinates
 
   % reset menu entry region
   current.menu menu.index.entries get exch get
@@ -770,7 +805,6 @@
   exch
   11 add
   exch
-  0xc7d9f0 setcolor
   -6 -1 rmoveto
   currentpoint
   4 2 roll
@@ -1038,6 +1072,7 @@
 /paint_menu {
 
   menu.erase
+
   paint_breadcrumbs
 
   % get menu specific layout values
@@ -1064,20 +1099,23 @@
     update_left_align_x
     current.menu menu.index.entries get {
 
-      % get text
+      % text
       dup menu_to_text
 
+      % indention
+      /indention 0 def
+
       % paint icon
-      left_align_x y_offset moveto
-      exch
       % determine index of icon element in this menu entry
-      dup menu.index.type get
+      exch dup menu.index.type get
       dup menu.type.start eq {
         pop
         startmenu.index.icon
       } {
         dup menu.type.config eq {
           pop
+          dup configmenu.index.indention get
+          /indention exch def
           configmenu.index.icon
         } {
           dup menu.type.menu eq {
@@ -1095,7 +1133,14 @@
           } ifelse
         } ifelse
       } ifelse
-      dup -1 ne {
+      dup -1 eq {
+        % menu type is not (yet) supported
+        % remove index (-1) from stack
+        pop
+        % remove menu entry from stack
+        pop
+      } {
+        % supported menu type
         get
         dup "" ne {
           findfile setimage
@@ -1106,6 +1151,7 @@
           % get offset
           sub
           % move to a good position
+          left_align_x indention add y_offset moveto
           image.size pop menu.icon_inset add neg exch rmoveto
           % paint icon
           0 0 image.size image
@@ -1115,16 +1161,10 @@
           % file could not be found
           pop
         } ifelse
-      } {
-        % menu type is not (yet) supported
-        % remove index (-1) from stack
-        pop
-        % remove menu entry from stack
-        pop
       } ifelse
 
       % paint text
-      left_align_x y_offset moveto show
+      left_align_x indention add y_offset moveto show
       /y_offset y_offset menu.dy add def
     } forall
   } ifelse

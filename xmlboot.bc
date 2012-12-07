@@ -24,7 +24,7 @@
 %% include xml.inc
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% Convert integer to pointer.
+% converts an integer to a pointer
 %
 % ( int1 -- ptr1 )
 %
