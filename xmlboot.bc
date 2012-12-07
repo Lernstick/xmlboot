@@ -3,7 +3,6 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
-%  - menu item indentation (for grouping config options under start menu entries)
 %  - help/description (with screenshots?, also how to use this menu (up, down, enter...))
 %  - check layout configuration on higher resolutions
 %  - initial config_to_submenu (when reading menu structure), not dynamically at runtime...???

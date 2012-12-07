@@ -18,10 +18,11 @@
 /menu.index.edit_x        6 def
 /menu.index.edit_y        7 def
 /menu.index.edit_width    8 def
-/menu.index.text          9 def
-/menu.index.entries      10 def
-/menu.index.show_edit    11 def
-/menu.index.edit_prompt  12 def
+/menu.index.indention     9 def
+/menu.index.text         10 def
+/menu.index.entries      11 def
+/menu.index.show_edit    12 def
+/menu.index.edit_prompt  13 def
 
 % start menu specific indices
 /startmenu.index.icon           1 def
@@ -65,10 +66,11 @@
 %    6: edit_x      (int,     x position of the edit field)
 %    7: edit_y      (int,     y position of the edit field)
 %    8: edit_width  (int,     width of the edit field)
-%    9: text        (string,  title of the menu) 
-%   10: entries     (array,   back/start/config/option entries and/or other submenus)
-%   11: show_edit   (boolean, if the edit input field should be visible when showing this menu)
-%   12: edit_prompt (string,  prompt to show in front of the edit field)
+%    9: indention   (int,     indention to apply when showing this menu in upper menu)
+%   10: text        (string,  title of the menu) 
+%   11: entries     (array,   back/start/config/option entries and/or other submenus)
+%   12: show_edit   (boolean, if the edit input field should be visible when showing this menu)
+%   13: edit_prompt (string,  prompt to show in front of the edit field)
 %
 % start menu entries are arrays with the following fields:
 %   0: type == menu.type.start
@@ -78,14 +80,14 @@
 %   4: label (string, the label in the syslinux config file to start)
 %   5: append_config (bool, if the config should be appended to the label when booting)
 %
-% config menus are arrays with the following fields:
+% config menus entries are arrays with the following fields:
 %   0: type      (int,    always menu.type.config)
 %   1: id        (string, config id)
 %   2: icon      (string, the name of the icon file)
 %   3: y         (int,    y position of the config menu on screen)
 %   4: dy        (int,    "line spacing" of the config menu)
 %   5: font      (string, name of the font file)
-%   6: indention (int, the indention to apply when showing this config menu in upper menu)
+%   6: indention (int,    indention to apply when showing this config menu in upper menu)
 %
 % options are arrays with the following fields:
 %   0: type == menu.type.option
@@ -105,7 +107,7 @@
     % menu icon
     exch dup "icon" get_attribute_value
 
-    % layout specific y, dy, icon_inset, font, edit_x values
+    % layout specific y, dy, icon_inset, font, edit_x and indention values
     /tmp_no_layout_found true def
     exch dup get_entity_children {
       dup gettype t_arr eq {
@@ -120,7 +122,8 @@
             exch dup "font" get_attribute_value
             exch dup "edit_x" get_attribute_value string_to_int
             exch dup "edit_y" get_attribute_value string_to_int
-            exch "edit_width" get_attribute_value string_to_int
+            exch dup "edit_width" get_attribute_value string_to_int
+            exch "indention" get_attribute_value string_to_int
             /tmp_no_layout_found false def
             exit
           } {
@@ -141,7 +144,7 @@
       % was not found in config file!
       "menu layout missing!" dtrace pop
     } if
-    8 7 roll
+    9 8 roll
 
     % menu text
     dup "text" get_entity_child
@@ -167,7 +170,7 @@
       exch get_entity_children {
         dup gettype t_arr eq {
           % child is another entity
-          % check, if entitiy is supported
+          % check, if entity is supported
           dup get_entity_name "start" eq {
             [
               exch
@@ -230,8 +233,8 @@
                   % was not found in config file!
                   "config layout missing!" dtrace pop
                 } if
-                % remove entitiy from stack
-                4 3 roll pop
+                % remove entity from stack
+                5 4 roll pop
               ]
             } {
               dup get_entity_name "option" eq {
@@ -351,6 +354,9 @@
     0 0
 
     % width of edit input field
+    0
+
+    % indention
     0
 
     % text
@@ -713,15 +719,18 @@
 %
 /get_indention {
   dup menu.index.type get
-  menu.type.config eq {
-    configmenu.index.indention get
-    return
-  } {
-    % menu entries without indention
+  dup menu.type.config eq {
     pop
-    0 return
+    configmenu.index.indention get
+  } {
+    menu.type.menu eq {
+      menu.index.indention get
+    } {
+      % menu entries without indention
+      pop
+      0 return
+    } ifelse
   } ifelse
-
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -795,7 +804,6 @@
 % int: the index where to remove the highlight
 %
 /menu.deselect {
-
   dup moveto_menu_coordinates
 
   % reset menu entry region
@@ -1120,6 +1128,8 @@
         } {
           dup menu.type.menu eq {
             pop
+            dup menu.index.indention get
+            /indention exch def
             menu.index.icon
           } {
             dup menu.type.back eq {
@@ -1142,7 +1152,10 @@
       } {
         % supported menu type
         get
-        dup "" ne {
+        dup "" eq {
+          % file could not be found
+          pop
+        } {
           findfile setimage
           % get text height
           dup strsize exch pop 8 mul 10 div
@@ -1157,9 +1170,6 @@
           0 0 image.size image
           % reset image
           default_image setimage
-        } {
-          % file could not be found
-          pop
         } ifelse
       } ifelse
 
