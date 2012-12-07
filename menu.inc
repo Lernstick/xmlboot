@@ -371,7 +371,7 @@
           exch dup config_option.index.text get gettext
 
           % selected
-          exch 4 get
+          exch config_option.index.selected get
         ]
       } forall
     ]
@@ -410,10 +410,10 @@
       % get options array of config
       config.index.options get {
         % only use selected options
-        dup 4 get {
+        dup config_option.index.selected get {
           % option is selected
           % get option specific append line
-          2 get
+          config_option.index.append get
           % concatenate with global append line
           append_line " " concatenate_strings
           exch
@@ -527,7 +527,7 @@
       % this is the selected option
       dup 4 true put
       % get option trigger
-      3 get
+      config_option.index.trigger get
       /tmp_option_trigger exch def
     } {
       % this is not the selected option
@@ -562,7 +562,7 @@
   } if
 
   % restore selected index from breadcrumbs
-  /menu.selected_index last_breadcrumb 2 get def
+  /menu.selected_index last_breadcrumb breadcrumb.index.current_index get def
 
   % free dynamically allocated memory of this menu entry
   current.menu menu.index.entries get {
@@ -643,7 +643,7 @@
   pop
 
   % restore selected index from breadcrumbs
-  /menu.selected_index last_breadcrumb 2 get def
+  /menu.selected_index last_breadcrumb breadcrumb.index.current_index get def
 
   % get previous menu from breadcrumbs
   last_breadcrumb
