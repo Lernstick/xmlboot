@@ -33,18 +33,22 @@
 /startmenu.index.append_config  5 def
 
 % config menu specific indices
-/configmenu.index.id        1 def
-/configmenu.index.icon      2 def
-/configmenu.index.y         3 def
-/configmenu.index.dy        4 def
-/configmenu.index.font      5 def
-/configmenu.index.indention 6 def
+/configmenu.index.id                1 def
+/configmenu.index.icon              2 def
+/configmenu.index.description_color 3 def
+/configmenu.index.y                 4 def
+/configmenu.index.dy                5 def
+/configmenu.index.font              6 def
+/configmenu.index.indention         7 def
+/configmenu.index.description_x     8 def
+/configmenu.index.description_y     9 def
 
 % config option menu entry specific indices
-/config_option_menu_entry.index.config_id 1 def
-/config_option_menu_entry.index.option_id 2 def
-/config_option_menu_entry.index.text      3 def
-/config_option_menu_entry.index.selected  4 def
+/config_option_menu_entry.index.config_id   1 def
+/config_option_menu_entry.index.option_id   2 def
+/config_option_menu_entry.index.text        3 def
+/config_option_menu_entry.index.description 4 def
+/config_option_menu_entry.index.selected    5 def
 
 % back entry specific indices
 /back.index.icon 1 def
@@ -194,7 +198,10 @@
                 % icon
                 exch dup "icon" get_attribute_value
 
-                % layout specific y, dy, and font values
+                % description_color
+                exch dup "description_color" get_attribute_value string_to_int
+
+                % layout specific y, dy, font, indention, description_x and description_y values
                 /tmp_no_layout_found true def
                 exch dup get_entity_children {
                   dup gettype t_arr eq {
@@ -205,7 +212,9 @@
                         dup "y" get_attribute_value string_to_int
                         exch dup "dy" get_attribute_value string_to_int
                         exch dup "font" get_attribute_value
-                        exch "indention" get_attribute_value string_to_int
+                        exch dup "indention" get_attribute_value string_to_int
+                        exch dup "description_x" get_attribute_value string_to_int
+                        exch "description_y" get_attribute_value string_to_int
                         /tmp_no_layout_found false def
                         exit
                       } {
@@ -227,7 +236,7 @@
                   "config layout missing!" dtrace pop
                 } if
                 % remove entity from stack
-                5 4 roll pop
+                7 6 roll pop
               ]
             } {
               dup get_entity_name "option" eq {
@@ -289,7 +298,7 @@
   0
   exch
   {
-    4 get {
+    config_option_menu_entry.index.selected get {
       return
     } if
     1 add
@@ -350,11 +359,12 @@
           exch
           % config option menus entries cache the values of its config option
           % they are arrays with the following fields:
-          %   0: type      (int,     always menu.type.config_option)
-          %   1: config id (string,  config ID)
-          %   2: option id (string,  option ID)
-          %   3: text      (string,  config description)
-          %   4: selected  (boolean, if this option is selected)
+          %   0: type        (int,     always menu.type.config_option)
+          %   1: config id   (string,  config ID)
+          %   2: option id   (string,  option ID)
+          %   3: text        (string,  config name)
+          %   4: description (string,  config description)
+          %   5: selected    (boolean, if this option is selected)
 
           % type
           menu.type.config_option
@@ -369,6 +379,9 @@
 
           % text
           exch dup config_option.index.text get gettext
+
+          % description
+          exch dup config_option.index.description get gettext
 
           % selected
           exch config_option.index.selected get
@@ -476,6 +489,14 @@
 % array: the selected config menu entry
 %
 /handle_config_menu_entry {
+  % update description position
+  dup configmenu.index.description_x get
+  /description_x exch def
+  dup configmenu.index.description_y get
+  /description_y exch def
+  dup configmenu.index.description_color get
+  /description_color exch def
+
   % paint config options menu
   config_to_menu
   /current.menu exch def
@@ -492,7 +513,8 @@
   paint_menu
 
   %find and highlight selected option
-  current.menu menu.index.entries get get_selected_option_index
+  current.menu menu.index.entries get
+  get_selected_option_index
   /menu.selected_index exch def
   menu.selected_index menu.select
 } def
@@ -525,13 +547,13 @@
     % check against id of option menu entry
     2 index eq {
       % this is the selected option
-      dup 4 true put
+      dup config_option.index.selected true put
       % get option trigger
       config_option.index.trigger get
       /tmp_option_trigger exch def
     } {
       % this is not the selected option
-      4 false put
+      config_option.index.selected false put
     } ifelse
   } forall
   % remove option id from TOS
@@ -547,10 +569,10 @@
       % check against option trigger id
       tmp_option_trigger eq {
         % this is the selected option
-        4 true put
+        config_option.index.selected true put
       } {
         % this is not the selected option
-        4 false put
+        config_option.index.selected false put
       } ifelse
     } forall
   } if
@@ -773,6 +795,19 @@
   % paint text in highlighted color
   menu.selected_color setcolor
   show
+
+  % show description (if supported by entry type)
+  current.menu menu.index.entries get menu.selected_index get
+  dup menu.index.type get
+  menu.type.config_option eq {
+    config_option_menu_entry.index.description get
+    description_color setcolor
+    description_x description_y moveto
+    show
+  } {
+    % menu type does not have a description
+    pop
+  } ifelse
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -801,6 +836,20 @@
   % paint text in normal color
   menu.color setcolor
   show
+
+  % reset description (if supported by entry type)
+  current.menu menu.index.entries get menu.selected_index get
+  dup menu.index.type get
+  menu.type.config_option eq {
+    description_x description_y moveto
+    description_x description_y
+    rot
+    config_option_menu_entry.index.description get strsize
+    image
+  } {
+    % menu type does not have a description
+    pop
+  } ifelse
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

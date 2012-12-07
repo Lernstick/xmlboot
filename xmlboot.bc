@@ -168,11 +168,12 @@ breadcrumbs.y 0 t_none settype eq {
 /config.index.options 3 def
 
 % config option specific indices
-/config_option.index.id       0 def
-/config_option.index.text     1 def
-/config_option.index.append   2 def
-/config_option.index.trigger  3 def
-/config_option.index.selected 4 def
+/config_option.index.id          0 def
+/config_option.index.text        1 def
+/config_option.index.description 2 def
+/config_option.index.append      3 def
+/config_option.index.trigger     4 def
+/config_option.index.selected    5 def
 
 % get configurations from XML structure
 %
@@ -216,6 +217,7 @@ xml_structure "configs" get_entity_child
                     tmp_option_id
                     % get text from child element
                     exch dup "text" get_entity_child get_entity_children 0 get
+                    exch dup "description" get_entity_child_string
                     exch dup "append" get_attribute_value
                     exch dup "trigger_option" get_attribute_value
                     exch "selected" get_attribute_value "true" eq {
