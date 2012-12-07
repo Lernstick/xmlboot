@@ -62,11 +62,11 @@ get_entity_children {
           "font" get_attribute_value findfile
           /system_info_font_file exch def
         } {
-          % a layout config for another screen height (ignore)
+          % a layout config for another video mode (ignore)
           pop
         } ifelse
       } {
-        % not (yet) supported
+        % entity not (yet) supported
         pop
       } ifelse
     } ifelse
@@ -105,7 +105,7 @@ xml_structure "configs" get_entity_child
   get_entity_children {
     dup gettype t_arr eq {
       % child is another entity
-      % check, if entitiy is supported
+      % check, if entity is supported
       dup get_entity_name "config" eq {
         [
           exch dup "id" get_attribute_value
@@ -189,7 +189,7 @@ xml_structure "options" get_entity_child
   get_entity_children {
     dup gettype t_arr eq {
       % child is another entity
-      % check, if entitiy is supported
+      % check, if entity is supported
       dup get_entity_name "option" eq {
         [
           exch dup "id" get_attribute_value
@@ -216,14 +216,42 @@ xml_structure "options" get_entity_child
 
 % get breadcrumb details
 xml_structure "breadcrumbs" get_entity_child
-dup "y" get_attribute_value string_to_int
-/breadcrumbs.y exch def
-dup "font" get_attribute_value
-/breadcrumbs.font exch def
+dup "color" get_attribute_value string_to_int
+/breadcrumbs.color exch def
 dup "delimiter" get_attribute_value
 /breadcrumbs.delimiter exch def
-"color" get_attribute_value string_to_int
-/breadcrumbs.color exch def
+get_entity_children {
+  dup gettype t_arr eq {
+    dup get_entity_name "layout" eq {
+      dup "height" get_attribute_value string_to_int
+      screen.size exch pop eq {
+        % layout config for current screen height found
+        dup "y" get_attribute_value string_to_int
+        /breadcrumbs.y exch def
+        "font" get_attribute_value findfile
+        /breadcrumbs.font_file exch def
+      } {
+        % a layout config for another screen height (ignore)
+        pop
+      } ifelse
+    } {
+      % not (yet) supported
+      pop
+    } ifelse
+  } {
+    % child entry was just some text
+    pop
+  } ifelse
+} forall
+breadcrumbs.y 0 t_none settype eq {
+  % the layout for the breadcrumbs for the current screen height
+  % was not found in config file!
+  "breadcrumbs layout missing!" dtrace pop
+} if
+
+
+
+
 
 % get menu from XML structure
 xml_structure "menu" get_entity_child

@@ -929,7 +929,7 @@
 
   % paint breadcrumbs text
   breadcrumbs.color setcolor
-  breadcrumbs.font findfile dup setfont free
+  breadcrumbs.font_file setfont
   breadcrumbs.y exch show_centered
 } def
 
