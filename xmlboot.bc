@@ -31,17 +31,16 @@
 % buffer for holding the edit input string
 /edit_input_buffer 1024 string def
 
-% set a good video mode and a splash screen
-trymodes
-paint_splash
-% remember default image
-/default_image currentimage def
-
-% parse xml file
+% parse xml config file
 "xmlboot.config" findfile dup
 parse_xml_file
 /xml_structure exch def
 free
+
+% set a good video mode and a splash screen
+try_video_modes
+% remember default image
+/default_image currentimage def
 
 % get system info properties
 xml_structure "system" get_entity_child
@@ -75,6 +74,11 @@ get_entity_children {
     pop
   } ifelse
 } forall
+system_info_x 0 t_none settype eq {
+  % the layout for the system information for the current video mode
+  % was not found in config file!
+  "system info layout missing!" dtrace pop
+} if
 
 % store current image as default background image
 0 0 moveto screen.size savescreen

@@ -30,52 +30,39 @@
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 %% trymodes - try setting a good video mode
 %
-% ( -- )   
+% ( -- )
 %
-/trymodes {
-  1366 768 32 trymode not {
-    1366 768 16 trymode not {
-      1280 800 32 trymode not {
-        1280 800 16 trymode not {
-          1024 768 32 trymode not {
-            1024 768 16 trymode not {
-              800 600 32 trymode not {
-                800 600 16 trymode not {
-                  false .end
-                } if
-              } if
-            } if
-          } if
-        } if
-      } if
-    } if
-  } if
-} def
-
-% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-%% paint_splash - paints a splash image that fits the current mode
-%
-% ( -- )   
-%
-/paint_splash {
-  screen.size pop
-  dup 1366 eq {
-    pop
-    "splash_1366x768.jpg"
-  } {
-    dup 1280 eq {
-      pop
-      "splash_1280x800.jpg"
-    } {
-      1024 eq {
-        "splash_1024x768.jpg"
+/try_video_modes {
+  xml_structure "videomodes" get_entity_child
+  get_entity_children {
+    dup gettype t_arr eq {
+      dup get_entity_name "videomode" eq {
+        dup "width" get_attribute_value string_to_int
+        exch dup "height" get_attribute_value string_to_int
+        exch dup "color_depth" get_attribute_value string_to_int
+        4 2 roll rot
+        trymode {
+          % setting this video mode succeeded
+          % paint background image
+          "background" get_attribute_value
+          findfile dup setimage free
+          0 0 moveto
+          0 0 image.size image
+          % exit forall loop
+          exit
+        } {
+          % setting this video mode failed
+          % remove video mode entity from stack
+          pop
+        } ifelse
       } {
-        "splash_800x600.jpg"
+        % entity not (yet) supported
+        pop
       } ifelse
+    } {
+      % child entry was just some text
+      pop
     } ifelse
-  } ifelse
-  findfile dup setimage free
-  0 0 moveto
-  0 0 image.size image
+  } forall
 } def
 
