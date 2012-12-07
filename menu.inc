@@ -9,15 +9,19 @@
 /menu.type.back          5 def
 
 % menu specific indices
-/menu.index.type        0 def
-/menu.index.icon        1 def
-/menu.index.text        2 def
-/menu.index.entries     3 def
-/menu.index.show_edit   4 def
-/menu.index.edit_x      5 def
-/menu.index.edit_y      6 def
-/menu.index.edit_width  7 def
-/menu.index.edit_prompt 8 def
+/menu.index.type          0 def
+/menu.index.icon          1 def
+/menu.index.y             2 def
+/menu.index.dy            3 def
+/menu.index.icon_inset    4 def
+/menu.index.font          5 def
+/menu.index.text          6 def
+/menu.index.entries       7 def
+/menu.index.show_edit     8 def
+/menu.index.edit_x        9 def
+/menu.index.edit_y       10 def
+/menu.index.edit_width   11 def
+/menu.index.edit_prompt  12 def
 
 % start menu specific indices
 /startmenu.index.icon           1 def
@@ -48,14 +52,19 @@
 % array2: the parsed menu
 %
 % menus are arrays with the following fields:
-%   0: type == menu.type.menu
-%   1: icon (string, the name of the icon file)
-%   2: text (string, the title of the menu) 
-%   3: entries (array of start/config entries and/or other menus)
-%   4: show_edit (boolean, if the edit input field should be visible when showing this menu)
-%   5: edit_x (int, the x position of the edit field)
-%   6: edit_y (int, the y position of the edit field)
-%   7: edit_prompt (string, the prompt to show in front of the edit field)
+%    0: type        (int,     always menu.type.menu)
+%    1: icon        (string,  name of the icon file)
+%    2: y           (int,     y position of the menu on screen)
+%    3: dy          (int,     "line spacing" of the menu)
+%    4: icon_inset  (int,     inset between icon and text)
+%    5: font        (string,  name of the font file)
+%    6: text        (string,  title of the menu) 
+%    7: entries     (array,   start/config entries and/or other menus)
+%    8: show_edit   (boolean, if the edit input field should be visible when showing this menu)
+%    9: edit_x      (int,     x position of the edit field)
+%   10: edit_y      (int,     y position of the edit field)
+%   10: edit_width  (int,     width of the edit field)
+%   11: edit_prompt (string,  prompt to show in front of the edit field)
 %
 % start menu entries are arrays with the following fields:
 %   0: type == menu.type.start
@@ -88,8 +97,42 @@
     % menu icon
     exch dup "icon" get_attribute_value
 
+    % layout specific y, dy, icon_inset and font values
+    /tmp_no_layout_found true def
+    exch dup get_entity_children {
+      dup gettype t_arr eq {
+        dup get_entity_name "layout" eq {
+          dup "height" get_attribute_value string_to_int
+          screen.size exch pop eq {
+            % layout config for current screen height found
+            dup "y" get_attribute_value string_to_int
+            exch dup "dy" get_attribute_value string_to_int
+            exch dup "icon_inset" get_attribute_value string_to_int
+            exch "font" get_attribute_value
+            /tmp_no_layout_found false def
+            exit
+          } {
+            % a layout config for another screen height (ignore)
+            pop
+          } ifelse
+        } {
+          % not (yet) supported
+          pop
+        } ifelse
+      } {
+        % child entry was just some text
+        pop
+      } ifelse
+    } forall
+    tmp_no_layout_found {
+      % the meny layout for the current screen height
+      % was not found in config file!
+      "menu layout missing!" dtrace pop
+    } if
+    5 4 roll
+
     % menu text
-    exch dup "text" get_entity_child
+    dup "text" get_entity_child
     dup 0 t_none settype eq {
         % there was no text child
         pop
@@ -246,12 +289,24 @@
     % (no) icon
     ""
 
+    % y
+    menu.y
+
+    % dy
+    menu.dy
+
+    % icon inset
+    menu.icon_inset
+
+    % font
+    menu.font
+
     % text
     tmp_config_id get_configuration
     dup config.index.text get
     exch
 
-    % options
+    % use config options as menu entries
     [
       % loop over all config options
       exch config.index.options get {
@@ -943,10 +998,16 @@
   menu.erase
   paint_breadcrumbs
 
+  % get menu specific layout values
+  /menu.y          current.menu menu.index.y          get def
+  /menu.dy         current.menu menu.index.dy         get def
+  /menu.icon_inset current.menu menu.index.icon_inset get def
+  /menu.font       current.menu menu.index.font       get def
+
   % paint all menu entries
   menu.color setcolor
   /y_offset menu.y def
-  menu.font_file setfont
+  menu.font findfile dup setfont free
 
   menu.alignment menu.alignment.center eq {
     % center all texts
