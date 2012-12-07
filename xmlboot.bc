@@ -207,7 +207,7 @@ xml_structure "configs" get_entity_child
                     /tmp_option_id exch def
                     tmp_option_id
                     % get text from child element
-                    exch dup get_entity_children 0 get
+                    exch dup "text" get_entity_child get_entity_children 0 get
                     exch dup "append" get_attribute_value
                     exch dup "trigger_option" get_attribute_value
                     exch "selected" get_attribute_value "true" eq {

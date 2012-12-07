@@ -1,6 +1,7 @@
- % menu variables
+% menu variables
 /menu.selected_index 0 def
 
+% menu entry types
 /menu.type.start         0 def
 /menu.type.config        1 def
 /menu.type.config_option 2 def
@@ -43,6 +44,7 @@
 /back.index.icon 1 def
 /back.index.text 2 def
 
+% alignment
 /menu.alignment.left   0 def
 /menu.alignment.center 1 def
 /menu.alignment menu.alignment.left def
@@ -279,22 +281,7 @@
     } ifelse
 
     % edit input field prompt
-    exch "edit_prompt" get_entity_child
-    dup 0 t_none settype eq {
-        % there was no edit_prompt child
-        pop
-        ""
-    } {
-      get_entity_children
-      dup length 0 eq {
-        % edit_prompt child was empty
-        pop
-        ""
-      } {
-        % get content of edit_prompt child
-        0 get
-      } ifelse
-    } ifelse
+    exch "edit_prompt" get_entity_child_string
   ]
 } def
 

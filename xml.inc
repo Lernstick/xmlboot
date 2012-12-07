@@ -323,3 +323,32 @@
   pop
   ""
 } def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% gets the string content of an entity child
+%
+% ( array string1 -- string2 )
+%
+% array: an xml entity
+% string1: the name of the entity child
+%
+% string2: the string content of the entity child or "" if it was not found
+%
+/get_entity_child_string {
+  get_entity_child
+  dup 0 t_none settype eq {
+    % there was no text child
+    pop
+    ""
+  } {
+    get_entity_children
+    dup length 0 eq {
+      % text child was empty
+      pop
+      ""
+    } {
+      % get content of text child
+      0 get
+    } ifelse
+  } ifelse
+} def
