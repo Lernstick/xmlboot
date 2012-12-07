@@ -15,12 +15,12 @@
 /menu.index.dy            3 def
 /menu.index.icon_inset    4 def
 /menu.index.font          5 def
-/menu.index.text          6 def
-/menu.index.entries       7 def
-/menu.index.show_edit     8 def
-/menu.index.edit_x        9 def
-/menu.index.edit_y       10 def
-/menu.index.edit_width   11 def
+/menu.index.edit_x        6 def
+/menu.index.edit_y        7 def
+/menu.index.edit_width    8 def
+/menu.index.text          9 def
+/menu.index.entries      10 def
+/menu.index.show_edit    11 def
 /menu.index.edit_prompt  12 def
 
 % start menu specific indices
@@ -61,13 +61,13 @@
 %    3: dy          (int,     "line spacing" of the menu)
 %    4: icon_inset  (int,     inset between icon and text)
 %    5: font        (string,  name of the font file)
-%    6: text        (string,  title of the menu) 
-%    7: entries     (array,   start/config entries and/or other menus)
-%    8: show_edit   (boolean, if the edit input field should be visible when showing this menu)
-%    9: edit_x      (int,     x position of the edit field)
-%   10: edit_y      (int,     y position of the edit field)
-%   10: edit_width  (int,     width of the edit field)
-%   11: edit_prompt (string,  prompt to show in front of the edit field)
+%    6: edit_x      (int,     x position of the edit field)
+%    7: edit_y      (int,     y position of the edit field)
+%    8: edit_width  (int,     width of the edit field)
+%    9: text        (string,  title of the menu) 
+%   10: entries     (array,   start/config entries and/or other menus)
+%   11: show_edit   (boolean, if the edit input field should be visible when showing this menu)
+%   12: edit_prompt (string,  prompt to show in front of the edit field)
 %
 % start menu entries are arrays with the following fields:
 %   0: type == menu.type.start
@@ -103,18 +103,22 @@
     % menu icon
     exch dup "icon" get_attribute_value
 
-    % layout specific y, dy, icon_inset and font values
+    % layout specific y, dy, icon_inset, font, edit_x values
     /tmp_no_layout_found true def
     exch dup get_entity_children {
       dup gettype t_arr eq {
         dup get_entity_name "layout" eq {
-          dup "height" get_attribute_value string_to_int
-          screen.size exch pop eq {
+          dup "width" get_attribute_value string_to_int
+          exch dup "height" get_attribute_value string_to_int
+          rot exch screen.size rot eq rot rot eq and {
             % layout config for current screen height found
             dup "y" get_attribute_value string_to_int
             exch dup "dy" get_attribute_value string_to_int
             exch dup "icon_inset" get_attribute_value string_to_int
-            exch "font" get_attribute_value
+            exch dup "font" get_attribute_value
+            exch dup "edit_x" get_attribute_value string_to_int
+            exch dup "edit_y" get_attribute_value string_to_int
+            exch "edit_width" get_attribute_value string_to_int
             /tmp_no_layout_found false def
             exit
           } {
@@ -135,7 +139,7 @@
       % was not found in config file!
       "menu layout missing!" dtrace pop
     } if
-    5 4 roll
+    8 7 roll
 
     % menu text
     dup "text" get_entity_child
@@ -268,15 +272,6 @@
       false
     } ifelse
 
-    % x position of edit input field
-    exch dup "edit_x" get_attribute_value string_to_int
-
-    % y position of edit input field
-    exch dup "edit_y" get_attribute_value string_to_int
-
-    % width of edit input field
-    exch dup "edit_width" get_attribute_value string_to_int
-
     % edit input field prompt
     exch "edit_prompt" get_entity_child
     dup 0 t_none settype eq {
@@ -349,6 +344,12 @@
     % font
     tmp_config_menu configmenu.index.font get
 
+    % x,y position of edit input field
+    0 0
+
+    % width of edit input field
+    0
+
     % text
     tmp_config_id get_configuration
     dup config.index.text get
@@ -389,12 +390,6 @@
 
     % visibility of edit input field (invisible)
     false
-
-    % x,y position of edit input field
-    0 0
-
-    % width of edit input field
-    0
 
     % prompt of edit input field
     ""
