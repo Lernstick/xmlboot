@@ -3,10 +3,10 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
-%  - check layout configuration on higher resolutions
-%  - resolution dependend fonts, indentation and line spacing for all elements (not only for system info)
+%  - menu specific font and line spacing (needed for configs with *lots* of options)
+%  - menu item indentation (for grouping config options under start menu entries)
 %  - help/description (with screenshots?, also how to use this menu (up, down, enter...))
-%  - menu entry specific font and line spacing (needed for configs with *lots* of options)
+%  - check layout configuration on higher resolutions
 %
 % test with:
 %  $ gfxboot -p -b isolinux -a bootlogo
@@ -289,13 +289,45 @@ xml_structure "options" get_entity_child
 
 % get menu from XML structure
 xml_structure "menu" get_entity_child
-dup /menu.font exch "font" get_attribute_value def
-dup /menu.y exch "y" get_attribute_value string_to_int def
-dup /menu.dy exch "dy" get_attribute_value string_to_int def
-dup /menu.color exch "color" get_attribute_value string_to_int def
-dup /menu.selected_color exch "selected_color" get_attribute_value string_to_int def
-dup /menu.rectangle_color exch "rectangle_color" get_attribute_value string_to_int def
-dup /menu.icon_inset exch "icon_inset" get_attribute_value string_to_int def
+dup
+dup "color" get_attribute_value string_to_int
+/menu.color exch def
+dup "selected_color" get_attribute_value string_to_int
+/menu.selected_color exch def
+dup "rectangle_color" get_attribute_value string_to_int
+/menu.rectangle_color exch def
+get_entity_children {
+  dup gettype t_arr eq {
+    dup get_entity_name "layout" eq {
+      dup "height" get_attribute_value string_to_int
+      screen.size exch pop eq {
+        % layout config for current screen height found
+        dup "y" get_attribute_value string_to_int
+        /menu.y exch def
+        dup "dy" get_attribute_value string_to_int
+        /menu.dy exch def
+        dup "font" get_attribute_value findfile
+        /menu.font_file exch def
+        "icon_inset" get_attribute_value string_to_int
+        /menu.icon_inset exch def
+      } {
+        % a layout config for another screen height (ignore)
+        pop
+      } ifelse
+    } {
+      % not (yet) supported
+      pop
+    } ifelse
+  } {
+    % child entry was just some text
+    pop
+  } ifelse
+} forall
+menu.y 0 t_none settype eq {
+  % the meny layout for the current screen height
+  % was not found in config file!
+  "menu layout missing!" dtrace pop
+} if
 parse_menu
 /current.menu exch def
 

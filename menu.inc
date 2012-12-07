@@ -946,7 +946,7 @@
   % paint all menu entries
   menu.color setcolor
   /y_offset menu.y def
-  menu.font findfile dup setfont free
+  menu.font_file setfont
 
   menu.alignment menu.alignment.center eq {
     % center all texts
