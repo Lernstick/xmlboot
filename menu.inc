@@ -33,6 +33,9 @@
 % config menu specific indices
 /configmenu.index.id   1 def
 /configmenu.index.icon 2 def
+/configmenu.index.y    3 def
+/configmenu.index.dy   4 def
+/configmenu.index.font 5 def
 
 % back entry specific indices
 /back.index.icon 1 def
@@ -75,9 +78,12 @@
 %   5: append_config (bool, if the config should be appended to the label when booting)
 %
 % config menus are arrays with the following fields:
-%   0: type == menu.type.config
-%   1: id (string, config id)
+%   0: type (int,    always menu.type.config)
+%   1: id   (string, config id)
 %   2: icon (string, the name of the icon file)
+%   2: y    (int,    y position of the config menu on screen)
+%   3: dy   (int,    "line spacing" of the config menu)
+%   5: font (string, name of the font file)
 %
 % options are arrays with the following fields:
 %   0: type == menu.type.option
@@ -176,9 +182,49 @@
             dup get_entity_name "config" eq {
               [
                 exch
+
+                % type
                 menu.type.config
+
+                % id
                 exch dup "id" get_attribute_value
-                exch "icon" get_attribute_value
+
+                % icon
+                exch dup "icon" get_attribute_value
+
+                % layout specific y, dy, and font values
+                /tmp_no_layout_found true def
+                exch dup get_entity_children {
+                  dup gettype t_arr eq {
+                    dup get_entity_name "layout" eq {
+                      dup "height" get_attribute_value string_to_int
+                      screen.size exch pop eq {
+                        % layout config for current screen height found
+                        dup "y" get_attribute_value string_to_int
+                        exch dup "dy" get_attribute_value string_to_int
+                        exch "font" get_attribute_value
+                        /tmp_no_layout_found false def
+                        exit
+                      } {
+                        % a layout config for another screen height (ignore)
+                        pop
+                      } ifelse
+                    } {
+                      % not (yet) supported
+                      pop
+                    } ifelse
+                  } {
+                    % child entry was just some text
+                    pop
+                  } ifelse
+                } forall
+                tmp_no_layout_found {
+                  % the meny layout for the current screen height
+                  % was not found in config file!
+                  "config layout missing!" dtrace pop
+                } if
+                % remove entitiy from stack
+                4 3 roll pop
               ]
             } {
               dup get_entity_name "option" eq {
@@ -274,14 +320,16 @@
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % converts a config into a menu structure
 %
-% ( string -- array )
+% ( array1 -- array2 )
 %
-% string: the config id
+% array1: the selected config menu entry
 %
-% array: the menu structure
+% array2: the menu structure containing this configurations options
 %
 /config_to_menu {
-  /tmp_config_id exch def
+  /tmp_config_menu exch def
+  /tmp_config_id tmp_config_menu 1 get def
+
   [
     % type
     menu.type.menu
@@ -290,23 +338,23 @@
     ""
 
     % y
-    menu.y
+    tmp_config_menu configmenu.index.y get
 
     % dy
-    menu.dy
+    tmp_config_menu configmenu.index.dy get
 
-    % icon inset
-    menu.icon_inset
+    % (no) icon inset
+    0
 
     % font
-    menu.font
+    tmp_config_menu configmenu.index.font get
 
     % text
     tmp_config_id get_configuration
     dup config.index.text get
-    exch
 
     % use config options as menu entries
+    exch
     [
       % loop over all config options
       exch config.index.options get {
@@ -446,7 +494,6 @@
 %
 /handle_config_menu_entry {
   % paint config options menu
-  1 get
   config_to_menu
   /current.menu exch def
 
