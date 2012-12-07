@@ -3,6 +3,7 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
+%  - check layout configuration on higher resolutions
 %  - resolution dependend fonts, indentation and line spacing for all elements (not only for system info)
 %  - help/description (with screenshots?, also how to use this menu (up, down, enter...))
 %  - menu entry specific font and line spacing (needed for configs with *lots* of options)
@@ -41,8 +42,49 @@ free
 try_video_modes
 % remember default image
 /default_image currentimage def
+% store current image as default background image
+0 0 moveto screen.size savescreen
+/default_background exch def
 
-% get system info properties
+% get timeout options from xml structure
+xml_structure "timeout" get_entity_child
+dup /timeout.color exch "color" get_attribute_value string_to_int def
+dup /timeout.format_singular exch "format_singular" get_entity_child get_entity_children 0 get gettext def
+dup /timeout.format_plural exch "format_plural" get_entity_child get_entity_children 0 get gettext def
+/timeout.string timeout.format_plural length 10 add string def
+get_entity_children {
+  dup gettype t_arr eq {
+    dup get_entity_name "layout" eq {
+      dup "width" get_attribute_value string_to_int
+      exch dup "height" get_attribute_value string_to_int
+      rot exch screen.size rot eq rot rot eq and {
+        % layout config for current video mode found
+        dup "x" get_attribute_value string_to_int
+        /timeout.x exch def
+        dup "y" get_attribute_value string_to_int
+        /timeout.y exch def
+        "font" get_attribute_value findfile
+        /timeout.fontfile exch def
+      } {
+        % a layout config for another video mode (ignore)
+        pop
+      } ifelse
+    } {
+      % entity not (yet) supported
+      pop
+    } ifelse
+  } {
+    % child entry was just some text
+    pop
+  } ifelse
+} forall
+timeout.x 0 t_none settype eq {
+  % the layout for the timeout for the current video mode
+  % was not found in config file!
+  "timeout layout missing!" dtrace pop
+} if
+
+% get system info properties from xml structure
 xml_structure "system" get_entity_child
 get_entity_children {
   dup gettype t_arr eq {
@@ -81,9 +123,40 @@ system_info_x 0 t_none settype eq {
   "system info layout missing!" dtrace pop
 } if
 
-% store current image as default background image
-0 0 moveto screen.size savescreen
-/default_background exch def
+% get breadcrumb options from xml file
+xml_structure "breadcrumbs" get_entity_child
+dup "color" get_attribute_value string_to_int
+/breadcrumbs.color exch def
+dup "delimiter" get_attribute_value
+/breadcrumbs.delimiter exch def
+get_entity_children {
+  dup gettype t_arr eq {
+    dup get_entity_name "layout" eq {
+      dup "height" get_attribute_value string_to_int
+      screen.size exch pop eq {
+        % layout config for current screen height found
+        dup "y" get_attribute_value string_to_int
+        /breadcrumbs.y exch def
+        "font" get_attribute_value findfile
+        /breadcrumbs.font_file exch def
+      } {
+        % a layout config for another screen height (ignore)
+        pop
+      } ifelse
+    } {
+      % not (yet) supported
+      pop
+    } ifelse
+  } {
+    % child entry was just some text
+    pop
+  } ifelse
+} forall
+breadcrumbs.y 0 t_none settype eq {
+  % the layout for the breadcrumbs for the current screen height
+  % was not found in config file!
+  "breadcrumbs layout missing!" dtrace pop
+} if
 
 % some config specific constants
 /config.index.id      0 def
@@ -167,7 +240,7 @@ xml_structure "configs" get_entity_child
   } forall
 ] def
 
-% some config specific constants
+% some config option specific constants
 /option.index.id                 0 def
 /option.index.text               1 def
 /option.index.append_selected    2 def
@@ -214,45 +287,6 @@ xml_structure "options" get_entity_child
   } forall
 ] def
 
-% get breadcrumb details
-xml_structure "breadcrumbs" get_entity_child
-dup "color" get_attribute_value string_to_int
-/breadcrumbs.color exch def
-dup "delimiter" get_attribute_value
-/breadcrumbs.delimiter exch def
-get_entity_children {
-  dup gettype t_arr eq {
-    dup get_entity_name "layout" eq {
-      dup "height" get_attribute_value string_to_int
-      screen.size exch pop eq {
-        % layout config for current screen height found
-        dup "y" get_attribute_value string_to_int
-        /breadcrumbs.y exch def
-        "font" get_attribute_value findfile
-        /breadcrumbs.font_file exch def
-      } {
-        % a layout config for another screen height (ignore)
-        pop
-      } ifelse
-    } {
-      % not (yet) supported
-      pop
-    } ifelse
-  } {
-    % child entry was just some text
-    pop
-  } ifelse
-} forall
-breadcrumbs.y 0 t_none settype eq {
-  % the layout for the breadcrumbs for the current screen height
-  % was not found in config file!
-  "breadcrumbs layout missing!" dtrace pop
-} if
-
-
-
-
-
 % get menu from XML structure
 xml_structure "menu" get_entity_child
 dup /menu.font exch "font" get_attribute_value def
@@ -269,17 +303,6 @@ parse_menu
 xml_structure "custom_options" get_entity_child
 "text" get_attribute_value
 "%s" edit_input_buffer sprintf
-
-% timeout options
-xml_structure "timeout" get_entity_child
-dup /timeout.x exch "x" get_attribute_value string_to_int def
-dup /timeout.y exch "y" get_attribute_value string_to_int def
-dup /timeout.fontfile exch "font" get_attribute_value findfile def
-dup /timeout.color exch "color" get_attribute_value string_to_int def
-dup /timeout.format_singular exch "format_singular" get_entity_child get_entity_children 0 get gettext def
-/timeout.format_plural exch "format_plural" get_entity_child get_entity_children 0 get gettext def
-/timeout.string timeout.format_plural length 10 add string def
-
 
 % support for breadcrumbs
 % a breadrumb is an array with the following fields:
