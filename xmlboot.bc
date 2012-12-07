@@ -51,9 +51,10 @@ get_entity_children {
       /system_info exch def
     } {
       dup get_entity_name "layout" eq {
-        dup "height" get_attribute_value string_to_int
-        screen.size exch pop eq {
-          % layout config for current screen height found
+        dup "width" get_attribute_value string_to_int
+        exch dup "height" get_attribute_value string_to_int
+        rot exch screen.size rot eq rot rot eq and {
+          % layout config for current video mode found
           dup "x" get_attribute_value string_to_int
           /system_info_x exch def
           dup "y" get_attribute_value string_to_int
