@@ -1,6 +1,9 @@
 % array for holding the translations
 /translations [ ] def
 
+/translations.index.original    0 def
+/translations.index.translation 1 def
+
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % reads translation files
 %
@@ -83,10 +86,11 @@
 %
 /gettext {
   translations {
-    dup 0 get 2 index eq {
+    % compare string1 with all originals in translations array
+    dup translations.index.original get 2 index eq {
       % original string found
       % get translated string
-      1 get
+      translations.index.translation get
       dup "" eq {
         % untranslated string
         % leave original string on stack

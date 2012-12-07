@@ -40,6 +40,12 @@
 /configmenu.index.font      5 def
 /configmenu.index.indention 6 def
 
+% config option menu entry specific indices
+/config_option_menu_entry.index.config_id 1 def
+/config_option_menu_entry.index.option_id 2 def
+/config_option_menu_entry.index.text      3 def
+/config_option_menu_entry.index.selected  4 def
+
 % back entry specific indices
 /back.index.icon 1 def
 /back.index.text 2 def
@@ -149,22 +155,7 @@
     9 8 roll
 
     % menu text
-    dup "text" get_entity_child
-    dup 0 t_none settype eq {
-        % there was no text child
-        pop
-        ""
-    } {
-      get_entity_children
-      dup length 0 eq {
-        % text child was empty
-        pop
-        ""
-      } {
-        % get content of text child
-        0 get
-      } ifelse
-    } ifelse
+    dup "text" get_entity_child_string
 
     % menu entries
     exch dup
@@ -306,17 +297,17 @@
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% converts a config into a menu structure
+% converts a config into a (temporary) menu structure
 %
 % ( array1 -- array2 )
 %
 % array1: the selected config menu entry
 %
-% array2: the menu structure containing this configurations options
+% array2: the (temporary) menu structure containing this configurations options
 %
 /config_to_menu {
   /tmp_config_menu exch def
-  /tmp_config_id tmp_config_menu 1 get def
+  /tmp_config_id tmp_config_menu config_option_menu_entry.index.config_id get def
 
   [
     % type
@@ -357,12 +348,13 @@
       exch config.index.options get {
         [
           exch
-          % config option menus are arrays with the following fields:
-          %   0: type == menu.type.config_option
-          %   1: config id (string, config id)
-          %   2: option id (string, option id)
-          %   3: text (string, config description)
-          %   4: selected (boolean)
+          % config option menus entries cache the values of its config option
+          % they are arrays with the following fields:
+          %   0: type      (int,     always menu.type.config_option)
+          %   1: config id (string,  config ID)
+          %   2: option id (string,  option ID)
+          %   3: text      (string,  config description)
+          %   4: selected  (boolean, if this option is selected)
 
           % type
           menu.type.config_option
@@ -373,10 +365,10 @@
           exch 
 
           % option id
-          dup 0 get
+          dup config_option.index.id get
 
           % text
-          exch dup 1 get gettext
+          exch dup config_option.index.text get gettext
 
           % selected
           exch 4 get
@@ -515,11 +507,11 @@
 /handle_config_option_menu_entry {
   % update configuration
   % get option id
-  dup 2 get
+  dup config_option_menu_entry.index.option_id get
   /tmp_option_id exch def
   tmp_option_id
   % get configuration
-  exch 1 get
+  exch config_option_menu_entry.index.config_id get
   /tmp_config_id exch def
   tmp_config_id
   get_configuration
@@ -529,7 +521,7 @@
   % loop through all configuration options
   config.index.options get {
     % get id
-    dup 0 get
+    dup config_option.index.id get
     % check against id of option menu entry
     2 index eq {
       % this is the selected option
@@ -551,7 +543,7 @@
     % loop through all configuration options
     config.index.options get {
       % get id
-      dup 0 get
+      dup config_option.index.id get
       % check against option trigger id
       tmp_option_trigger eq {
         % this is the selected option
@@ -580,9 +572,9 @@
 
    % get previous menu from breadcrumbs
   last_breadcrumb
-  /last_breadcrumb last_breadcrumb 0 get def
+  /last_breadcrumb last_breadcrumb breadcrumb.index.previous get def
   free
-  /current.menu last_breadcrumb 1 get def
+  /current.menu last_breadcrumb breadcrumb.index.current_menu get def
 
   % repaint menu 
   % !!! breadcrumbs must be updated before repainting the menu !!!
@@ -655,9 +647,9 @@
 
   % get previous menu from breadcrumbs
   last_breadcrumb
-  /last_breadcrumb last_breadcrumb 0 get def
+  /last_breadcrumb last_breadcrumb breadcrumb.index.previous get def
   free
-  /current.menu last_breadcrumb 1 get def
+  /current.menu last_breadcrumb breadcrumb.index.current_menu get def
 
   % repaint menu 
   % !!! breadcrumbs must be updated before repainting the menu !!!
@@ -905,9 +897,9 @@
   % loop over all config options
   config.index.options get {
     % check, if option is selected
-    dup 4 get {
+    dup config_option.index.selected get {
       % selected option found, leave text on stack
-      1 get return
+      config_option.index.text get return
     } {
       % option not selected, remove from stack
       pop
@@ -953,7 +945,7 @@
         pop
 
         % get radio button
-        dup 4 get {
+        dup config_option_menu_entry.index.selected get {
           % this is the selected option
           % add selected radiobutton prefix
           "◉ "
@@ -963,8 +955,8 @@
           "○ "
         } ifelse
 
-        % get option menu text
-        exch 3 get
+        % get config option menu text
+        exch config_option_menu_entry.index.text get
 
         % concatenate radio button with text
         concatenate_strings
@@ -1024,7 +1016,7 @@
   last_breadcrumb
   {
     % get breadcrumb menu
-    dup 1 get
+    dup breadcrumb.index.current_menu get
 
     % get menu text
     menu.index.text get gettext
@@ -1044,8 +1036,8 @@
     } ifelse
 
     % move to previous breadcrumb
-    exch 
-    0 get
+    exch
+    breadcrumb.index.previous get
     dup 0 eq {
       % this is the first breadcrumb
       pop

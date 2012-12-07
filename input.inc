@@ -49,7 +49,7 @@
   key keyEnter eq key 0 eq or {
     current.menu menu.index.entries get menu.selected_index get
     % check menu entry type
-    dup 0 get
+    dup menu.index.type get
     dup menu.type.start eq {
       pop
       handle_start_menu_entry

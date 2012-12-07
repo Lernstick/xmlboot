@@ -167,13 +167,27 @@ breadcrumbs.y 0 t_none settype eq {
 /config.index.trigger 2 def
 /config.index.options 3 def
 
+% config option specific indices
+/config_option.index.id       0 def
+/config_option.index.text     1 def
+/config_option.index.append   2 def
+/config_option.index.trigger  3 def
+/config_option.index.selected 4 def
+
 % get configurations from XML structure
 %
 % configurations are arrays with the following fields:
-%   0: id (string)
-%   1: text (string)
-%   2: trigger_config (string, another configuration that gets triggered)
-%   3: options (array)
+%   0: id             (string, ID of this configuration)
+%   1: text           (string, name of this configuration)
+%   2: trigger_config (string, name of another configuration that gets changed when this configuration is changed)
+%   3: options        (array,  collection of mutually exclusive options of this configuration)
+%
+% configuration options are arrays with the following fields:
+%   0: id             (string,  ID of this configuration option)
+%   1: text           (string,  name of this configuration option)
+%   2: append         (string,  the kernel options to append if this configuration option is selected)
+%   3: trigger_option (string,  name of another configuration option that gets selected when this configuration option is selected)
+%   4: selected       (boolean, if this configuration option is currently selected)
 xml_structure "configs" get_entity_child
 /configurations
 [
@@ -196,12 +210,6 @@ xml_structure "configs" get_entity_child
             exch get_entity_children {
               dup gettype t_arr eq {
                 dup get_entity_name "option" eq {
-                  % configuration options are arrays with the following fields:
-                  %   0: id (string)
-                  %   1: text (string)
-                  %   2: append (string)
-                  %   3: trigger_option (string)
-                  %   4: selected (boolean)
                   [
                     exch dup "id" get_attribute_value
                     /tmp_option_id exch def
@@ -307,6 +315,9 @@ xml_structure "custom_options" get_entity_child
 "%s" edit_input_buffer sprintf
 
 % support for breadcrumbs
+/breadcrumb.index.previous      0 def
+/breadcrumb.index.current_menu  1 def
+/breadcrumb.index.current_index 2 def
 % a breadrumb is an array with the following fields:
 %   0: previous breadcrumb
 %   1: this menu
