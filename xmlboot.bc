@@ -3,8 +3,8 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
-%  - layout specific screenshots
 %  - help on how to use this menu (up, down, enter...)
+%  - make targets for translation file generation and translation updates
 %  - check layout configuration on higher resolutions
 %  - better error handling
 %
@@ -218,10 +218,36 @@ xml_structure "configs" get_entity_child
                     exch dup "id" get_attribute_value
                     /tmp_option_id exch def
                     tmp_option_id
-                    % get text from child element
                     exch dup "text" get_entity_child get_entity_children 0 get
                     exch dup "description" get_entity_child_string
-                    exch dup "screenshot" get_attribute_value
+                    % get layout specific screenshot
+                    /tmp_no_screenshot_found true def
+                    exch dup get_entity_children {
+                      dup gettype t_arr eq {
+                        dup get_entity_name "layout" eq {
+                          dup "width" get_attribute_value string_to_int
+                          exch dup "height" get_attribute_value string_to_int
+                          rot exch screen.size rot eq rot rot eq and {
+                            "screenshot" get_attribute_value
+                            /tmp_no_screenshot_found false def
+                            exit
+                          } {
+                            % a layout config for another video mode (ignore)
+                            pop
+                          } ifelse
+                        } {
+                          % entity not (yet) supported
+                          pop
+                        } ifelse
+                      } {
+                        % child entry was just some text
+                        pop
+                      } ifelse
+                    } forall
+                    tmp_no_screenshot_found {
+                      % leave empty string as screenshot filename on stack
+                      ""
+                    } if
                     exch dup "append" get_attribute_value
                     exch dup "trigger_option" get_attribute_value
                     exch "selected" get_attribute_value "true" eq {

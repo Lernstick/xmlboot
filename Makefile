@@ -21,11 +21,21 @@ bootlogo: xmlboot.bc font
 	@cp po/*.translation *.jpg xmlboot.config font*.fnt $@.dir
 	$(GFXBOOT) --archive $@.dir --pack-archive $@
 
-font:
+font: font_size_10.fnt font_size_12.fnt font_size_15.fnt font_size_15_bold.fnt font_size_20.fnt
+
+font_size_10.fnt:
 	$(GFXBOOT_FONT) -v -a 0-65535 -p /usr/share/fonts/truetype/ttf-dejavu/ -f DejaVuSans:size=10 font_size_10.fnt >font.log
+
+font_size_12.fnt:
 	$(GFXBOOT_FONT) -v -a 0-65535 -p /usr/share/fonts/truetype/ttf-dejavu/ -f DejaVuSans:size=12 font_size_12.fnt >font.log
+
+font_size_15.fnt:
 	$(GFXBOOT_FONT) -v -a 0-65535 -p /usr/share/fonts/truetype/ttf-dejavu/ -f DejaVuSans:size=15 font_size_15.fnt >font.log
+
+font_size_15_bold.fnt:
 	$(GFXBOOT_FONT) -v -a 0-65535 -p /usr/share/fonts/truetype/ttf-dejavu/ -f DejaVuSans:size=15:bold=1 font_size_15_bold.fnt >font.log
+
+font_size_20.fnt:
 	$(GFXBOOT_FONT) -v -a 0-65535 -p /usr/share/fonts/truetype/ttf-dejavu/ -f DejaVuSans:size=20 font_size_20.fnt >font.log
 
 clean:
