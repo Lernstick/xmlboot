@@ -42,13 +42,16 @@
 /configmenu.index.indention         7 def
 /configmenu.index.description_x     8 def
 /configmenu.index.description_y     9 def
+/configmenu.index.screenshot_x     10 def
+/configmenu.index.screenshot_y     11 def
 
 % config option menu entry specific indices
 /config_option_menu_entry.index.config_id   1 def
 /config_option_menu_entry.index.option_id   2 def
 /config_option_menu_entry.index.text        3 def
 /config_option_menu_entry.index.description 4 def
-/config_option_menu_entry.index.selected    5 def
+/config_option_menu_entry.index.screenshot  5 def
+/config_option_menu_entry.index.selected    6 def
 
 % back entry specific indices
 /back.index.icon 1 def
@@ -93,13 +96,18 @@
 %   5: append_config (bool, if the config should be appended to the label when booting)
 %
 % config menus entries are arrays with the following fields:
-%   0: type      (int,    always menu.type.config)
-%   1: id        (string, config id)
-%   2: icon      (string, the name of the icon file)
-%   3: y         (int,    y position of the config menu on screen)
-%   4: dy        (int,    "line spacing" of the config menu)
-%   5: font      (string, name of the font file)
-%   6: indention (int,    indention to apply when showing this config menu in upper menu)
+%    0: type              (int,    always menu.type.config)
+%    1: id                (string, config id)
+%    2: icon              (string, the name of the icon file)
+%    3: description_color (int, the color to use when showing descriptions)
+%    4: y                 (int,    y position of the config menu on screen)
+%    5: dy                (int,    "line spacing" of the config menu)
+%    6: font              (string, name of the font file)
+%    7: indention         (int,    indention to apply when showing this config menu in upper menu)
+%    8: description_x     (int,    x position of menu entry descriptions)
+%    9: description_y     (int,    y position of menu entry descriptions)
+%   10: screenshot_x      (int,    x position of menu entry screenshots)
+%   11: screenshot_y      (int,    y position of menu entry screenshots)
 %
 % options are arrays with the following fields:
 %   0: type == menu.type.option
@@ -201,7 +209,7 @@
                 % description_color
                 exch dup "description_color" get_attribute_value string_to_int
 
-                % layout specific y, dy, font, indention, description_x and description_y values
+                % layout specific values
                 /tmp_no_layout_found true def
                 exch dup get_entity_children {
                   dup gettype t_arr eq {
@@ -214,7 +222,9 @@
                         exch dup "font" get_attribute_value
                         exch dup "indention" get_attribute_value string_to_int
                         exch dup "description_x" get_attribute_value string_to_int
-                        exch "description_y" get_attribute_value string_to_int
+                        exch dup "description_y" get_attribute_value string_to_int
+                        exch dup "screenshot_x" get_attribute_value string_to_int
+                        exch "screenshot_y" get_attribute_value string_to_int
                         /tmp_no_layout_found false def
                         exit
                       } {
@@ -236,7 +246,7 @@
                   "config layout missing!" dtrace pop
                 } if
                 % remove entity from stack
-                7 6 roll pop
+                9 8 roll pop
               ]
             } {
               dup get_entity_name "option" eq {
@@ -362,9 +372,10 @@
           %   0: type        (int,     always menu.type.config_option)
           %   1: config id   (string,  config ID)
           %   2: option id   (string,  option ID)
-          %   3: text        (string,  config name)
-          %   4: description (string,  config description)
-          %   5: selected    (boolean, if this option is selected)
+          %   3: text        (string,  short config option name)
+          %   4: description (string,  longer config option description)
+          %   5: screenshot  (string,  screenshot for config option)
+          %   6: selected    (boolean, if this option is selected)
 
           % type
           menu.type.config_option
@@ -382,6 +393,9 @@
 
           % description
           exch dup config_option.index.description get gettext
+
+          % screenshot
+          exch dup config_option.index.screenshot get
 
           % selected
           exch config_option.index.selected get
@@ -496,6 +510,10 @@
   /description_y exch def
   dup configmenu.index.description_color get
   /description_color exch def
+  dup configmenu.index.screenshot_x get
+  /screenshot_x exch def
+  dup configmenu.index.screenshot_y get
+  /screenshot_y exch def
 
   % paint config options menu
   config_to_menu
@@ -796,10 +814,23 @@
   menu.selected_color setcolor
   show
 
-  % show description (if supported by entry type)
+  % show screenshot and/or description (if supported by entry type)
   current.menu menu.index.entries get menu.selected_index get
   dup menu.index.type get
   menu.type.config_option eq {
+    % show config option screenshot
+    dup config_option_menu_entry.index.screenshot get
+    dup "" eq {
+      % no screenshot file configured
+      pop
+    } {
+      findfile dup setimage free
+      screenshot_x screenshot_y moveto
+      0 0 image.size image
+      default_image setimage
+    } ifelse
+
+    % show config option description
     config_option_menu_entry.index.description get
     description_color setcolor
     description_x description_y moveto
@@ -837,10 +868,24 @@
   menu.color setcolor
   show
 
-  % reset description (if supported by entry type)
+  % reset screenshot and/or description (if supported by entry type)
   current.menu menu.index.entries get menu.selected_index get
   dup menu.index.type get
   menu.type.config_option eq {
+    % reset config option screenshot
+    dup config_option_menu_entry.index.screenshot get
+    dup "" eq {
+      % no screenshot file configured
+      pop
+    } {
+      findfile dup setimage free
+      screenshot_x screenshot_y moveto
+      screenshot_x screenshot_y image.size
+      default_image setimage
+      image
+    } ifelse
+
+    % reset config option description
     description_x description_y moveto
     description_x description_y
     rot
@@ -1184,7 +1229,7 @@
           % file could not be found
           pop
         } {
-          findfile setimage
+          findfile dup setimage free
           % get text height
           dup strsize exch pop 8 mul 10 div
           % get icon height

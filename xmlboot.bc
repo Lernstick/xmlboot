@@ -3,9 +3,9 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
-%  - help/description (with screenshots?, also how to use this menu (up, down, enter...))
+%  - layout specific screenshots
+%  - help on how to use this menu (up, down, enter...)
 %  - check layout configuration on higher resolutions
-%  - initial config_to_submenu (when reading menu structure), not dynamically at runtime...???
 %  - better error handling
 %
 % test with:
@@ -171,9 +171,10 @@ breadcrumbs.y 0 t_none settype eq {
 /config_option.index.id          0 def
 /config_option.index.text        1 def
 /config_option.index.description 2 def
-/config_option.index.append      3 def
-/config_option.index.trigger     4 def
-/config_option.index.selected    5 def
+/config_option.index.screenshot  3 def
+/config_option.index.append      4 def
+/config_option.index.trigger     5 def
+/config_option.index.selected    6 def
 
 % get configurations from XML structure
 %
@@ -185,10 +186,12 @@ breadcrumbs.y 0 t_none settype eq {
 %
 % configuration options are arrays with the following fields:
 %   0: id             (string,  ID of this configuration option)
-%   1: text           (string,  name of this configuration option)
-%   2: append         (string,  the kernel options to append if this configuration option is selected)
-%   3: trigger_option (string,  name of another configuration option that gets selected when this configuration option is selected)
-%   4: selected       (boolean, if this configuration option is currently selected)
+%   1: text           (string,  short name of this configuration option)
+%   2: description    (string,  longer description of this configuration option)
+%   3: screenshot     (string,  file name for a screenshot of this configuration option)
+%   4: append         (string,  the kernel options to append if this configuration option is selected)
+%   5: trigger_option (string,  name of another configuration option that gets selected when this configuration option is selected)
+%   6: selected       (boolean, if this configuration option is currently selected)
 xml_structure "configs" get_entity_child
 /configurations
 [
@@ -218,6 +221,7 @@ xml_structure "configs" get_entity_child
                     % get text from child element
                     exch dup "text" get_entity_child get_entity_children 0 get
                     exch dup "description" get_entity_child_string
+                    exch dup "screenshot" get_attribute_value
                     exch dup "append" get_attribute_value
                     exch dup "trigger_option" get_attribute_value
                     exch "selected" get_attribute_value "true" eq {
