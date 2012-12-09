@@ -792,6 +792,8 @@
   % reset menu entry region
   current.menu menu.index.entries get exch get
   menu_to_text
+  currentfont free
+  menu.font findfile setfont
   dup string_region_reset
 
   % paint focus rectangle
@@ -858,6 +860,8 @@
   % reset menu entry region
   current.menu menu.index.entries get exch get
   menu_to_text
+  currentfont free
+  menu.font findfile setfont
   dup strsize
   exch
   11 add
