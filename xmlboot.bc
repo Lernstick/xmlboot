@@ -3,6 +3,7 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
+%  - setting keyboard in gfxboot (important when entering custom options)
 %  - help on how to use this menu (up, down, enter...)
 %  - make targets for translation file generation and translation updates
 %  - check layout configuration on higher resolutions
