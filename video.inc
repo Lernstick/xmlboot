@@ -45,7 +45,7 @@
           % setting this video mode succeeded
           % paint background image
           "background" get_attribute_value
-          findfile dup setimage free
+          findfile setimage
           0 0 moveto
           0 0 image.size image
           % exit forall loop

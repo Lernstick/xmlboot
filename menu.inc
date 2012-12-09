@@ -824,10 +824,14 @@
       % no screenshot file configured
       pop
     } {
-      findfile dup setimage free
       screenshot_x screenshot_y moveto
-      0 0 image.size image
+      % remember screenshot dimensions
+      findfile dup setimage image.size
+      /screenshot_height exch def
+      /screenshot_width exch def
+      0 0 screenshot_width screenshot_height image
       default_image setimage
+      free
     } ifelse
 
     % show config option description
@@ -878,11 +882,10 @@
       % no screenshot file configured
       pop
     } {
-      findfile dup setimage free
-      screenshot_x screenshot_y moveto
-      screenshot_x screenshot_y image.size
+      pop
       default_image setimage
-      image
+      screenshot_x screenshot_y moveto
+      screenshot_x screenshot_y screenshot_width screenshot_height image
     } ifelse
 
     % reset config option description
@@ -1165,7 +1168,8 @@
   % paint all menu entries
   menu.color setcolor
   /y_offset menu.y def
-  menu.font findfile dup setfont free
+  currentfont free
+  menu.font findfile setfont
 
   menu.alignment menu.alignment.center eq {
     % center all texts
@@ -1229,7 +1233,8 @@
           % file could not be found
           pop
         } {
-          findfile dup setimage free
+          % set the image (temporarily) to the icon file
+          findfile setimage
           % get text height
           dup strsize exch pop 8 mul 10 div
           % get icon height
@@ -1241,7 +1246,8 @@
           image.size pop menu.icon_inset add neg exch rmoveto
           % paint icon
           0 0 image.size image
-          % reset image
+          % reset image to default background
+          currentimage free
           default_image setimage
         } ifelse
       } ifelse
