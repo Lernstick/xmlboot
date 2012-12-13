@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"POT-Creation-Date: 2012-12-09 12:39+0100\n"
+"POT-Creation-Date: 2012-12-13 09:33+0100\n"
 "PO-Revision-Date: 2012-12-05 23:00+100\n"
 "Last-Translator: Ronny Standtke <ronny.standtke@fhnw.ch>\n"
 "Language-Team: DE <DE@li.org>\n"
@@ -66,90 +66,90 @@ msgstr ""
 msgid "Desktop for PCs and notebooks with extensive configurability"
 msgstr "Desktop für PCs und Notebooks mit hoher Konfigurierbarkeit"
 
-#: xmlboot.config:91(option/text)
+#: xmlboot.config:92(option/text)
 msgid "GNOME"
 msgstr ""
 
-#: xmlboot.config:92(option/description)
+#: xmlboot.config:93(option/description)
 msgid "Desktop with emphasis on simplicity and usability"
 msgstr "Desktop mit Gewichtung auf Einfachheit und Benutzbarkeit"
 
-#: xmlboot.config:99(option/text)
+#: xmlboot.config:101(option/text)
 msgid "LXDE"
 msgstr ""
 
-#: xmlboot.config:100(option/description)
+#: xmlboot.config:102(option/description)
 msgid "A fast and energy efficient desktop"
 msgstr "Schneller und energieeffizienter Desktop"
 
-#: xmlboot.config:103(option/text)
+#: xmlboot.config:105(option/text)
 msgid "Sugar"
 msgstr ""
 
-#: xmlboot.config:104(option/description)
+#: xmlboot.config:106(option/description)
 msgid "A desktop for children and interactive learning"
 msgstr "Ein Desktop für Kinder und interaktives Lernen"
 
-#: xmlboot.config:111(option/text)
+#: xmlboot.config:114(option/text)
 msgid "Text console"
 msgstr "Textkonsole"
 
-#: xmlboot.config:112(option/description)
+#: xmlboot.config:115(option/description)
 msgid "No desktop"
 msgstr "Kein Desktop"
 
-#: xmlboot.config:121(options/option)
+#: xmlboot.config:125(options/option)
 msgid "Test mode"
 msgstr "Testmodus"
 
-#: xmlboot.config:122(options/option)
+#: xmlboot.config:126(options/option)
 msgid "Use swap partition"
 msgstr "Auslagerungspartition verwenden"
 
-#: xmlboot.config:123(options/option)
+#: xmlboot.config:127(options/option)
 msgid "Use swap file"
 msgstr "Auslagerungsdatei verwenden"
 
-#: xmlboot.config:124(options/option)
+#: xmlboot.config:128(options/option)
 msgid "Show boot messages"
 msgstr "Startmeldungen anzeigen"
 
-#: xmlboot.config:125(options/option)
+#: xmlboot.config:129(options/option)
 msgid "Show boot splash"
 msgstr "Startgrafik anzeigen"
 
-#: xmlboot.config:126(options/option)
+#: xmlboot.config:130(options/option)
 msgid "Check integrity of boot medium"
 msgstr "Integrität des Startmediums überprüfen"
 
-#: xmlboot.config:152(timeout/format_singular)
+#: xmlboot.config:160(timeout/format_singular)
 msgid "Automatic boot in %u second..."
 msgstr "Automatischer Start in %u Sekunde..."
 
-#: xmlboot.config:153(timeout/format_plural)
+#: xmlboot.config:161(timeout/format_plural)
 msgid "Automatic boot in %u seconds..."
 msgstr "Automatischer Start in %u Sekunden..."
 
-#: xmlboot.config:164(menu/start)
+#: xmlboot.config:174(menu/start)
 msgid "Start lernstick"
 msgstr "lernstick starten"
 
-#: xmlboot.config:180(submenu/text)
+#: xmlboot.config:193(submenu/text)
 msgid "More Configuration"
 msgstr "Weitere Einstellungen"
 
-#: xmlboot.config:181(submenu/edit_prompt)
+#: xmlboot.config:194(submenu/edit_prompt)
 msgid "Custom options:"
 msgstr "Eigene Optionen:"
 
-#: xmlboot.config:182(submenu/back)
+#: xmlboot.config:195(submenu/back)
 msgid "Back to main menu"
 msgstr "Zurück zum Hauptmenü"
 
-#: xmlboot.config:195(menu/start)
+#: xmlboot.config:209(menu/start)
 msgid "Boot from hard drive"
 msgstr "Von Festplatte starten"
 
-#: xmlboot.config:196(menu/start)
+#: xmlboot.config:210(menu/start)
 msgid "Hardware info"
 msgstr "Hardware-Informationen"

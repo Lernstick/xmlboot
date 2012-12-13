@@ -28,6 +28,7 @@
 
       % paint new value
       timeout.color setcolor
+      currentfont free
       timeout.fontfile setfont
       timeout.string show
     } if

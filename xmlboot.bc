@@ -235,8 +235,8 @@ get_entity_children {
           /system_info_x exch def
           dup "y" get_attribute_value string_to_int
           /system_info_y exch def
-          "font" get_attribute_value findfile
-          /system_info_font_file exch def
+          "font" get_attribute_value
+          /system_info_font exch def
           exit
         } {
           % a layout config for another video mode (ignore)
@@ -272,8 +272,8 @@ get_entity_children {
         % layout config for current screen height found
         dup "y" get_attribute_value string_to_int
         /breadcrumbs.y exch def
-        "font" get_attribute_value findfile
-        /breadcrumbs.font_file exch def
+        "font" get_attribute_value
+        /breadcrumbs.font exch def
         exit
       } {
         % a layout config for another screen height (ignore)
