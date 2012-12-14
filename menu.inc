@@ -214,8 +214,9 @@
                 exch dup get_entity_children {
                   dup gettype t_arr eq {
                     dup get_entity_name "layout" eq {
-                      dup "height" get_attribute_value string_to_int
-                      screen.size exch pop eq {
+                      dup "width" get_attribute_value string_to_int
+                      exch dup "height" get_attribute_value string_to_int
+                      rot exch screen.size rot eq rot rot eq and {
                         % layout config for current screen height found
                         dup "y" get_attribute_value string_to_int
                         exch dup "dy" get_attribute_value string_to_int
@@ -1242,7 +1243,7 @@
           % set the image (temporarily) to the icon file
           findfile setimage
           % get text height
-          dup strsize exch pop 8 mul 10 div
+          dup strsize exch pop 7 mul 10 div
           % get icon height
           image.size exch pop
           % get offset
