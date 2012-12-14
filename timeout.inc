@@ -29,7 +29,7 @@
       % paint new value
       timeout.color setcolor
       currentfont free
-      timeout.fontfile setfont
+      timeout.font findfile setfont
       timeout.string show
     } if
   } if
