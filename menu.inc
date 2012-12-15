@@ -914,7 +914,7 @@
 /menu.erase {
   % restore default background
   0 0 moveto
-  default_background restorescreen
+  0 0 image.size image
 
   % repaint system info
   % (this text is non-static, it changes after selecting another locale)

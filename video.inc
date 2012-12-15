@@ -49,6 +49,8 @@
           % when showing just the background image alone for several seconds...
           "background" get_attribute_value
           findfile setimage
+          % remember default image
+          /default_image currentimage def
           % exit forall loop
           exit
         } {
