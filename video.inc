@@ -43,11 +43,12 @@
         4 2 roll rot
         trymode {
           % setting this video mode succeeded
-          % paint background image
+          % set the background image
+          % but do NOT *paint* the background image right now
+          % the rest of the setup will still take a while and it looks somewhat broken
+          % when showing just the background image alone for several seconds...
           "background" get_attribute_value
           findfile setimage
-          0 0 moveto
-          0 0 image.size image
           % exit forall loop
           exit
         } {

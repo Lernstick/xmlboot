@@ -49,11 +49,6 @@ dup 0 t_none settype eq {
 
 % set a good video mode and a splash screen
 try_video_modes
-% remember default image
-/default_image currentimage def
-% store current image as default background image
-0 0 moveto screen.size savescreen
-/default_background exch def
 
 % !!! load config (and thereby init gettext) at the very beginning
 % !!! other parts, e.g. timeout, etc. will need a working gettext...
@@ -372,6 +367,14 @@ xml_structure "custom_options" get_entity_child
   current.menu
   0
 ] def
+
+% set and remember default image and background
+0 0 moveto
+0 0 image.size image
+/default_image currentimage def
+% store current image as default background image
+0 0 moveto screen.size savescreen
+/default_background exch def
 
 % paint menu texts
 % !!! last_breadcrumb and edit_input_buffer must already be defined for paint_menu to work !!!
