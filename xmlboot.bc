@@ -3,12 +3,10 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
-%  - paint background image only after initializing all the rest
 %  - checkbox trigger (integrity check and splash are "exclusive or")
 %  - setting keyboard in gfxboot (important when entering custom options)
 %  - help on how to use this menu (up, down, enter...)
 %  - make targets for translation file generation and translation updates
-%  - check layout configuration on higher resolutions
 %  - better error handling
 %
 % test with:

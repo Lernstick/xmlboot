@@ -788,14 +788,12 @@
 % int: the index to highlight
 %
 /menu.select {
+  % move to correct position on screen
   dup moveto_menu_coordinates
 
-  % reset menu entry region
+  % get menu text
   current.menu menu.index.entries get exch get
   menu_to_text
-  currentfont free
-  menu.font findfile setfont
-  dup string_region_reset
 
   % paint focus rectangle
   dup strsize
@@ -861,8 +859,6 @@
   % reset menu entry region
   current.menu menu.index.entries get exch get
   menu_to_text
-  currentfont free
-  menu.font findfile setfont
   dup strsize
   exch
   11 add
