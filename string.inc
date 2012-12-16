@@ -38,7 +38,7 @@
   dup 47 gt exch dup 58 lt rot and {
     48 sub return
   } if
-  
+
   % characters within range "A".."F"
   dup 64 gt exch dup 71 lt rot and {
     55 sub return
@@ -110,4 +110,65 @@
   % concatenate
   "%s%s" concatenated_string sprintf
   concatenated_string
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% converts a comma separated string into an array
+%
+% ( string -- array )
+%
+% string: a string with comma separated values
+% array: an array containing all strings
+%
+/csv_to_array {
+  /csv_string exch def
+
+  % early return for empty strings
+  csv_string length 0 eq {
+    [ ]
+    return
+  } if
+
+  /start_index 0 def
+  /stop_index 0 def
+  [
+    csv_string
+    {
+      % the ASCII comma ',' is '44' in decimal notation
+      44 eq {
+        % leave value on stack
+        private_get_csv_value
+        % update start_index
+        /start_index stop_index 1 add def
+      } if
+      % increment stop index
+      /stop_index stop_index 1 add def
+    } forall
+    % leave final value (after last comma) on stack
+    private_get_csv_value
+  ]
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% puts a cvs value on stack
+%
+% ( -- string )
+%
+% string: the found csv value
+%
+/private_get_csv_value {
+  % allocate memory for value
+  stop_index start_index sub string
+  /value exch def
+
+  % copy value
+  /value_index 0 def
+  start_index 1 stop_index 1 sub {
+    csv_string exch get
+    value value_index rot put
+    /value_index value_index 1 add def
+  } for
+
+  % leave value as string on stack for array
+  value
 } def

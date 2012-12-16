@@ -175,6 +175,54 @@ xml_structure "configs" get_entity_child
   } forall
 ] def
 
+% some option specific constants
+/option.index.id                 0 def
+/option.index.text               1 def
+/option.index.append_selected    2 def
+/option.index.append_nonselected 3 def
+/option.index.on_on_triggers     4 def
+/option.index.selected           5 def
+
+% get options from XML structure
+%
+% options are arrays with the following fields:
+%   0: id (string)
+%   1: text (string)
+%   2: append_selected (string)
+%   3: append_nonselected (string)
+%   4: selected (boolean)
+xml_structure "options" get_entity_child
+/options
+[
+  rot
+  get_entity_children {
+    dup gettype t_arr eq {
+      % child is another entity
+      % check, if entity is supported
+      dup get_entity_name "option" eq {
+        [
+          exch dup "id" get_attribute_value
+          % get text from child element
+          exch dup get_entity_children 0 get
+          exch dup "append_selected" get_attribute_value
+          exch dup "append_nonselected" get_attribute_value
+          exch dup "on_on_triggers" get_attribute_value csv_to_array
+          exch "selected" get_attribute_value "true" eq {
+            true
+          } {
+            false
+          } ifelse
+        ]
+      } {
+        % entity is not supported
+        pop
+      } ifelse
+    } {
+      % child is just some text
+      pop
+    } ifelse
+  } forall
+] def
 
 % get timeout options from xml structure
 xml_structure "timeout" get_entity_child
@@ -291,54 +339,7 @@ breadcrumbs.y 0 t_none settype eq {
   "breadcrumbs layout missing!" dtrace pop
 } if
 
-% some config option specific constants
-/option.index.id                 0 def
-/option.index.text               1 def
-/option.index.append_selected    2 def
-/option.index.append_nonselected 3 def
-/option.index.selected           4 def
-
-% get options from XML structure
-%
-% options are arrays with the following fields:
-%   0: id (string)
-%   1: text (string)
-%   2: append_selected (string)
-%   3: append_nonselected (string)
-%   4: selected (boolean)
-xml_structure "options" get_entity_child
-/options
-[
-  rot
-  get_entity_children {
-    dup gettype t_arr eq {
-      % child is another entity
-      % check, if entity is supported
-      dup get_entity_name "option" eq {
-        [
-          exch dup "id" get_attribute_value
-          % get text from child element
-          exch dup get_entity_children 0 get
-          exch dup "append_selected" get_attribute_value
-          exch dup "append_nonselected" get_attribute_value
-          exch "selected" get_attribute_value "true" eq {
-            true
-          } {
-            false
-          } ifelse
-        ]
-      } {
-        % entity is not supported
-        pop
-      } ifelse
-    } {
-      % child is just some text
-      pop
-    } ifelse
-  } forall
-] def
-
-% get menu from XML structure
+% get menu structure from XML structure
 xml_structure "menu" get_entity_child
 dup "color" get_attribute_value string_to_int
 /menu.color exch def

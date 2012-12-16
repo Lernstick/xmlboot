@@ -53,6 +53,9 @@
 /config_option_menu_entry.index.screenshot  5 def
 /config_option_menu_entry.index.selected    6 def
 
+% option menu entry specific indices
+/option_menu_entry.index.id   1 def
+
 % back entry specific indices
 /back.index.icon 1 def
 /back.index.text 2 def
@@ -109,7 +112,7 @@
 %   10: screenshot_x      (int,    x position of menu entry screenshots)
 %   11: screenshot_y      (int,    y position of menu entry screenshots)
 %
-% options are arrays with the following fields:
+% option menu entries are arrays with the following fields:
 %   0: type == menu.type.option
 %   1: id (string, option id)
 %
@@ -634,12 +637,37 @@
 %
 /handle_option_menu_entry {
   % toggle option
-  1 get get_option
-  dup 4 get {
-    4 false put
+  option_menu_entry.index.id get get_option
+  dup
+  dup option.index.selected get {
+    option.index.selected false put
   } {
-    4 true put
+    % update option
+    option.index.selected true put
+
+    % handle on->on triggers
+    option.index.on_on_triggers get {
+      dup get_option
+      option.index.selected true put
+      % repaint triggered option (if currently visible)
+      /tmp_index 0 def
+      current.menu menu.index.entries get {
+        dup menu.index.type get
+        menu.type.option eq {
+          % check if this is the triggered option
+          option_menu_entry.index.id get 1 index eq {
+            tmp_index menu.deselect
+          } if
+        } {
+          % non-supported menu type
+          pop
+        } ifelse
+        /tmp_index tmp_index 1 add def
+      } forall
+      pop
+    } forall
   } ifelse
+
 
   % repaint option in menu
   menu.selected_index menu.select
@@ -981,6 +1009,7 @@
       pop
     } ifelse
   } forall
+  "option id not found!" dtrace pop
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1018,90 +1047,90 @@
 /menu_to_text {
   % check menu entry type
   dup menu.index.type get
+
   dup menu.type.start eq {
     pop
     % leave start menu text on stack
     startmenu.index.text get gettext
+    return
+  } if
 
-  } {
-    dup menu.type.config eq {
-      pop
+  dup menu.type.config eq {
+    pop
 
-      % get configuration by id
-      configmenu.index.id get get_configuration
+    % get configuration by id
+    configmenu.index.id get get_configuration
 
-      % get configuration text
-      dup config.index.text get gettext
+    % get configuration text
+    dup config.index.text get gettext
 
-      % show currently selected option
-      ": " concatenate_strings
-      exch
-      get_selected_option_text gettext
-      concatenate_strings
+    % show currently selected option
+    ": " concatenate_strings
+    exch
+    get_selected_option_text gettext
+    concatenate_strings
+    return
+  } if
 
+  dup menu.type.config_option eq {
+    pop
+
+    % get radio button
+    dup config_option_menu_entry.index.selected get {
+      % this is the selected option
+      % add selected radiobutton prefix
+      "◉ "
     } {
-      dup menu.type.config_option eq {
-        pop
-
-        % get radio button
-        dup config_option_menu_entry.index.selected get {
-          % this is the selected option
-          % add selected radiobutton prefix
-          "◉ "
-        } {
-          % this is a nonselected option
-          % add nonselected radiobutton prefix
-          "○ "
-        } ifelse
-
-        % get config option menu text
-        exch config_option_menu_entry.index.text get
-
-        % concatenate radio button with text
-        concatenate_strings
-
-      } {
-        dup menu.type.option eq {
-          pop
-
-          % get option by id
-          1 get get_option
-
-          % get checkbox
-          dup option.index.selected get {
-            % this is a selected option
-            % add selected checkbox prefix
-            "☑ "
-          } {
-            % this is a nonselected option
-            % add nonselected checkbox prefix
-            "☐ "
-          } ifelse
-
-          % get option text
-          exch option.index.text get gettext
-
-          % concatenate checkbox with text
-          concatenate_strings
-        } {
-
-          dup menu.type.menu eq {
-            pop
-
-            % get (sub)menu text
-            menu.index.text get gettext
-            breadcrumbs.delimiter concatenate_strings
-
-          } {
-            menu.type.back eq {
-              % get back entry text
-              back.index.text get gettext
-            } if
-          } ifelse
-        } ifelse
-      } ifelse
+      % this is a nonselected option
+      % add nonselected radiobutton prefix
+      "○ "
     } ifelse
-  } ifelse
+
+    % get config option menu text
+    exch config_option_menu_entry.index.text get
+
+    % concatenate radio button with text
+    concatenate_strings
+    return
+  } if
+
+  dup menu.type.option eq {
+    pop
+
+    % get option by id
+    option_menu_entry.index.id get get_option
+
+    % get checkbox
+    dup option.index.selected get {
+      % this is a selected option
+      % add selected checkbox prefix
+      "☑ "
+    } {
+      % this is a nonselected option
+      % add nonselected checkbox prefix
+      "☐ "
+    } ifelse
+
+    % get option text
+    exch option.index.text get gettext
+
+    % concatenate checkbox with text
+    concatenate_strings
+    return
+  } if
+
+  dup menu.type.menu eq {
+    pop
+    % get (sub)menu text
+    menu.index.text get gettext
+    breadcrumbs.delimiter concatenate_strings
+    return
+  } if
+
+  menu.type.back eq {
+    % get back entry text
+    back.index.text get gettext
+  } if
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
