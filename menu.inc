@@ -640,37 +640,54 @@
   option_menu_entry.index.id get get_option
   dup
   dup option.index.selected get {
+    % update option
     option.index.selected false put
   } {
     % update option
     option.index.selected true put
 
     % handle on->on triggers
-    option.index.on_on_triggers get {
+    dup option.index.on_on_triggers get {
       dup get_option
       option.index.selected true put
-      % repaint triggered option (if currently visible)
-      /tmp_index 0 def
-      current.menu menu.index.entries get {
-        dup menu.index.type get
-        menu.type.option eq {
-          % check if this is the triggered option
-          option_menu_entry.index.id get 1 index eq {
-            tmp_index menu.deselect
-          } if
-        } {
-          % non-supported menu type
-          pop
-        } ifelse
-        /tmp_index tmp_index 1 add def
-      } forall
-      pop
+      repaint_option
+    } forall
+
+    % handle on->off triggers
+    option.index.on_off_triggers get {
+      dup get_option
+      option.index.selected false put
+      repaint_option
     } forall
   } ifelse
 
-
   % repaint option in menu
   menu.selected_index menu.select
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% repaints an option (if visible)
+%
+% ( string -- )
+%
+% string: the id of the option
+%
+/repaint_option {
+  /tmp_index 0 def
+  current.menu menu.index.entries get {
+    dup menu.index.type get
+    menu.type.option eq {
+      % check if this is the option we have to repaint
+      option_menu_entry.index.id get 1 index eq {
+        tmp_index menu.deselect
+      } if
+    } {
+      % other menu type, ignored
+      pop
+    } ifelse
+    /tmp_index tmp_index 1 add def
+  } forall
+  pop
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

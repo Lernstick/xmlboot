@@ -181,7 +181,8 @@ xml_structure "configs" get_entity_child
 /option.index.append_selected    2 def
 /option.index.append_nonselected 3 def
 /option.index.on_on_triggers     4 def
-/option.index.selected           5 def
+/option.index.on_off_triggers    5 def
+/option.index.selected           6 def
 
 % get options from XML structure
 %
@@ -207,6 +208,7 @@ xml_structure "options" get_entity_child
           exch dup "append_selected" get_attribute_value
           exch dup "append_nonselected" get_attribute_value
           exch dup "on_on_triggers" get_attribute_value csv_to_array
+          exch dup "on_off_triggers" get_attribute_value csv_to_array
           exch "selected" get_attribute_value "true" eq {
             true
           } {
