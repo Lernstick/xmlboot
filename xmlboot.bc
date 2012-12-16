@@ -3,7 +3,6 @@
 %    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
 %
 % TODO:
-%  - checkbox trigger (integrity check and splash are "exclusive or")
 %  - setting keyboard in gfxboot (important when entering custom options)
 %  - help on how to use this menu (up, down, enter...)
 %  - make targets for translation file generation and translation updates
@@ -182,7 +181,9 @@ xml_structure "configs" get_entity_child
 /option.index.append_nonselected 3 def
 /option.index.on_on_triggers     4 def
 /option.index.on_off_triggers    5 def
-/option.index.selected           6 def
+/option.index.off_on_triggers    6 def
+/option.index.off_off_triggers   7 def
+/option.index.selected           8 def
 
 % get options from XML structure
 %
@@ -209,6 +210,8 @@ xml_structure "options" get_entity_child
           exch dup "append_nonselected" get_attribute_value
           exch dup "on_on_triggers" get_attribute_value csv_to_array
           exch dup "on_off_triggers" get_attribute_value csv_to_array
+          exch dup "off_on_triggers" get_attribute_value csv_to_array
+          exch dup "off_off_triggers" get_attribute_value csv_to_array
           exch "selected" get_attribute_value "true" eq {
             true
           } {

@@ -642,6 +642,20 @@
   dup option.index.selected get {
     % update option
     option.index.selected false put
+
+    % handle off->on triggers
+    dup option.index.off_on_triggers get {
+      dup get_option
+      option.index.selected true put
+      repaint_option
+    } forall
+
+    % handle off->off triggers
+    option.index.off_off_triggers get {
+      dup get_option
+      option.index.selected false put
+      repaint_option
+    } forall
   } {
     % update option
     option.index.selected true put
