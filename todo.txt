@@ -1,0 +1,5 @@
+- faster menu repaint (only restore menu areas)
+- setting keyboard in gfxboot (important when entering custom options)
+- help on how to use this menu (up, down, enter...)
+- make targets for translation file generation and translation updates
+- better error handling

@@ -1,13 +1,3 @@
-% HINT:
-%  - findfile seems to have a bug that only files with names that are longer than 12 characters
-%    are found (maybe this has something to do with the "stoneage" 8.3 file name limit!?)
-%
-% TODO:
-%  - setting keyboard in gfxboot (important when entering custom options)
-%  - help on how to use this menu (up, down, enter...)
-%  - make targets for translation file generation and translation updates
-%  - better error handling
-%
 % test with:
 %  $ gfxboot -p -b isolinux -a bootlogo
 %
