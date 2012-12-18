@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"POT-Creation-Date: 2012-12-16 13:17+0100\n"
+"POT-Creation-Date: 2012-12-17 15:24+0100\n"
 "PO-Revision-Date: 2012-12-05 23:00+100\n"
 "Last-Translator: Ronny Standtke <ronny.standtke@fhnw.ch>\n"
 "Language-Team: DE <DE@li.org>\n"
@@ -146,10 +146,10 @@ msgstr "Eigene Optionen:"
 msgid "Back to main menu"
 msgstr "Zurück zum Hauptmenü"
 
-#: xmlboot.config:216(menu/start)
+#: xmlboot.config:217(menu/start)
 msgid "Boot from hard drive"
 msgstr "Von Festplatte starten"
 
-#: xmlboot.config:217(menu/start)
+#: xmlboot.config:218(menu/start)
 msgid "Hardware info"
 msgstr "Hardware-Informationen"
