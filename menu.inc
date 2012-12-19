@@ -497,9 +497,6 @@
 
   % "2" means that we want to boot
   2
-
-  % keep video mode when starting kernel
-  1 keepmode
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
