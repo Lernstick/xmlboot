@@ -497,6 +497,11 @@
 
   % "2" means that we want to boot
   2
+  
+  % !!! Do *NOT* use keepmode !!!
+  % keepmode breaks the hardware detection tool and memtest.
+  % I just leave it here commented for documentation...
+  % 1 keepmode
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
