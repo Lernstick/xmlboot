@@ -120,7 +120,7 @@ msgstr "Debugmeldungen anzeigen"
 
 #: xmlboot.config:135(options/option)
 msgid "Use local APIC timer"
-msgstr "Lokale APIC-Uhr verwenden"
+msgstr "Lokalen APIC-Timer verwenden"
 
 #: xmlboot.config:165(timeout/format_singular)
 msgid "Automatic boot in %u second..."
