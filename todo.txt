@@ -1,4 +1,3 @@
-- cache icons and fonts
 - cache x position and text of breadcrumbs
 - faster menu repaint (only restore menu areas)
 - setting keyboard in gfxboot (important when entering custom options)

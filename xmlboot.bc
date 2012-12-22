@@ -258,6 +258,8 @@ timeout.x 0 t_none settype eq {
   % was not found in config file!
   "timeout layout missing!" dtrace pop
 } if
+% early caching of timeout font
+timeout.font find_cached_file pop
 
 % get system info properties from xml structure
 xml_structure "system" get_entity_child
@@ -298,6 +300,8 @@ system_info_x 0 t_none settype eq {
   % was not found in config file!
   "system info layout missing!" dtrace pop
 } if
+% early caching of system info font
+system_info_font find_cached_file pop
 
 % get breadcrumb options from xml file
 xml_structure "breadcrumbs" get_entity_child
@@ -334,6 +338,8 @@ breadcrumbs.y 0 t_none settype eq {
   % was not found in config file!
   "breadcrumbs layout missing!" dtrace pop
 } if
+% early caching of breadcrumbs font
+breadcrumbs.font find_cached_file pop
 
 % get menu structure from XML structure
 xml_structure "menu" get_entity_child
@@ -345,6 +351,8 @@ dup "rectangle_color" get_attribute_value string_to_int
 /menu.rectangle_color exch def
 parse_menu
 /current.menu exch def
+% early caching of main menu font
+current.menu menu.index.font get find_cached_file pop
 
 % custom options
 xml_structure "custom_options" get_entity_child
