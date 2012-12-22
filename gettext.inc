@@ -31,7 +31,7 @@
   } forall
   translations free
 
-  findfile
+  find_cached_file
   dup 0 t_none settype eq {
     % file was not found
     pop

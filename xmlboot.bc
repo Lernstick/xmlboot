@@ -3,6 +3,7 @@
 %
 
 %% include constants.inc
+%% include file_cache.inc
 %% include gettext.inc
 %% include input.inc
 %% include menu.inc

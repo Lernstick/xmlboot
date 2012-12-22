@@ -891,12 +891,11 @@
     } {
       screenshot_x screenshot_y moveto
       % remember screenshot dimensions
-      findfile dup setimage image.size
+      find_cached_file setimage image.size
       /screenshot_height exch def
       /screenshot_width exch def
       0 0 screenshot_width screenshot_height image
       default_image setimage
-      free
     } ifelse
 
     % show config option description
@@ -979,8 +978,7 @@
   % repaint system info
   % (this text is non-static, it changes after selecting another locale)
   system_info gettext
-  currentfont free
-  system_info_font findfile setfont
+  system_info_font find_cached_file setfont
   0x000000 setcolor
   system_info_x system_info_y moveto
   show
@@ -1211,8 +1209,7 @@
 
   % paint breadcrumbs text
   breadcrumbs.color setcolor
-  currentfont free
-  breadcrumbs.font findfile setfont
+  breadcrumbs.font find_cached_file setfont
   breadcrumbs.y exch show_centered
 } def
 
@@ -1236,8 +1233,7 @@
   % paint all menu entries
   menu.color setcolor
   /y_offset menu.y def
-  currentfont free
-  menu.font findfile setfont
+  menu.font find_cached_file setfont
 
   menu.alignment menu.alignment.center eq {
     % center all texts
@@ -1302,7 +1298,7 @@
           pop
         } {
           % set the image (temporarily) to the icon file
-          findfile setimage
+          find_cached_file setimage
           % get text height
           dup strsize exch pop 7 mul 10 div
           % get icon height
@@ -1315,7 +1311,6 @@
           % paint icon
           0 0 image.size image
           % reset image to default background
-          currentimage free
           default_image setimage
         } ifelse
       } ifelse

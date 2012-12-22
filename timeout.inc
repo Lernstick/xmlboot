@@ -21,8 +21,7 @@
     % erase old value from screen
     erase.timeout
     % reset font to menu font
-    currentfont free
-    menu.font findfile setfont
+    menu.font find_cached_file setfont
     return
   } if
 
@@ -34,8 +33,7 @@
   % for later use to speed up things a little bit for every round
   timeout.firstrun {
     timeout.color setcolor
-    currentfont free
-    timeout.font findfile setfont
+    timeout.font find_cached_file setfont
     set.timeout.string
     timeout.string strsize
     /timeout.height exch def
