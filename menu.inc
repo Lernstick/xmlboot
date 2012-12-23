@@ -55,7 +55,8 @@
 /config_option_menu_entry.index.selected    6 def
 
 % option menu entry specific indices
-/option_menu_entry.index.id   1 def
+/option_menu_entry.index.id        1 def
+/option_menu_entry.index.indention 2 def
 
 % back entry specific indices
 /back.index.icon 1 def
@@ -115,8 +116,9 @@
 %   11: screenshot_y      (int,    y position of menu entry screenshots)
 %
 % option menu entries are arrays with the following fields:
-%   0: type == menu.type.option
-%   1: id (string, option id)
+%   0: type      (int,    always menu.type.option)
+%   1: id        (string, option id)
+%   2: indention (int,    indention to apply when showing this option in upper menu)
 %
 % back entries are arrays with the following fields:
 %   0: type == menu.type.back
@@ -140,7 +142,7 @@
           dup "width" get_attribute_value string_to_int
           exch dup "height" get_attribute_value string_to_int
           rot exch screen.size rot eq rot rot eq and {
-            % layout config for current screen height found
+            % layout config for current screen resolution found
             dup "y" get_attribute_value string_to_int
             exch dup "dy" get_attribute_value string_to_int
             exch dup "icon_inset" get_attribute_value string_to_int
@@ -152,7 +154,7 @@
             /tmp_no_layout_found false def
             exit
           } {
-            % a layout config for another screen height (ignore)
+            % a layout config for another screen resolution (ignore)
             pop
           } ifelse
         } {
@@ -165,7 +167,7 @@
       } ifelse
     } forall
     tmp_no_layout_found {
-      % the meny layout for the current screen height
+      % the menu layout for the current screen resolution
       % was not found in config file!
       "menu layout missing!" dtrace pop
     } if
@@ -225,13 +227,13 @@
 
                 % layout specific values
                 /tmp_no_layout_found true def
-                exch dup get_entity_children {
+                exch get_entity_children {
                   dup gettype t_arr eq {
                     dup get_entity_name "layout" eq {
                       dup "width" get_attribute_value string_to_int
                       exch dup "height" get_attribute_value string_to_int
                       rot exch screen.size rot eq rot rot eq and {
-                        % layout config for current screen height found
+                        % layout config for current screen resolution found
                         dup "y" get_attribute_value string_to_int
                         exch dup "dy" get_attribute_value string_to_int
                         exch dup "font" get_attribute_value
@@ -243,7 +245,7 @@
                         /tmp_no_layout_found false def
                         exit
                       } {
-                        % a layout config for another screen height (ignore)
+                        % a layout config for another screen resolution (ignore)
                         pop
                       } ifelse
                     } {
@@ -256,19 +258,48 @@
                   } ifelse
                 } forall
                 tmp_no_layout_found {
-                  % the meny layout for the current screen height
+                  % the config layout for the current screen resolution
                   % was not found in config file!
                   "config layout missing!" dtrace pop
                 } if
-                % remove entity from stack
-                9 8 roll pop
               ]
             } {
               dup get_entity_name "option" eq {
                 [
                   exch
                   menu.type.option
-                  exch "id" get_attribute_value
+                  exch dup "id" get_attribute_value
+                  % layout specific values
+                  /tmp_no_layout_found true def
+                  exch get_entity_children {
+                    dup gettype t_arr eq {
+                      dup get_entity_name "layout" eq {
+                        dup "width" get_attribute_value string_to_int
+                        exch dup "height" get_attribute_value string_to_int
+                        rot exch screen.size rot eq rot rot eq and {
+                          % layout config for current screen resolution found
+                          "indention" get_attribute_value string_to_int
+                          /tmp_no_layout_found false def
+                          exit
+                        } {
+                          % a layout config for another screen resolution (ignore)
+                          pop
+                        } ifelse
+                      } {
+                        % not (yet) supported
+                        pop
+                      } ifelse
+                    } {
+                      % child entry was just some text
+                      pop
+                    } ifelse
+                  } forall
+                  tmp_no_layout_found {
+                    % the option layout for the current screen resolution
+                    % was not found in config file!
+                    % use default value
+                    0
+                  } if
                 ]
               } {
                   dup get_entity_name "submenu" eq {
@@ -830,18 +861,27 @@
 %
 /get_indention {
   dup menu.index.type get
+
   dup menu.type.config eq {
     pop
     configmenu.index.indention get
-  } {
-    menu.type.menu eq {
-      menu.index.indention get
-    } {
-      % menu entries without indention
-      pop
-      0 return
-    } ifelse
-  } ifelse
+    return
+  } if
+
+  dup menu.type.menu eq {
+    pop
+    menu.index.indention get
+    return
+  } if
+
+  menu.type.option eq {
+    option_menu_entry.index.indention get
+    return
+  } if
+
+  % menu entries without indention
+  pop
+  0 return
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1304,9 +1344,16 @@
               pop
               back.index.icon
             } {
-              pop
-              % menu type is not (yet) supported
-              -1
+              dup menu.type.option eq {
+                pop
+                dup option_menu_entry.index.indention get
+                /indention exch def
+                -1
+              } {
+                pop
+                % menu type is not (yet) supported
+                -1
+              } ifelse
             } ifelse
           } ifelse
         } ifelse

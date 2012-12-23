@@ -6,10 +6,10 @@
 % ptr: pointer to the xml file
 % array: top entity of the xml document
 %
-% every entity is an array with the following fields 
-% 	name (string)
-% 	attributes (array)
-%       texts (string) and/or child entities (array) (array)
+% every entity is an array with the following fields:
+%   name (string)
+%   attributes (array)
+%   texts (string) and/or child entities (array) (array)
 %
 /parse_xml_file {
 
@@ -34,7 +34,10 @@
       % '/' of an empty element '/>' or at the '>' of a non-empty element
       % test if current character is '/'
       xml_file_pointer 0 get '/' eq {
-        % this is an empty element, close tag...
+        % this is an empty element
+        % put an empty child array on stack
+        [ ]
+        % close element
         ]
       } {
         % this is a "normal" element
