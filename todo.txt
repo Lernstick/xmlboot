@@ -1,4 +1,3 @@
-- paint option checkboxes aligned with icons
 - cache x position and text of breadcrumbs
 - faster menu repaint (only restore menu areas)
 - setting keyboard in gfxboot (important when entering custom options)

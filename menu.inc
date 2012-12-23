@@ -700,64 +700,72 @@
 %
 /handle_option_menu_entry {
   % toggle option
-  option_menu_entry.index.id get get_option
-  dup
+  dup option_menu_entry.index.id get get_option
+
   dup option.index.selected get {
     % update option
-    option.index.selected false put
+    dup option.index.selected false put
 
     % handle off->on triggers
     dup option.index.off_on_triggers get {
       dup get_option
       option.index.selected true put
-      repaint_option
+      update_option_checkbox
     } forall
 
     % handle off->off triggers
     option.index.off_off_triggers get {
       dup get_option
       option.index.selected false put
-      repaint_option
+      update_option_checkbox
     } forall
   } {
     % update option
-    option.index.selected true put
+    dup option.index.selected true put
 
     % handle on->on triggers
     dup option.index.on_on_triggers get {
       dup get_option
       option.index.selected true put
-      repaint_option
+      update_option_checkbox
     } forall
 
     % handle on->off triggers
     option.index.on_off_triggers get {
       dup get_option
       option.index.selected false put
-      repaint_option
+      update_option_checkbox
     } forall
   } ifelse
 
   % repaint option in menu
+  menu.selected_index moveto_menu_coordinates
+  paint_option_checkbox
   menu.selected_index menu.select
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% repaints an option (if visible)
+% updates an option checkbox (if visible)
 %
 % ( string -- )
 %
 % string: the id of the option
 %
-/repaint_option {
+/update_option_checkbox {
   /tmp_index 0 def
   current.menu menu.index.entries get {
     dup menu.index.type get
     menu.type.option eq {
-      % check if this is the option we have to repaint
-      option_menu_entry.index.id get 1 index eq {
-        tmp_index menu.deselect
-      } if
+      % check if this is the option we have to update
+      dup option_menu_entry.index.id get 2 index eq {
+        % option found, repaint the option checkbox
+        tmp_index moveto_menu_coordinates
+        paint_option_checkbox
+        exit
+      } {
+        % this was a different option
+        pop
+      } ifelse
     } {
       % other menu type, ignored
       pop
@@ -765,6 +773,29 @@
     /tmp_index tmp_index 1 add def
   } forall
   pop
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% paints the checkbox of an option menu entry
+%
+% ( array -- )
+%
+% array: the option menu entry
+%
+/paint_option_checkbox {
+  option_menu_entry.index.id get get_option
+  option.index.selected get {
+    "☑ "
+  } {
+    "☐ "
+  } ifelse
+  % move to correct offset
+  dup strsize pop 3 add neg 0 rmoveto
+  % erase old checkbox
+  dup strsize currentpoint 4 2 roll image
+  % paint new checkbox
+  0x000000 setcolor
+  show
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1197,39 +1228,19 @@
 
   dup menu.type.option eq {
     pop
-
-    % get option by id
     option_menu_entry.index.id get get_option
-
-    % get checkbox
-    dup option.index.selected get {
-      % this is a selected option
-      % add selected checkbox prefix
-      "☑ "
-    } {
-      % this is a nonselected option
-      % add nonselected checkbox prefix
-      "☐ "
-    } ifelse
-
-    % get option text
-    exch option.index.text get gettext
-
-    % concatenate checkbox with text
-    concatenate_strings
+    option.index.text get gettext
     return
   } if
 
   dup menu.type.menu eq {
     pop
-    % get (sub)menu text
     menu.index.text get gettext
     breadcrumbs.delimiter concatenate_strings
     return
   } if
 
   menu.type.back eq {
-    % get back entry text
     back.index.text get gettext
   } if
 } def
@@ -1348,6 +1359,12 @@
                 pop
                 dup option_menu_entry.index.indention get
                 /indention exch def
+
+                % paint option checkbox
+                left_align_x indention add y_offset moveto
+                dup paint_option_checkbox
+
+                % options have no icon!
                 -1
               } {
                 pop
@@ -1366,6 +1383,7 @@
         pop
       } {
         % supported menu type
+        % get icon file name
         get
         dup "" eq {
           % file could not be found
