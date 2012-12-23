@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"POT-Creation-Date: 2012-12-23 11:01+0100\n"
+"POT-Creation-Date: 2012-12-23 13:38+0100\n"
 "PO-Revision-Date: 2012-12-05 23:00+100\n"
 "Last-Translator: Ronny Standtke <ronny.standtke@fhnw.ch>\n"
 "Language-Team: DE <DE@li.org>\n"
@@ -134,30 +134,34 @@ msgstr "Automatischer Start in %u Sekunde..."
 msgid "Automatic boot in %u seconds..."
 msgstr "Automatischer Start in %u Sekunden..."
 
-#: xmlboot.config:180(menu/start)
+#: xmlboot.config:181(start/text)
 msgid "Start lernstick"
 msgstr "lernstick starten"
 
-#: xmlboot.config:201(submenu/text)
+#: xmlboot.config:182(start/splash)
+msgid "splash_linux.jpg"
+msgstr "splash_linux_de.jpg"
+
+#: xmlboot.config:204(submenu/text)
 msgid "More Configuration"
 msgstr "Weitere Einstellungen"
 
-#: xmlboot.config:202(submenu/edit_prompt)
+#: xmlboot.config:205(submenu/edit_prompt)
 msgid "Custom options:"
 msgstr "Eigene Optionen:"
 
-#: xmlboot.config:203(submenu/back)
+#: xmlboot.config:206(submenu/back)
 msgid "Back to main menu"
 msgstr "Zurück zum Hauptmenü"
 
-#: xmlboot.config:218(menu/start)
+#: xmlboot.config:222(start/text)
 msgid "Check integrity of boot medium"
 msgstr "Integrität des Startmediums überprüfen"
 
-#: xmlboot.config:219(menu/start)
+#: xmlboot.config:225(start/text)
 msgid "Boot from hard drive"
 msgstr "Von Festplatte starten"
 
-#: xmlboot.config:220(menu/start)
+#: xmlboot.config:228(start/text)
 msgid "Hardware info"
 msgstr "Hardware-Informationen"

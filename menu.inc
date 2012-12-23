@@ -31,6 +31,7 @@
 /startmenu.index.syslinux_index 3 def
 /startmenu.index.label          4 def
 /startmenu.index.append_config  5 def
+/startmenu.index.splash         6 def
 
 % config menu specific indices
 /configmenu.index.id                1 def
@@ -91,12 +92,13 @@
 %   13: edit_prompt (string,  prompt to show in front of the edit field)
 %
 % start menu entries are arrays with the following fields:
-%   0: type == menu.type.start
-%   1: icon (string, the name of the icon file)
-%   2: text (string, the text to display in the start menu)
-%   3: index (string, the index in the syslinux config file to start)
-%   4: label (string, the label in the syslinux config file to start)
-%   5: append_config (bool, if the config should be appended to the label when booting)
+%   0: type          (int,     always menu.type.start)
+%   1: icon          (string,  the name of the icon file)
+%   2: text          (string,  the text to display in the start menu)
+%   3: index         (string,  the index in the syslinux config file to start)
+%   4: label         (string,  the label in the syslinux config file to start)
+%   5: append_config (boolean, if the config should be appended to the label when booting)
+%   6: splash        (string,  name of the splash file to show when starting)
 %
 % config menus entries are arrays with the following fields:
 %    0: type              (int,    always menu.type.config)
@@ -185,14 +187,23 @@
               menu.type.start
               exch dup "icon" get_attribute_value
               % get text from child element
-              exch dup get_entity_children 0 get
+              exch dup "text" get_entity_child get_entity_children 0 get
               exch dup "index" get_attribute_value string_to_int
               exch dup "label" get_attribute_value
-              exch "append_config" get_attribute_value
+              exch dup "append_config" get_attribute_value
               "true" eq {
                 true
               } {
                 false
+              } ifelse
+              exch "splash" get_entity_child
+              dup 0 0 settype eq {
+                % there is no "splash" child
+                % leave empty string on stack
+                pop
+                ""
+              } {
+                get_entity_children 0 get
               } ifelse
             ]
           } {
@@ -493,15 +504,31 @@
   } if
 
   % get syslinux index
-  startmenu.index.syslinux_index get 
+  dup startmenu.index.syslinux_index get
 
-  % "2" means that we want to boot
-  2
-  
+  % paint start entry splash
+  exch startmenu.index.splash get gettext
+  dup "" eq {
+    % start menu entry has *NO* splash screen
+    pop
+  } {
+    % start menu entry has a splash screen
+    0x000000 setcolor
+    0 0 moveto screen.size fillrect
+    findfile dup setimage
+    image.size screen.size
+    exch 4 -1 roll sub 2 div 3 1 roll exch sub 2 div moveto
+    0 0 image.size image
+    free
+  } ifelse
+
   % !!! Do *NOT* use keepmode !!!
   % keepmode breaks the hardware detection tool and memtest.
   % I just leave it here commented for documentation...
   % 1 keepmode
+
+  % "2" means that we want to boot
+  2
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
