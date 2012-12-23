@@ -165,6 +165,15 @@ xml_structure "configs" get_entity_child
   } forall
 ] def
 
+% paint splashscreen
+xml_structure "splash" get_entity_child get_entity_children 0 get gettext
+findfile dup setimage
+image.size screen.size
+exch 4 -1 roll sub 2 div 3 1 roll exch sub 2 div moveto
+0 0 image.size image
+free
+default_image setimage
+
 % some option specific constants
 /option.index.id                 0 def
 /option.index.text               1 def
