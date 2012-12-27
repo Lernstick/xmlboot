@@ -24,6 +24,7 @@
   % put scan code into the upper 8 bits
   dup 0xFF00 and 16 shl
   % ignore special prefix 'E0' (used e.g. for the arrow keys)
+  % see http://en.wikipedia.org/wiki/Scancode for more details
   over 0xFF and dup 0xE0 eq { pop 0 } if add
   /key exch def
   % 'key' now holds the ASCII code for 'normal' keys and the scan code in the
