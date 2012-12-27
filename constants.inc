@@ -1,6 +1,8 @@
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Some constants we need.
 %
+
+% boolean values
 /true 0 0 eq def
 /false 0 0 ne def
 
@@ -11,6 +13,13 @@
 /keyLeft      0x4b000000 def
 /keyRight     0x4d000000 def
 /keyDown      0x50000000 def
+
+% some status codes
+/statusAlt    0x0208 def
+/statusAltL   0x0200 def
+/statusAltR   0x0008 def
+/statusCtrl   0x0104 def
+/statusShift  0x0003 def
 
 % type values
 /t_none  0 def

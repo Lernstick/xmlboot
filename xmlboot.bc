@@ -6,6 +6,7 @@
 %% include file_cache.inc
 %% include gettext.inc
 %% include input.inc
+%% include keytables.inc
 %% include menu.inc
 %% include properties.inc
 %% include string.inc

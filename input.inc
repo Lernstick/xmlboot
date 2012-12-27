@@ -20,13 +20,24 @@
 %  - menu_entry is the number of the menu entry you want to boot
 %
 /KeyEvent {
-  % pre-process keycode a bit
-  dup 0xff00 and 16 shl exch 0xff and dup 0xe0 eq { pop 0 } if add
-  dup 0xff and { 0xff and } if
-  /key exch def
 
+  % put scan code into the upper 8 bits
+  dup 0xFF00 and 16 shl
+  % ignore special prefix 'E0' (used e.g. for the arrow keys)
+  over 0xFF and dup 0xE0 eq { pop 0 } if add
+  /key exch def
   % 'key' now holds the ASCII code for 'normal' keys and the scan code in the
   % upper 8 bits if there is no ASCII code (e.g. F-keys, cursor keys)
+
+  % store status bits (ctrl, shift...)
+  16 shr 0xFFFF and
+  /key.status exch def
+
+  % map key (needs the scan code!)
+  key config.keymap .km.map get { mapkey } if
+  % remove the scan code if there is normal ACSII code
+  dup 0xFF and { 0xFF and } if
+  /key exch def
 
   % process key events...
   key keyDown eq {
@@ -89,3 +100,39 @@
 
   "" 0 0
 } def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Test for AltGr.
+%
+% (  -- bool )
+%
+/is_altGr {
+  key.status statusAltR and 0 ne key.status statusAltL and 0 eq and
+} def
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Keyboard mapping.
+%
+% ( key -- key )
+%
+/mapkey {
+   dup 24 shr 0xff and /key.code exch def
+   is_altGr {
+     % bios is too smart...
+     key.code 0x78 ge key.code 0x83 le and { /key.code key.code 0x76 sub def } if
+   } if
+   0 1 config.keymap .km.map get length 1 sub {
+     config.keymap .km.map get exch get
+     dup 0 get key.code eq {
+       1
+       key.status statusShift and { pop 2 } if
+       is_altGr { pop 3 } if
+       get
+       exch pop
+     } {
+       pop
+     } ifelse
+   } for
+} def
+
