@@ -6,20 +6,22 @@
 /true 0 0 eq def
 /false 0 0 ne def
 
-% some key codes
-/keyEsc       0x0000001b def
-/keyEnter     0x0000000d def
-/keyUp        0x48000000 def
-/keyLeft      0x4b000000 def
-/keyRight     0x4d000000 def
-/keyDown      0x50000000 def
+% some ASCII codes
+/asciiEsc   0x1B def
+/asciiEnter 0x0D def
+
+% some scan codes
+/scanUp    0x48 def
+/scanLeft  0x4b def
+/scanRight 0x4d def
+/scanDown  0x50 def
 
 % some status codes
-/statusAlt    0x0208 def
-/statusAltL   0x0200 def
-/statusAltR   0x0008 def
-/statusCtrl   0x0104 def
-/statusShift  0x0003 def
+/statusAlt   0x0208 def
+/statusAltL  0x0200 def
+/statusAltR  0x0008 def
+/statusCtrl  0x0104 def
+/statusShift 0x0003 def
 
 % type values
 /t_none  0 def

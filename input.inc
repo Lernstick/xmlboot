@@ -21,84 +21,94 @@
 %
 /KeyEvent {
 
-  % put scan code into the upper 8 bits
-  dup 0xFF00 and 16 shl
+  % store key value
+  /key exch def
+
+  % put key ascii into separate value
+  key 0xFF and
   % ignore special prefix 'E0' (used e.g. for the arrow keys)
   % see http://en.wikipedia.org/wiki/Scancode for more details
-  over 0xFF and dup 0xE0 eq { pop 0 } if add
-  /key exch def
-  % 'key' now holds the ASCII code for 'normal' keys and the scan code in the
-  % upper 8 bits if there is no ASCII code (e.g. F-keys, cursor keys)
+  dup 0xE0 eq {
+    pop 0
+  } if
+  /key.ascii exch def
 
-  % store status bits (ctrl, shift...)
-  16 shr 0xFFFF and
+  % put key scan code into separate value
+  key 0xFF00 and 8 shr
+  /key.scan_code exch def
+
+  % put key status bits into separate value
+  key 16 shr 0xFFFF and
   /key.status exch def
 
-  % map key (needs the scan code!)
-  key config.keymap .km.map get { mapkey } if
-  % remove the scan code if there is normal ACSII code
-  dup 0xFF and { 0xFF and } if
-  /key exch def
-
   % process key events...
-  key keyDown eq {
+  key.scan_code scanDown eq {
     menu.selected_index current.menu menu.index.entries get length 1 sub lt {
       menu.selected_index menu.deselect
       /menu.selected_index menu.selected_index 1 add def
       menu.selected_index menu.select
     } if
+    "" 0 0 return
   } if
 
-  key keyUp eq {
+  key.scan_code scanUp eq {
     menu.selected_index 0 gt {
       menu.selected_index menu.deselect
       /menu.selected_index menu.selected_index 1 sub def
       menu.selected_index menu.select
     } if
+    "" 0 0 return
   } if
 
   % enter or timeout
-  key keyEnter eq key 0 eq or {
-    current.menu menu.index.entries get menu.selected_index get
+  key.ascii asciiEnter eq key 0 eq or {
     % check menu entry type
+    current.menu menu.index.entries get menu.selected_index get
     dup menu.index.type get
+
     dup menu.type.start eq {
       pop
       handle_start_menu_entry
       return
-    } {
-      dup menu.type.config eq {
-        pop
-        handle_config_menu_entry
-      } {
-        dup menu.type.config_option eq {
-          pop
-          handle_config_option_menu_entry
-        } {
-          dup menu.type.option eq {
-            pop
-            handle_option_menu_entry
-          } {
-            dup menu.type.menu eq {
-              pop
-              handle_submenu_entry
-            } {
-              menu.type.back eq {
-                handle_back_entry
-              } if
-            } ifelse
-          } ifelse
-        } ifelse
-     } ifelse
-    } ifelse
+    } if
+
+    dup menu.type.config eq {
+      pop
+      handle_config_menu_entry
+      "" 0 0 return
+    } if
+
+    dup menu.type.config_option eq {
+      pop
+      handle_config_option_menu_entry
+      "" 0 0 return
+    } if
+
+    dup menu.type.option eq {
+      pop
+      handle_option_menu_entry
+      "" 0 0 return
+    } if
+
+    dup menu.type.menu eq {
+      pop
+      handle_submenu_entry
+      "" 0 0 return
+    } if
+
+    menu.type.back eq {
+      handle_back_entry
+      "" 0 0 return
+    } if
   } if
 
   % use key for editable input line (if available)
+  key.ascii mapkey
+  /key.ascii exch def
   edit_obj 0 0 settype ne {
     0x000000 setcolor
-    edit_obj key edit.input
+    edit_obj key.ascii edit.input
   } if
-
   "" 0 0
 } def
 
@@ -118,22 +128,32 @@
 % ( key -- key )
 %
 /mapkey {
-   dup 24 shr 0xff and /key.code exch def
+
    is_altGr {
-     % bios is too smart...
-     key.code 0x78 ge key.code 0x83 le and { /key.code key.code 0x76 sub def } if
+     % BIOS is too smart...
+     key.scan_code 0x78 ge key.scan_code 0x83 le and {
+       /key.scan_code key.scan_code 0x76 sub def
+     } if
    } if
-   0 1 config.keymap .km.map get length 1 sub {
-     config.keymap .km.map get exch get
-     dup 0 get key.code eq {
-       1
-       key.status statusShift and { pop 2 } if
-       is_altGr { pop 3 } if
+
+   config.keymap {
+     dup keymap.index.scan_code get key.scan_code eq {
+       % scan code found in map
+
+       % put mapped value on stack
+       keymap.index.ascii
+       key.status statusShift and { pop keymap.index.shift } if
+       is_altGr { pop keymap.index.altgr } if
        get
+
+       % remove unmapped key value from stack
        exch pop
+       exit
+
      } {
+       % another scan code
        pop
      } ifelse
-   } for
+   } forall
 } def
 

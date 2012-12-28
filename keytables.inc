@@ -2,14 +2,15 @@
 %
 % Keyboard mappings.
 %
+% The keymap arrays contain arrays with the following four fields:
+%   [ scan code, ASCII, Shift value, AltGr value ]
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-
-/.km.name         0 def
-/.km.map          1 def
-/.km.display      2 def
-/.km.locales      3 def
-/.km.model        4 def
+% keymap specific indices
+/keymap.index.scan_code 0 def
+/keymap.index.ascii     1 def
+/keymap.index.shift     2 def
+/keymap.index.altgr     3 def
 
 /keymap.af [
   [ 0x02 0x00 0x21 0x60 ]
@@ -2877,114 +2878,143 @@
   [ 0x56 0x3c 0x3e 0x7c ]
 ] def
 
+% keymaps specific indices
+/keymaps.index.id  0 def
+/keymaps.index.map 1 def
+
 /keymaps [
-  [ "af" keymap.af "Afghani" [ ] .undef ]
-  [ "al" keymap.al "Albanian" [ "_AL" ] .undef ]
-  [ "et" keymap.et "Amharic" [ ] .undef ]
-  [ "ara" keymap.ara "Arabic" [ "ar_" ] .undef ]
-  [ "am" keymap.am "Armenian" [ "hy_" ] .undef ]
-  [ "es_ast" keymap.es_ast "Asturian" [ "ast_ES" ] .undef ]
-  [ "at" keymap.at "Austria" [ ] .undef ]
-  [ "az" keymap.az "Azerbaijani" [ "_AZ" ] .undef ]
-  [ "ml" keymap.ml "Bambara" [ ] .undef ]
-  [ "by" keymap.by "Belarusian" [ "_BY" ] .undef ]
-  [ "be" keymap.be "Belgian" [ "_BE" ] .undef ]
-  [ "bd" keymap.bd "Bengali" [ "_BD" ] .undef ]
-  [ "ba" keymap.ba "Bosnia" [ "bs_" ] .undef ]
-  [ "br" keymap.br "Brazil" [ "_BR" ] "abnt2" ]
-  [ "bg" keymap.bg "Bulgarian" [ "_BG" ] .undef ]
-  [ "mm" keymap.mm "Burmese" [ ] .undef ]
-  [ "cm" keymap.cm "Cameroon" [ ] .undef ]
-  [ "ca" keymap.ca "Canada" [ "_CA" ] .undef ]
-  [ "es_cat" keymap.es_cat "Catalan" [ "ca_ES" ] .undef ]
-  [ "cn" keymap.cn "Chinese" [ "zh_CN" ] .undef ]
-  [ "cd" keymap.cd "Congo" [ ] .undef ]
-  [ "hr" keymap.hr "Croatian" [ "hr_" ] .undef ]
-  [ "cz" keymap.cz "Czech" [ "_CZ" ] .undef ]
-  [ "dk" keymap.dk "Danish" [ "_DK" ] .undef ]
-  [ "mv" keymap.mv "Dhivehi" [ ] .undef ]
-  [ "nl" keymap.nl "Dutch" [ ] .undef ]
-  [ "us_dvorak" keymap.us_dvorak "Dvorak" [ ] .undef ]
-  [ "bt" keymap.bt "Dzongkha" [ ] .undef ]
-  [ "epo" keymap.epo "Esperanto" [ "eo" ] .undef ]
-  [ "ee" keymap.ee "Estonian" [ "_EE" ] .undef ]
-  [ "fo" keymap.fo "Faroes" [ ] .undef ]
-  [ "ph" keymap.ph "Filipino" [ ] .undef ]
-  [ "fi" keymap.fi "Finnish" [ "_FI" ] .undef ]
-  [ "fr_oss" keymap.fr_oss "French" [ "fr_" ] .undef ]
-  [ "ge" keymap.ge "Georgian" [ "ka_" ] .undef ]
-  [ "de" keymap.de "German" [ "de_" ] .undef ]
-  [ "gh" keymap.gh "Ghana" [ ] .undef ]
-  [ "gr" keymap.gr "Greek" [ "el_" ] .undef ]
-  [ "gn" keymap.gn "Guinea" [ ] .undef ]
-  [ "in_guj" keymap.in_guj "Gujarati" [ "gu_" ] .undef ]
-  [ "in_guru" keymap.in_guru "Gurmukhi" [ "pa_" ] .undef ]
-  [ "il" keymap.il "Hebrew" [ "_IL" ] .undef ]
-  [ "hu" keymap.hu "Hungarian" [ "_HU" ] .undef ]
-  [ "is" keymap.is "Icelandic" [ "_IS" ] .undef ]
-  [ "in" keymap.in "Indian" [ "hi_" ] .undef ]
-  [ "iq" keymap.iq "Iraqi" [ ] .undef ]
-  [ "ie" keymap.ie "Irish" [ "_IE" ] .undef ]
-  [ "it" keymap.it "Italian" [ "_IT" ] .undef ]
-  [ "jp" keymap.jp "Japanese" [ "_JP" ] "jp106" ]
-  [ "in_kan" keymap.in_kan "Kannada" [ "kn_" ] .undef ]
-  [ "kz" keymap.kz "Kazakh" [ ] .undef ]
-  [ "ke" keymap.ke "Kenya" [ ] .undef ]
-  [ "kh" keymap.kh "Khmer" [ ] .undef ]
-  [ "kr" keymap.kr "Korean" [ ] .undef ]
-  [ "tr_ku" keymap.tr_ku "Kurdish" [ "ku_TR" ] .undef ]
-  [ "kg" keymap.kg "Kyrgyz" [ ] .undef ]
-  [ "la" keymap.la "Lao" [ "lo_" ] .undef ]
-  [ "latam" keymap.latam "Latin Amer." [ "_AR" "_BO" "_CL" "_CO" "_CR" "_DO" "_EC" "_GT" "_HN" "_MX" "_NI" "_PA" "_PE" "es_PR" "_PY" "_SV" "es_US" "_UY" "_VE" ] .undef ]
-  [ "lv" keymap.lv "Latvian" [ "_LV" ] .undef ]
-  [ "lt" keymap.lt "Lithuanian" [ "_LT" ] .undef ]
-  [ "mk" keymap.mk "Macedonian" [ "_MK" ] .undef ]
-  [ "in_mal" keymap.in_mal "Malayalam" [ "ml_" ] .undef ]
-  [ "mt" keymap.mt "Maltese" [ "_MT" ] .undef ]
-  [ "mao" keymap.mao "Maori" [ ] .undef ]
-  [ "mn" keymap.mn "Mongolian" [ "_MN" ] .undef ]
-  [ "me" keymap.me "Montenegrin" [ "sr_ME" ] .undef ]
-  [ "ma" keymap.ma "Morocco" [ "_MA" ] .undef ]
-  [ "np" keymap.np "Nepali" [ ] .undef ]
-  [ "ng" keymap.ng "Nigeria" [ ] .undef ]
-  [ "no" keymap.no "Norwegian" [ "_NO" ] .undef ]
-  [ "pk" keymap.pk "Pakistan" [ ] .undef ]
-  [ "ir" keymap.ir "Persian" [ "_IR" ] .undef ]
-  [ "pl" keymap.pl "Polish" [ "_PL" ] .undef ]
-  [ "pt" keymap.pt "Portuguese" [ "_PT" ] .undef ]
-  [ "ro" keymap.ro "Romanian" [ "_RO" ] .undef ]
-  [ "ru" keymap.ru "Russian" [ "_RU" ] .undef ]
-  [ "fi_smi" keymap.fi_smi "Saami (Fin.)" [ "se_FI" ] .undef ]
-  [ "no_smi" keymap.no_smi "Saami (Nor.)" [ "se_NO" ] .undef ]
-  [ "se_smi" keymap.se_smi "Saami (Swe.)" [ "se_SE" ] .undef ]
-  [ "rs" keymap.rs "Serbian" [ "sr_" ] .undef ]
-  [ "lk" keymap.lk "Sinhala" [ ] .undef ]
-  [ "sk" keymap.sk "Slovak" [ "_SK" ] .undef ]
-  [ "si" keymap.si "Slovenian" [ "_SI" ] .undef ]
-  [ "za" keymap.za "South Africa" [ ] .undef ]
-  [ "es" keymap.es "Spanish" [ "_ES" ] .undef ]
-  [ "se" keymap.se "Swedish" [ "sv_" ] .undef ]
-  [ "ch_fr" keymap.ch_fr "Swiss French" [ "fr_CH" ] .undef ]
-  [ "ch" keymap.ch "Swiss German" [ "_CH" ] .undef ]
-  [ "sy" keymap.sy "Syria" [ ] .undef ]
-  [ "tw" keymap.tw "Taiwanese" [ ] .undef ]
-  [ "tj" keymap.tj "Tajik" [ "_TJ" ] .undef ]
-  [ "in_tam" keymap.in_tam "Tamil" [ "ta_" ] .undef ]
-  [ "tz" keymap.tz "Tanzania" [ ] .undef ]
-  [ "in_tel" keymap.in_tel "Telugu" [ "te_" ] .undef ]
-  [ "th" keymap.th "Thai" [ "_TH" ] .undef ]
-  [ "bw" keymap.bw "Tswana" [ ] .undef ]
-  [ "tr" keymap.tr "Turkish" [ "_TR" ] .undef ]
-  [ "tr_f" keymap.tr_f "Turkish (F)" [ ] .undef ]
-  [ "tm" keymap.tm "Turkmen" [ ] .undef ]
-  [ "gb" keymap.gb "UK" [ "_GB" ] .undef ]
-  [ "us" keymap.us "USA" [ "en_US" "_VN" ] .undef ]
-  [ "us_intl" keymap.us_intl "USA Intl." [ "_NL" ] .undef ]
-  [ "ua" keymap.ua "Ukrainian" [ "_UA" ] .undef ]
-  [ "uz" keymap.uz "Uzbek" [ ] .undef ]
-  [ "vn" keymap.vn "Vietnam" [ ] .undef ]
-  [ "sn" keymap.sn "Wolof" [ ] .undef ]
+  [ "af" keymap.af ]
+  [ "al" keymap.al ]
+  [ "am" keymap.am ]
+  [ "ara" keymap.ara ]
+  [ "at" keymap.at ]
+  [ "az" keymap.az ]
+  [ "ba" keymap.ba ]
+  [ "bd" keymap.bd ]
+  [ "be" keymap.be ]
+  [ "bg" keymap.bg ]
+  [ "br" keymap.br ]
+  [ "bt" keymap.bt ]
+  [ "bw" keymap.bw ]
+  [ "by" keymap.by ]
+  [ "ca" keymap.ca ]
+  [ "cd" keymap.cd ]
+  [ "ch_fr" keymap.ch_fr ]
+  [ "ch" keymap.ch ]
+  [ "cm" keymap.cm ]
+  [ "cn" keymap.cn ]
+  [ "cz" keymap.cz ]
+  [ "de" keymap.de ]
+  [ "dk" keymap.dk ]
+  [ "ee" keymap.ee ]
+  [ "epo" keymap.epo ]
+  [ "es_ast" keymap.es_ast ]
+  [ "es_cat" keymap.es_cat ]
+  [ "es" keymap.es ]
+  [ "et" keymap.et ]
+  [ "fi" keymap.fi ]
+  [ "fi_smi" keymap.fi_smi ]
+  [ "fo" keymap.fo ]
+  [ "fr_oss" keymap.fr_oss ]
+  [ "gb" keymap.gb ]
+  [ "ge" keymap.ge ]
+  [ "gh" keymap.gh ]
+  [ "gn" keymap.gn ]
+  [ "gr" keymap.gr ]
+  [ "hr" keymap.hr ]
+  [ "hu" keymap.hu ]
+  [ "ie" keymap.ie ]
+  [ "il" keymap.il ]
+  [ "in_guj" keymap.in_guj ]
+  [ "in_guru" keymap.in_guru ]
+  [ "in_kan" keymap.in_kan ]
+  [ "in" keymap.in ]
+  [ "in_mal" keymap.in_mal ]
+  [ "in_tam" keymap.in_tam ]
+  [ "in_tel" keymap.in_tel ]
+  [ "iq" keymap.iq ]
+  [ "ir" keymap.ir ]
+  [ "is" keymap.is ]
+  [ "it" keymap.it ]
+  [ "jp" keymap.jp ]
+  [ "ke" keymap.ke ]
+  [ "kg" keymap.kg ]
+  [ "kh" keymap.kh ]
+  [ "kr" keymap.kr ]
+  [ "kz" keymap.kz ]
+  [ "la" keymap.la ]
+  [ "latam" keymap.latam ]
+  [ "lk" keymap.lk ]
+  [ "lt" keymap.lt ]
+  [ "lv" keymap.lv ]
+  [ "ma" keymap.ma ]
+  [ "mao" keymap.mao ]
+  [ "me" keymap.me ]
+  [ "mk" keymap.mk ]
+  [ "ml" keymap.ml ]
+  [ "mm" keymap.mm ]
+  [ "mn" keymap.mn ]
+  [ "mt" keymap.mt ]
+  [ "mv" keymap.mv ]
+  [ "ng" keymap.ng ]
+  [ "nl" keymap.nl ]
+  [ "no" keymap.no ]
+  [ "no_smi" keymap.no_smi ]
+  [ "np" keymap.np ]
+  [ "ph" keymap.ph ]
+  [ "pk" keymap.pk ]
+  [ "pl" keymap.pl ]
+  [ "pt" keymap.pt ]
+  [ "ro" keymap.ro ]
+  [ "rs" keymap.rs ]
+  [ "ru" keymap.ru ]
+  [ "se" keymap.se ]
+  [ "se_smi" keymap.se_smi ]
+  [ "si" keymap.si ]
+  [ "sk" keymap.sk ]
+  [ "sn" keymap.sn ]
+  [ "sy" keymap.sy ]
+  [ "th" keymap.th ]
+  [ "tj" keymap.tj ]
+  [ "tm" keymap.tm ]
+  [ "tr_f" keymap.tr_f ]
+  [ "tr" keymap.tr ]
+  [ "tr_ku" keymap.tr_ku ]
+  [ "tw" keymap.tw ]
+  [ "tz" keymap.tz ]
+  [ "ua" keymap.ua ]
+  [ "us_dvorak" keymap.us_dvorak ]
+  [ "us_intl" keymap.us_intl ]
+  [ "us" keymap.us ]
+  [ "uz" keymap.uz ]
+  [ "vn" keymap.vn ]
+  [ "za" keymap.za ]
 ] def
 
-% set to "us" for safety
-/config.keymap keymaps 87 get def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% sets a keymap
+%
+% ( string -- )
+%
+% string: id of the keymap to set
+%
+/set_keymap {
+  keymaps {
+    dup keymaps.index.id get
+    2 index eq {
+      % keymap found
+      keymaps.index.map get
+      /config.keymap exch def
+      exit
+    } {
+      % another keymap, continue searching...
+      pop
+    } ifelse
+  } forall
+  % remove id from stack
+  pop
+} def
+
+% set default
+"ch" set_keymap

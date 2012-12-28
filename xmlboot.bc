@@ -135,10 +135,14 @@ xml_structure "configs" get_entity_child
                     exch dup "trigger_option" get_attribute_value
                     exch "selected" get_attribute_value "true" eq {
                       true
-                      % gettext support
+                      % special handling for language configuration
                       tmp_config_id "language" eq {
                         tmp_option_id ".translation" concatenate_strings
                         read_translation_file
+                      } if
+                      % special handling for keyboard configuration
+                      tmp_config_id "keyboard" eq {
+                        tmp_option_id set_keymap
                       } if
                     } {
                       false

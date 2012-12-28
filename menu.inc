@@ -662,10 +662,15 @@
     } forall
   } if
 
-  % handle special options
+  % special handling for language changes
   tmp_config_id "language" eq {
     tmp_option_id ".translation" concatenate_strings
     read_translation_file
+  } if
+
+  % special handling for keyboard changes
+  tmp_config_id "keyboard" eq {
+    tmp_option_id set_keymap
   } if
 
   % restore selected index from breadcrumbs
