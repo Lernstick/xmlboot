@@ -4,22 +4,16 @@ GFXBOOT_FONT = $(BINDIR)gfxboot-font
 GFXBOOT = $(BINDIR)gfxboot
 BFLAGS = -O -v -L ../..
 
-.PHONY: all themes clean distclean
+.PHONY: all clean distclean
 
 all: bootlogo
 
-release: xmlboot.bc font
+bootlogo: font
 	@rm -rf bootlogo.dir
-	@mkdir bootlogo.dir
-	$(GFXBOOT_COMPILE) $(BFLAGS) -l bootlogo.log -c $< bootlogo.dir/init
+	cd ../../script; make
+	cp -a ../../script/bootlogo.dir .
+	cp *jpg *fnt po/*translation xmlboot.config bootlogo.dir
 	$(GFXBOOT) --archive bootlogo.dir --pack-archive bootlogo
-
-bootlogo: xmlboot.bc font
-	@rm -rf $@.dir
-	@mkdir $@.dir
-	$(GFXBOOT_COMPILE) $(BFLAGS) -l $@.log -c $< $@.dir/init
-	@cp po/*.translation *.jpg xmlboot.config font*.fnt $@.dir
-	$(GFXBOOT) --archive $@.dir --pack-archive $@
 
 font: font_size_10.fnt font_size_12.fnt font_size_15.fnt font_size_15_bold.fnt font_size_20.fnt
 
@@ -40,6 +34,9 @@ font_size_20.fnt:
 
 clean:
 	rm -rf *~ *.log *.dir bootlogo *.fnt
+
+test: bootlogo
+	gfxboot -p -b isolinux -a bootlogo
 
 distclean: clean
 

@@ -5,5 +5,5 @@ bootlogo.log
 *.directory
 font.log
 font_size_*.fnt
-po/*.translation
+*.translation
 .xmlboot.config.swp
