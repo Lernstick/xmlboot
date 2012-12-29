@@ -41,7 +41,11 @@
   key 16 shr 0xFFFF and
   /key.status exch def
 
-  % process key events...
+  % paint key details on screen (only used for debugging...)
+  % show_key_info
+
+  % process key events
+
   key.scan_code scanDown eq {
     menu.selected_index current.menu menu.index.entries get length 1 sub lt {
       menu.selected_index menu.deselect
@@ -57,6 +61,12 @@
       /menu.selected_index menu.selected_index 1 sub def
       menu.selected_index menu.select
     } if
+    "" 0 0 return
+  } if
+
+  % show memory info when user presses Ctrl+M
+  key.status statusCtrl eq key.scan_code 0x32 eq and {
+    toggle_memory_info
     "" 0 0 return
   } if
 
@@ -121,7 +131,6 @@
   key.status statusAltR and 0 ne key.status statusAltL and 0 eq and
 } def
 
-
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Keyboard mapping.
 %
@@ -157,3 +166,70 @@
    } forall
 } def
 
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Shows key info on screen
+%
+% ( -- )
+%
+/show_key_info {
+  0x000000 setcolor
+  0 0 moveto 300 120 fillrect
+  0xFFFFFF setcolor
+  /buf 100 string def
+  key "key: 0x" "%s%x" buf sprintf
+  buf show
+  0 30 moveto
+  key.status "key.status: 0x" "%s%x" buf sprintf
+  buf show
+  0 60 moveto
+  key.scan_code "key.scan_code: 0x" "%s%x" buf sprintf
+  buf show
+  0 90 moveto
+  key.ascii "key.ascii: 0x" "%s%x" buf sprintf
+  buf show
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Shows some memory info on screen
+%
+% ( -- )
+%
+/toggle_memory_info {
+  memory_info_showing {
+    % hide memory info
+    /memory_info_showing false def
+    paint_menu
+    menu.selected_index menu.select
+  } {
+    % show memory info
+    /memory_info_showing true def
+    0x000000 setcolor
+    0 0 moveto screen.size fillrect
+    0xFFFFFF setcolor
+    /buf 100 string def
+
+    /biosmem sysconfig 20 add getdword def
+    biosmem "biosmem: 0x%x" buf sprintf
+    buf show
+
+    0 30 moveto
+    0 memsize
+    "region 0: size of largest free block 0x%x, total free memory: 0x%x" buf sprintf
+    buf show
+
+    0 60 moveto
+    1 memsize
+    "region 1: size of largest free block 0x%x, total free memory: 0x%x" buf sprintf
+    buf show
+
+    0 90 moveto
+    2 memsize
+    "region 2: size of largest free block 0x%x, total free memory: 0x%x" buf sprintf
+    buf show
+
+    0 120 moveto
+    3 memsize
+    "region 3: size of largest free block 0x%x, total free memory: 0x%x" buf sprintf
+    buf show
+  } ifelse
+} def
