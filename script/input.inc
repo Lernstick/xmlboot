@@ -65,7 +65,7 @@
   } if
 
   % show memory info when user presses Ctrl+M
-  key.status statusCtrl eq key.scan_code 0x32 eq and {
+  key.status statusCtrlL eq key.status statusCtrlR eq or key.scan_code 0x32 eq and {
     toggle_memory_info
     "" 0 0 return
   } if

@@ -20,7 +20,8 @@
 /statusAlt   0x0208 def
 /statusAltL  0x0200 def
 /statusAltR  0x0008 def
-/statusCtrl  0x0104 def
+/statusCtrlL 0x0104 def
+/statusCtrlR 0x0004 def
 /statusShift 0x0003 def
 
 % type values
