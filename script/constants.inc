@@ -17,12 +17,21 @@
 /scanDown  0x50 def
 
 % some status codes
-/statusAlt   0x0208 def
-/statusAltL  0x0200 def
-/statusAltR  0x0008 def
-/statusCtrlL 0x0104 def
-/statusCtrlR 0x0004 def
-/statusShift 0x0003 def
+/statusAlt              0x0208 def
+/statusAltGr            0x0008 def
+/statusAltL             0x0200 def
+/statusCapsLockActive   0x0040 def
+/statusCapsLockPressed  0x4000 def
+/statusCtrl             0x0104 def
+/statusCtrlL            0x0104 def
+/statusCtrlR            0x0004 def
+/statusInsert           0x0080 def
+/statusNumLock          0x0020 def
+/statusNumLockActive    0x0020 def
+/statusNumLockPressed   0x2000 def
+/statusShift            0x0003 def
+/statusShiftL           0x0002 def
+/statusShiftR           0x0001 def
 
 % type values
 /t_none  0 def

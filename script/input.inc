@@ -65,9 +65,11 @@
   } if
 
   % show memory info when user presses Ctrl+M
-  key.status statusCtrlL eq key.status statusCtrlR eq or key.scan_code 0x32 eq and {
-    toggle_memory_info
-    "" 0 0 return
+  key.scan_code 0x32 eq {
+    key.status statusCtrl and {
+      toggle_memory_info
+      "" 0 0 return
+    } if
   } if
 
   % enter or timeout
@@ -128,7 +130,7 @@
 % (  -- bool )
 %
 /is_altGr {
-  key.status statusAltR and 0 ne key.status statusAltL and 0 eq and
+  key.status statusAltGr and 0 ne key.status statusAltL and 0 eq and
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
