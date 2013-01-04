@@ -117,7 +117,7 @@
   % use key for editable input line (if available)
   key.ascii mapkey
   /key.ascii exch def
-  edit_obj 0 0 settype ne {
+  edit_obj .undef ne {
     0x000000 setcolor
     edit_obj key.ascii edit.input
   } if

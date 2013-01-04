@@ -32,7 +32,7 @@
   translations free
 
   find_cached_file
-  dup 0 t_none settype eq {
+  dup .undef eq {
     % file was not found
     pop
     /translations [ ] def

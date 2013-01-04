@@ -60,19 +60,35 @@
 /string_to_int {
   % put int for result on stack
   0
-
-  % determine factor
   exch
-  dup 0 get exch dup 1 get
-  rot
-  48 eq exch 120 eq and {
-    % string started with "0x"
-    % skip "0x"
-    2 add
-    % this is a hexadecimal number
-    16
+
+  % early return for undefined strings
+  dup .undef eq {
+    pop
+    return
+  } if
+  
+  % determine factor
+  dup length 3 ge {
+    % string is three or more characters long
+    % check if there is a "0x" prefix
+    dup 0 get exch dup 1 get
+    rot
+    48 eq exch 120 eq and {
+      % string started with "0x"
+      % skip "0x"
+      2 add
+      % this is a hexadecimal number
+      16
+    } {
+      % string did NOT start with "0x"
+      % therefore this is a decimal number
+      10
+    } ifelse
   } {
-    % this is a decimal number
+    % string is only one or two characters long
+    % there can be no "0x" prefix
+    % therefore this is a decimal number
     10
   } ifelse
   exch
@@ -123,6 +139,12 @@
 /csv_to_array {
   /csv_string exch def
 
+  % early return for undefined strings
+  csv_string .undef eq {
+    [ ]
+    return
+  } if
+  
   % early return for empty strings
   csv_string length 0 eq {
     [ ]

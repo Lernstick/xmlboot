@@ -29,7 +29,7 @@
 /startmenu.index.icon           1 def
 /startmenu.index.text           2 def
 /startmenu.index.syslinux_index 3 def
-/startmenu.index.label          4 def
+/startmenu.index.syslinux_label 4 def
 /startmenu.index.append_config  5 def
 /startmenu.index.splash         6 def
 
@@ -93,13 +93,13 @@
 %   13: edit_prompt (string,  prompt to show in front of the edit field)
 %
 % start menu entries are arrays with the following fields:
-%   0: type          (int,     always menu.type.start)
-%   1: icon          (string,  the name of the icon file)
-%   2: text          (string,  the text to display in the start menu)
-%   3: index         (string,  the index in the syslinux config file to start)
-%   4: label         (string,  the label in the syslinux config file to start)
-%   5: append_config (boolean, if the config should be appended to the label when booting)
-%   6: splash        (string,  name of the splash file to show when starting)
+%   0: type           (int,     always menu.type.start)
+%   1: icon           (string,  the name of the icon file)
+%   2: text           (string,  the text to display in the start menu)
+%   3: syslinux_index (string,  the index in the syslinux config file to start)
+%   4: syslinux_label (string,  the label in the syslinux config file to start)
+%   5: append_config  (boolean, if the config should be appended to the label when booting)
+%   6: splash         (string,  name of the splash file to show when starting)
 %
 % config menus entries are arrays with the following fields:
 %    0: type              (int,    always menu.type.config)
@@ -139,14 +139,14 @@
     exch dup get_entity_children {
       dup gettype t_arr eq {
         dup get_entity_name "layout" eq {
-          dup "width" get_attribute_value string_to_int
-          exch dup "height" get_attribute_value string_to_int
+          dup "width" get_mandatory_attribute_value string_to_int
+          exch dup "height" get_mandatory_attribute_value string_to_int
           rot exch screen.size rot eq rot rot eq and {
             % layout config for current screen resolution found
-            dup "y" get_attribute_value string_to_int
-            exch dup "dy" get_attribute_value string_to_int
-            exch dup "icon_inset" get_attribute_value string_to_int
-            exch dup "font" get_attribute_value
+            dup "y" get_mandatory_attribute_value string_to_int
+            exch dup "dy" get_mandatory_attribute_value string_to_int
+            exch dup "icon_inset" get_mandatory_attribute_value string_to_int
+            exch dup "font" get_mandatory_attribute_value
             exch dup "edit_x" get_attribute_value string_to_int
             exch dup "edit_y" get_attribute_value string_to_int
             exch dup "edit_width" get_attribute_value string_to_int
@@ -190,7 +190,7 @@
               exch dup "icon" get_attribute_value
               % get text from child element
               exch dup "text" get_entity_child get_entity_children 0 get
-              exch dup "index" get_attribute_value string_to_int
+              exch dup "index" get_attribute_value dup .undef ne { string_to_int } if
               exch dup "label" get_attribute_value
               exch dup "append_config" get_attribute_value
               "true" eq {
@@ -199,7 +199,7 @@
                 false
               } ifelse
               exch "splash" get_entity_child
-              dup 0 0 settype eq {
+              dup .undef eq {
                 % there is no "splash" child
                 % leave empty string on stack
                 pop
@@ -470,7 +470,32 @@
 %
 /handle_start_menu_entry {
   % get menu label
-  dup startmenu.index.label get
+  dup startmenu.index.syslinux_label get
+  dup .undef eq {
+    % start menu entry uses syslinux default label
+    pop
+    syslinux_default_label
+
+    % check for options that change the default syslinux label
+    options {
+      dup option.index.selected get {
+        % option is selected
+        option.index.syslinux_label get
+        dup .undef eq {
+          % this option does NOT change the default syslinux label
+          pop
+        } {
+          % this option changes the default syslinux label
+          exch
+          pop
+          exit
+        } ifelse
+      } {
+        % ignore nonselected options
+        pop
+      } ifelse
+    } forall
+  } if
 
   % check, if the config should be appended to the label
   exch dup startmenu.index.append_config get {
@@ -512,7 +537,7 @@
       } ifelse
 
       % concatenate with global append line
-      dup "" eq {
+      dup .undef eq {
         % ignore empty options
         pop
       } {
@@ -530,12 +555,41 @@
 
     % concatenate label and append line
     exch append_line concatenate_strings
+
     % get menu entry back to top of stack
     exch
   } if
 
+  % show complete label (just for debugging...)
+  % exch debug_show_full_label exch
+
   % get syslinux index
   dup startmenu.index.syslinux_index get
+  dup .undef eq {
+    % start menu entry uses syslinux default index
+    pop
+    syslinux_default_index
+
+    % check for options that change the default syslinux index
+    options {
+      dup option.index.selected get {
+        % option is selected
+        option.index.syslinux_index get
+        dup .undef eq {
+          % this option does NOT change the default syslinux index
+          pop
+        } {
+          % this option changes the default syslinux index
+          exch
+          pop
+          exit
+        } ifelse
+      } {
+        % ignore nonselected options
+        pop
+      } ifelse
+    } forall
+  } if
 
   % paint start entry splash
   exch startmenu.index.splash get gettext
@@ -560,6 +614,23 @@
 
   % "2" means that we want to boot
   2
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% shows the full syslinux label on screen (just for debugging...)
+%
+% ( string -- )
+%
+% string: the full syslinux label to show on screen
+%
+/debug_show_full_label {
+  0x000000 setcolor
+  0 0 moveto screen.size fillrect
+  0xFFFFFF setcolor
+  0 250 moveto
+  800 settextwrap
+  dup show
+  "full label" dtrace pop
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -645,7 +716,7 @@
   pop
 
   % handle config trigger (if any)
-  tmp_config_trigger "" ne {
+  tmp_config_trigger .undef ne {
     tmp_config_trigger get_configuration
     % loop through all configuration options
     config.index.options get {
@@ -1440,7 +1511,7 @@
     edit_obj edit_input_buffer edit.init
   } {
     % hide editable input line
-    edit_obj 0 0 settype ne {
+    edit_obj .undef ne {
       edit_obj edit.done
     } if
   } ifelse

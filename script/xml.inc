@@ -290,8 +290,8 @@
   % child was not found...
   % remove child name from stack
   pop
-  % leave pointer to 0 on stack
-  0 t_none settype
+  % leave undefined pointer on stack
+  .undef
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -302,7 +302,7 @@
 % ptr1: pointer to an xml entity
 % string1: the name of the entity attribute
 %
-% string2: the value of the entity attribute or "" if the attribute was not found
+% string2: the value of the entity attribute or .undef if the attribute was not found
 %
 /get_attribute_value {
   % loop over attribute array
@@ -322,9 +322,41 @@
 
   % attribute key not found
   % remove attribute name from stack
-  % and leave "" on stack
   pop
-  ""
+  % and leave undefined pointer on stack
+  .undef
+} def
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% gets the value of a mandatory xml entity attribute
+% or exits with an error message if the attribute was not found
+%
+% ( ptr1 string1 -- string2 )
+%
+% ptr1: pointer to an xml entity
+% string1: the name of the entity attribute
+%
+% string2: the value of the entity attribute
+%
+/get_mandatory_attribute_value {
+  dup
+  /tmp_mandatory_attribute_value exch def
+  1 index
+  /tmp_xml_entity exch def
+  get_attribute_value
+  dup .undef eq {
+    % the madatory attribute was not found
+    % exit with error message
+    "aborting..."
+    "not found!"
+    tmp_xml_entity get_entity_name
+    "of entity"
+    tmp_mandatory_attribute_value
+    "mandatory attribute"
+    "ERROR:"
+    dtrace pop pop pop pop pop pop pop
+    .end
+  } if
 } def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -339,7 +371,7 @@
 %
 /get_entity_child_string {
   get_entity_child
-  dup 0 t_none settype eq {
+  dup .undef eq {
     % there was no text child
     pop
     ""

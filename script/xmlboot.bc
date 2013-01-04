@@ -26,7 +26,7 @@
 
 % parse xml config file
 "xmlboot.config" findfile
-dup 0 t_none settype eq {
+dup .undef eq {
   "config file not found!" dtrace pop
   pop
 } {
@@ -40,6 +40,22 @@ dup 0 t_none settype eq {
 % !!! because they are video mode dependent
 % set a good video mode and a splash screen
 try_video_modes
+
+% load syslinux defaults
+xml_structure "syslinux_defaults" get_entity_child
+dup .undef eq {
+  % exit with error message
+  "aborting..."
+  "not found in config file!"
+  "syslinux_defaults"
+  "ERROR:"
+  dtrace pop pop pop pop
+  .end
+} if
+dup "index" get_mandatory_attribute_value string_to_int
+/syslinux_default_index exch def
+"label" get_mandatory_attribute_value
+/syslinux_default_label exch def
 
 % !!! load config (and thereby init gettext) at the very beginning
 % !!! other parts, e.g. timeout, etc. will need a working gettext...
@@ -85,7 +101,7 @@ xml_structure "configs" get_entity_child
       % check, if entity is supported
       dup get_entity_name "config" eq {
         [
-          exch dup "id" get_attribute_value
+          exch dup "id" get_mandatory_attribute_value
           /tmp_config_id exch def
           tmp_config_id
           % get text from child element
@@ -98,7 +114,7 @@ xml_structure "configs" get_entity_child
               dup gettype t_arr eq {
                 dup get_entity_name "option" eq {
                   [
-                    exch dup "id" get_attribute_value
+                    exch dup "id" get_mandatory_attribute_value
                     /tmp_option_id exch def
                     tmp_option_id
                     exch dup "text" get_entity_child get_entity_children 0 get
@@ -108,10 +124,10 @@ xml_structure "configs" get_entity_child
                     exch dup get_entity_children {
                       dup gettype t_arr eq {
                         dup get_entity_name "layout" eq {
-                          dup "width" get_attribute_value string_to_int
-                          exch dup "height" get_attribute_value string_to_int
+                          dup "width" get_mandatory_attribute_value string_to_int
+                          exch dup "height" get_mandatory_attribute_value string_to_int
                           rot exch screen.size rot eq rot rot eq and {
-                            "screenshot" get_attribute_value
+                            "screenshot" get_mandatory_attribute_value
                             /tmp_no_screenshot_found false def
                             exit
                           } {
@@ -180,15 +196,17 @@ free
 default_image setimage
 
 % some option specific constants
-/option.index.id                 0 def
-/option.index.text               1 def
-/option.index.append_selected    2 def
-/option.index.append_nonselected 3 def
-/option.index.on_on_triggers     4 def
-/option.index.on_off_triggers    5 def
-/option.index.off_on_triggers    6 def
-/option.index.off_off_triggers   7 def
-/option.index.selected           8 def
+/option.index.id                  0 def
+/option.index.text                1 def
+/option.index.append_selected     2 def
+/option.index.append_nonselected  3 def
+/option.index.syslinux_index      4 def
+/option.index.syslinux_label      5 def
+/option.index.on_on_triggers      6 def
+/option.index.on_off_triggers     7 def
+/option.index.off_on_triggers     8 def
+/option.index.off_off_triggers    9 def
+/option.index.selected           10 def
 
 % get options from XML structure
 %
@@ -208,11 +226,13 @@ xml_structure "options" get_entity_child
       % check, if entity is supported
       dup get_entity_name "option" eq {
         [
-          exch dup "id" get_attribute_value
+          exch dup "id" get_mandatory_attribute_value
           % get text from child element
           exch dup get_entity_children 0 get
           exch dup "append_selected" get_attribute_value
           exch dup "append_nonselected" get_attribute_value
+          exch dup "syslinux_index" get_attribute_value dup .undef ne { string_to_int } if
+          exch dup "syslinux_label" get_attribute_value
           exch dup "on_on_triggers" get_attribute_value csv_to_array
           exch dup "on_off_triggers" get_attribute_value csv_to_array
           exch dup "off_on_triggers" get_attribute_value csv_to_array
@@ -234,24 +254,42 @@ xml_structure "options" get_entity_child
   } forall
 ] def
 
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% converts a color value string into a color number
+% and defaults to black if there is no given string
+%
+% ( string -- int )
+%
+% string: the color string
+%
+/get_color_attribute {
+  dup .undef eq {
+    % default to black if color was not specified
+    pop
+    0
+  } {
+    string_to_int
+  } ifelse
+} def
+
 % get timeout options from xml structure
 xml_structure "timeout" get_entity_child
-dup /timeout.color exch "color" get_attribute_value string_to_int def
+dup /timeout.color exch "color" get_attribute_value get_color_attribute def
 dup /timeout.format_singular exch "format_singular" get_entity_child get_entity_children 0 get gettext def
 dup /timeout.format_plural exch "format_plural" get_entity_child get_entity_children 0 get gettext def
 /timeout.string timeout.format_plural length 10 add string def
 get_entity_children {
   dup gettype t_arr eq {
     dup get_entity_name "layout" eq {
-      dup "width" get_attribute_value string_to_int
-      exch dup "height" get_attribute_value string_to_int
+      dup "width" get_mandatory_attribute_value string_to_int
+      exch dup "height" get_mandatory_attribute_value string_to_int
       rot exch screen.size rot eq rot rot eq and {
         % layout config for current video mode found
-        dup "x" get_attribute_value string_to_int
+        dup "x" get_mandatory_attribute_value string_to_int
         /timeout.x exch def
-        dup "y" get_attribute_value string_to_int
+        dup "y" get_mandatory_attribute_value string_to_int
         /timeout.y exch def
-        "font" get_attribute_value
+        "font" get_mandatory_attribute_value
         /timeout.font exch def
         exit
       } {
@@ -267,7 +305,7 @@ get_entity_children {
     pop
   } ifelse
 } forall
-timeout.x 0 t_none settype eq {
+timeout.x .undef eq {
   % the layout for the timeout for the current video mode
   % was not found in config file!
   "timeout layout missing!" dtrace pop
@@ -284,15 +322,15 @@ get_entity_children {
       /system_info exch def
     } {
       dup get_entity_name "layout" eq {
-        dup "width" get_attribute_value string_to_int
-        exch dup "height" get_attribute_value string_to_int
+        dup "width" get_mandatory_attribute_value string_to_int
+        exch dup "height" get_mandatory_attribute_value string_to_int
         rot exch screen.size rot eq rot rot eq and {
           % layout config for current video mode found
-          dup "x" get_attribute_value string_to_int
+          dup "x" get_mandatory_attribute_value string_to_int
           /system_info_x exch def
-          dup "y" get_attribute_value string_to_int
+          dup "y" get_mandatory_attribute_value string_to_int
           /system_info_y exch def
-          "font" get_attribute_value
+          "font" get_mandatory_attribute_value
           /system_info_font exch def
           exit
         } {
@@ -309,7 +347,7 @@ get_entity_children {
     pop
   } ifelse
 } forall
-system_info_x 0 t_none settype eq {
+system_info_x .undef eq {
   % the layout for the system information for the current video mode
   % was not found in config file!
   "system info layout missing!" dtrace pop
@@ -319,19 +357,19 @@ system_info_font find_cached_file pop
 
 % get breadcrumb options from xml file
 xml_structure "breadcrumbs" get_entity_child
-dup "color" get_attribute_value string_to_int
+dup "color" get_attribute_value get_color_attribute
 /breadcrumbs.color exch def
-dup "delimiter" get_attribute_value
+dup "delimiter" get_mandatory_attribute_value
 /breadcrumbs.delimiter exch def
 get_entity_children {
   dup gettype t_arr eq {
     dup get_entity_name "layout" eq {
-      dup "height" get_attribute_value string_to_int
+      dup "height" get_mandatory_attribute_value string_to_int
       screen.size exch pop eq {
         % layout config for current screen height found
-        dup "y" get_attribute_value string_to_int
+        dup "y" get_mandatory_attribute_value string_to_int
         /breadcrumbs.y exch def
-        "font" get_attribute_value
+        "font" get_mandatory_attribute_value
         /breadcrumbs.font exch def
         exit
       } {
@@ -347,7 +385,7 @@ get_entity_children {
     pop
   } ifelse
 } forall
-breadcrumbs.y 0 t_none settype eq {
+breadcrumbs.y .undef eq {
   % the layout for the breadcrumbs for the current screen height
   % was not found in config file!
   "breadcrumbs layout missing!" dtrace pop
@@ -357,11 +395,11 @@ breadcrumbs.font find_cached_file pop
 
 % get menu structure from XML structure
 xml_structure "menu" get_entity_child
-dup "color" get_attribute_value string_to_int
+dup "color" get_attribute_value get_color_attribute
 /menu.color exch def
-dup "selected_color" get_attribute_value string_to_int
+dup "selected_color" get_mandatory_attribute_value string_to_int
 /menu.selected_color exch def
-dup "rectangle_color" get_attribute_value string_to_int
+dup "rectangle_color" get_mandatory_attribute_value string_to_int
 /menu.rectangle_color exch def
 parse_menu
 /current.menu exch def
@@ -370,7 +408,7 @@ current.menu menu.index.font get find_cached_file pop
 
 % custom options
 xml_structure "custom_options" get_entity_child
-"text" get_attribute_value
+"text" get_mandatory_attribute_value
 "%s" edit_input_buffer sprintf
 
 % support for breadcrumbs

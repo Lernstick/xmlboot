@@ -37,9 +37,9 @@
   get_entity_children {
     dup gettype t_arr eq {
       dup get_entity_name "videomode" eq {
-        dup "width" get_attribute_value string_to_int
-        exch dup "height" get_attribute_value string_to_int
-        exch dup "color_depth" get_attribute_value string_to_int
+        dup "width" get_mandatory_attribute_value string_to_int
+        exch dup "height" get_mandatory_attribute_value string_to_int
+        exch dup "color_depth" get_mandatory_attribute_value string_to_int
         4 2 roll rot
         trymode {
           % setting this video mode succeeded
@@ -47,6 +47,7 @@
           % but do NOT *paint* the background image right now
           % the rest of the setup will still take a while and it looks somewhat broken
           % when showing just the background image alone for several seconds...
+          % TODO: mandatory background attribute?
           "background" get_attribute_value
           findfile setimage
           % remember default image
