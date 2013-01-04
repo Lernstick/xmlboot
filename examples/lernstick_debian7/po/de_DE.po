@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"POT-Creation-Date: 2013-01-04 17:15+0100\n"
+"POT-Creation-Date: 2013-01-04 18:16+0100\n"
 "PO-Revision-Date: 2012-12-05 23:00+100\n"
 "Last-Translator: Ronny Standtke <ronny.standtke@fhnw.ch>\n"
 "Language-Team: DE <DE@li.org>\n"
@@ -135,53 +135,57 @@ msgid "Use local APIC timer"
 msgstr "Lokalen APIC-Timer verwenden"
 
 #: xmlboot.config:153(options/option)
+msgid "Dynamic timer tick"
+msgstr "Dynamische Timer-Ticks verwenden"
+
+#: xmlboot.config:154(options/option)
 msgid "Show boot messages"
 msgstr "Startmeldungen anzeigen"
 
-#: xmlboot.config:154(options/option)
+#: xmlboot.config:155(options/option)
 msgid "Show debug messages"
 msgstr "Debugmeldungen anzeigen"
 
-#: xmlboot.config:172(timeout/format_singular)
+#: xmlboot.config:173(timeout/format_singular)
 msgid "Automatic boot in %u second..."
 msgstr "Automatischer Start in %u Sekunde..."
 
-#: xmlboot.config:173(timeout/format_plural)
+#: xmlboot.config:174(timeout/format_plural)
 msgid "Automatic boot in %u seconds..."
 msgstr "Automatischer Start in %u Sekunden..."
 
-#: xmlboot.config:204(start/text)
+#: xmlboot.config:205(start/text)
 msgid "Start lernstick"
 msgstr "lernstick starten"
 
-#: xmlboot.config:205(start/splash) xmlboot.config:258(start/splash)
+#: xmlboot.config:206(start/splash) xmlboot.config:260(start/splash)
 msgid "splash_linux.jpg"
 msgstr "splash_linux_de.jpg"
 
-#: xmlboot.config:238(submenu/text)
+#: xmlboot.config:239(submenu/text)
 msgid "More Configuration"
 msgstr "Weitere Einstellungen"
 
-#: xmlboot.config:239(submenu/edit_prompt)
+#: xmlboot.config:240(submenu/edit_prompt)
 msgid "Custom options:"
 msgstr "Eigene Optionen:"
 
-#: xmlboot.config:240(submenu/back)
+#: xmlboot.config:241(submenu/back)
 msgid "Back to main menu"
 msgstr "Zurück zum Hauptmenü"
 
-#: xmlboot.config:257(start/text)
+#: xmlboot.config:259(start/text)
 msgid "Check integrity of boot medium"
 msgstr "Integrität des Startmediums überprüfen"
 
-#: xmlboot.config:261(start/text)
+#: xmlboot.config:263(start/text)
 msgid "Boot from hard drive"
 msgstr "Von Festplatte starten"
 
-#: xmlboot.config:264(start/text)
+#: xmlboot.config:266(start/text)
 msgid "Hardware info"
 msgstr "Hardware-Informationen"
 
-#: xmlboot.config:265(start/splash)
+#: xmlboot.config:267(start/splash)
 msgid "splash_hdt.jpg"
 msgstr "splash_hdt_de.jpg"
