@@ -512,7 +512,10 @@
           % option is selected
           % get option specific append line
           config_option.index.append get
-          dup .undef ne {
+          dup .undef eq {
+            % ignore undefined append lines
+            pop
+          } {
             % concatenate with global append line
             append_line " " concatenate_strings
             exch
