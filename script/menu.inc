@@ -521,7 +521,7 @@
             exch
             concatenate_strings
             /append_line exch def
-          } if
+          } ifelse
         } {
           % option is not selected
           pop
