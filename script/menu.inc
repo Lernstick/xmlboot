@@ -43,8 +43,9 @@
 /configmenu.index.indention         7 def
 /configmenu.index.description_x     8 def
 /configmenu.index.description_y     9 def
-/configmenu.index.screenshot_x     10 def
-/configmenu.index.screenshot_y     11 def
+/configmenu.index.textwrap         10 def
+/configmenu.index.screenshot_x     11 def
+/configmenu.index.screenshot_y     12 def
 
 % config option menu entry specific indices
 /config_option_menu_entry.index.config_id   1 def
@@ -112,6 +113,7 @@
 %    7: indention         (int,    indention to apply when showing this config menu in upper menu)
 %    8: description_x     (int,    x position of menu entry descriptions)
 %    9: description_y     (int,    y position of menu entry descriptions)
+%   10: textwrap          (int,    x position of text wrap in pixels)
 %   10: screenshot_x      (int,    x position of menu entry screenshots)
 %   11: screenshot_y      (int,    y position of menu entry screenshots)
 %
@@ -240,6 +242,7 @@
                         exch dup "indention" get_attribute_value string_to_int
                         exch dup "description_x" get_attribute_value string_to_int
                         exch dup "description_y" get_attribute_value string_to_int
+                        exch dup "textwrap" get_attribute_value string_to_int
                         exch dup "screenshot_x" get_attribute_value string_to_int
                         exch "screenshot_y" get_attribute_value string_to_int
                         /tmp_no_layout_found false def
@@ -651,6 +654,8 @@
   /description_x exch def
   dup configmenu.index.description_y get
   /description_y exch def
+  dup configmenu.index.textwrap get
+  /textwrap exch def
   dup configmenu.index.description_color get
   /description_color exch def
   dup configmenu.index.screenshot_x get
@@ -1080,8 +1085,10 @@
     % show config option description
     config_option_menu_entry.index.description get
     description_color setcolor
+    textwrap settextwrap
     description_x description_y moveto
     show
+    0 settextwrap
   } {
     % menu type does not have a description
     pop
@@ -1134,8 +1141,13 @@
     % reset config option description
     description_x description_y moveto
     description_x description_y
-    rot
-    config_option_menu_entry.index.description get strsize
+    % get string height
+    rot config_option_menu_entry.index.description get strsize exch pop
+    % TODO: get number of rows
+    % Very dirty workaround: assume max of 3 rows...
+    3 mul
+    textwrap description_x sub
+    exch
     image
   } {
     % menu type does not have a description
