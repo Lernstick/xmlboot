@@ -1142,12 +1142,15 @@
     description_x description_y moveto
     description_x description_y
     % get string height
-    rot config_option_menu_entry.index.description get strsize exch pop
-    % TODO: get number of rows
-    % Very dirty workaround: assume max of 3 rows...
-    3 mul
-    textwrap description_x sub
-    exch
+    rot config_option_menu_entry.index.description get strsize
+    textwrap 0 ne {
+      exch pop
+      % TODO: get number of rows
+      % Very dirty workaround: assume max of 3 rows...
+      3 mul
+      textwrap description_x sub
+      exch
+    } if
     image
   } {
     % menu type does not have a description
