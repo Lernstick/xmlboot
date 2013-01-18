@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"POT-Creation-Date: 2013-01-15 17:10+0100\n"
+"POT-Creation-Date: 2013-01-18 18:54+0100\n"
 "PO-Revision-Date: 2012-12-05 23:00+100\n"
 "Last-Translator: Ronny Standtke <ronny.standtke@fhnw.ch>\n"
 "Language-Team: DE <DE@li.org>\n"
@@ -150,74 +150,102 @@ msgstr ""
 "Alle bereits vorgenommenen Änderungen sind nicht sichtbar, alle neuen "
 "Änderungen werden nur temporär in den Arbeitsspeicher geschrieben."
 
-#: xmlboot.config:162(options/option)
+#: xmlboot.config:161(config/text)
+msgid "System device"
+msgstr "Systemgerät"
+
+#: xmlboot.config:163(option/text)
+msgid "any"
+msgstr "beliebig"
+
+#: xmlboot.config:164(option/description)
+msgid "use any storage device"
+msgstr "verwende beliebiges Speichermedium"
+
+#: xmlboot.config:167(option/text)
+msgid "removable device"
+msgstr "entfernbares Speichermedium"
+
+#: xmlboot.config:168(option/description)
+msgid "prefer removable storage devices"
+msgstr "bevorzuge entfernbare Speichermedien"
+
+#: xmlboot.config:171(option/text)
+msgid "removable USB device"
+msgstr "entfernbares USB-Speichermedium"
+
+#: xmlboot.config:172(option/description)
+msgid "prefer removable USB storage devices"
+msgstr "bevorzuge entfernbare USB-Speichermedien"
+
+#: xmlboot.config:177(options/option)
 msgid "Use swap partition"
 msgstr "Auslagerungspartition verwenden"
 
-#: xmlboot.config:163(options/option)
+#: xmlboot.config:178(options/option)
 msgid "Use swap file"
 msgstr "Auslagerungsdatei verwenden"
 
-#: xmlboot.config:164(options/option)
+#: xmlboot.config:179(options/option)
 msgid "more than 4 GB RAM"
 msgstr "mehr als 4 GB RAM"
 
-#: xmlboot.config:165(options/option)
+#: xmlboot.config:180(options/option)
 msgid "Use local APIC timer"
 msgstr "Lokalen APIC-Timer verwenden"
 
-#: xmlboot.config:166(options/option)
+#: xmlboot.config:181(options/option)
 msgid "Dynamic timer tick"
 msgstr "Dynamische Timer-Ticks verwenden"
 
-#: xmlboot.config:167(options/option)
+#: xmlboot.config:182(options/option)
 msgid "Show boot messages"
 msgstr "Startmeldungen anzeigen"
 
-#: xmlboot.config:168(options/option)
+#: xmlboot.config:183(options/option)
 msgid "Show debug messages"
 msgstr "Debugmeldungen anzeigen"
 
-#: xmlboot.config:186(timeout/format_singular)
+#: xmlboot.config:201(timeout/format_singular)
 msgid "Automatic boot in %u second..."
 msgstr "Automatischer Start in %u Sekunde..."
 
-#: xmlboot.config:187(timeout/format_plural)
+#: xmlboot.config:202(timeout/format_plural)
 msgid "Automatic boot in %u seconds..."
 msgstr "Automatischer Start in %u Sekunden..."
 
-#: xmlboot.config:218(start/text)
+#: xmlboot.config:233(start/text)
 msgid "Start lernstick"
 msgstr "lernstick starten"
 
-#: xmlboot.config:219(start/splash) xmlboot.config:273(start/splash)
+#: xmlboot.config:234(start/splash) xmlboot.config:296(start/splash)
 msgid "splash_linux.jpg"
 msgstr "splash_linux_de.jpg"
 
-#: xmlboot.config:252(submenu/text)
+#: xmlboot.config:267(submenu/text)
 msgid "More Configuration"
 msgstr "Weitere Einstellungen"
 
-#: xmlboot.config:253(submenu/edit_prompt)
+#: xmlboot.config:268(submenu/edit_prompt)
 msgid "Custom options:"
 msgstr "Eigene Optionen:"
 
-#: xmlboot.config:254(submenu/back)
+#: xmlboot.config:269(submenu/back)
 msgid "Back to main menu"
 msgstr "Zurück zum Hauptmenü"
 
-#: xmlboot.config:272(start/text)
+#: xmlboot.config:295(start/text)
 msgid "Check integrity of boot medium"
 msgstr "Integrität des Startmediums überprüfen"
 
-#: xmlboot.config:276(start/text)
+#: xmlboot.config:299(start/text)
 msgid "Boot from hard drive"
 msgstr "Von Festplatte starten"
 
-#: xmlboot.config:279(start/text)
+#: xmlboot.config:302(start/text)
 msgid "Hardware info"
 msgstr "Hardware-Informationen"
 
-#: xmlboot.config:280(start/splash)
+#: xmlboot.config:303(start/splash)
 msgid "splash_hdt.jpg"
 msgstr "splash_hdt_de.jpg"
