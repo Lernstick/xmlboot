@@ -112,7 +112,7 @@ msgstr "beliebig"
 
 #: xmlboot.config:139(option/description)
 msgid "use any storage device"
-msgstr "beliebiges Speichermedium"
+msgstr "verwende beliebiges Speichermedium"
 
 #: xmlboot.config:142(option/text)
 msgid "removable device"
