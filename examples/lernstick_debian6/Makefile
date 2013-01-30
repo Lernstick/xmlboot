@@ -36,7 +36,7 @@ clean:
 	rm -rf *~ *.log *.dir bootlogo *.fnt
 
 test: bootlogo
-	gfxboot -p -b isolinux -a bootlogo
+	gfxboot -p -b isolinux -a bootlogo --save-image test.iso
 
 distclean: clean
 

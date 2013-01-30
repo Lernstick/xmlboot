@@ -3,6 +3,7 @@ bootlogo
 bootlogo.dir/
 bootlogo.log
 *.directory
+test.iso
 font.log
 font_size_*.fnt
 *.translation
