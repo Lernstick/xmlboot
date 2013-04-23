@@ -1169,12 +1169,16 @@
   0 0 moveto
   0 0 image.size image
 
-  % repaint system info
+  % repaint system info and version
   % (this text is non-static, it changes after selecting another locale)
   system_info gettext
   system_info_font find_cached_file setfont
   0x000000 setcolor
   system_info_x system_info_y moveto
+  show
+  " "
+  show
+  system_version
   show
 } def
 

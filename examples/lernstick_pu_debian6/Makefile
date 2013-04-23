@@ -12,7 +12,7 @@ bootlogo: font
 	@rm -rf bootlogo.dir
 	cd ../../script; make
 	cp -a ../../script/bootlogo.dir .
-	cp ../lernstick_debian6/*jpg *fnt ../lernstick_debian6/po/*translation xmlboot.config bootlogo.dir
+	cp ../lernstick_debian6/*jpg *fnt po/*translation xmlboot.config bootlogo.dir
 	$(GFXBOOT) --archive bootlogo.dir --pack-archive bootlogo
 
 font: font_size_10.fnt font_size_12.fnt font_size_15.fnt font_size_15_bold.fnt font_size_20.fnt

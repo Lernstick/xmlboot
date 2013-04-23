@@ -28,7 +28,7 @@
 "xmlboot.config" findfile
 dup .undef eq {
   "config file not found!" dtrace pop
-  pop
+  .end
 } {
   dup
   parse_xml_file
@@ -309,6 +309,7 @@ timeout.x .undef eq {
   % the layout for the timeout for the current video mode
   % was not found in config file!
   "timeout layout missing!" dtrace pop
+  .end
 } if
 % early caching of timeout font
 timeout.font find_cached_file pop
@@ -321,25 +322,30 @@ get_entity_children {
       get_entity_children 0 get
       /system_info exch def
     } {
-      dup get_entity_name "layout" eq {
-        dup "width" get_mandatory_attribute_value string_to_int
-        exch dup "height" get_mandatory_attribute_value string_to_int
-        rot exch screen.size rot eq rot rot eq and {
-          % layout config for current video mode found
-          dup "x" get_mandatory_attribute_value string_to_int
-          /system_info_x exch def
-          dup "y" get_mandatory_attribute_value string_to_int
-          /system_info_y exch def
-          "font" get_mandatory_attribute_value
-          /system_info_font exch def
-          exit
+      dup get_entity_name "version" eq {
+        get_entity_children 0 get
+        /system_version exch def
+      } {
+        dup get_entity_name "layout" eq {
+          dup "width" get_mandatory_attribute_value string_to_int
+          exch dup "height" get_mandatory_attribute_value string_to_int
+          rot exch screen.size rot eq rot rot eq and {
+            % layout config for current video mode found
+            dup "x" get_mandatory_attribute_value string_to_int
+            /system_info_x exch def
+            dup "y" get_mandatory_attribute_value string_to_int
+            /system_info_y exch def
+            "font" get_mandatory_attribute_value
+            /system_info_font exch def
+            exit
+          } {
+            % a layout config for another video mode (ignore)
+            pop
+          } ifelse
         } {
-          % a layout config for another video mode (ignore)
+          % entity not (yet) supported
           pop
         } ifelse
-      } {
-        % entity not (yet) supported
-        pop
       } ifelse
     } ifelse
   } {
@@ -347,10 +353,19 @@ get_entity_children {
     pop
   } ifelse
 } forall
+system_info .undef eq {
+  "system info missing!" dtrace pop
+  .end
+} if
+system_version .undef eq {
+  "system version missing!" dtrace pop
+  .end
+} if
 system_info_x .undef eq {
   % the layout for the system information for the current video mode
   % was not found in config file!
   "system info layout missing!" dtrace pop
+  .end
 } if
 % early caching of system info font
 system_info_font find_cached_file pop
@@ -389,6 +404,7 @@ breadcrumbs.y .undef eq {
   % the layout for the breadcrumbs for the current screen height
   % was not found in config file!
   "breadcrumbs layout missing!" dtrace pop
+  .end
 } if
 % early caching of breadcrumbs font
 breadcrumbs.font find_cached_file pop
