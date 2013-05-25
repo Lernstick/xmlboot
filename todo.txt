@@ -1,3 +1,4 @@
+- dont crash when no option is selected in a config (autoselect first option instead)
 - cache x position and text of breadcrumbs
 - faster menu repaint (only restore menu areas)
 - help on how to use this menu (up, down, enter...)
