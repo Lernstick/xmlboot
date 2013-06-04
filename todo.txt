@@ -1,3 +1,4 @@
+- dont crash when syslinux timeout is "1"
 - dont crash when no option is selected in a config (autoselect first option instead)
 - cache x position and text of breadcrumbs
 - faster menu repaint (only restore menu areas)
