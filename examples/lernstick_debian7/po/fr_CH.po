@@ -12,7 +12,7 @@ msgstr ""
 
 #: xmlboot.config:13(xmlboot/splash)
 msgid "splash_xmlboot.jpg"
-msgstr "splash_xmlboot_de.jpg"
+msgstr "splash_xmlboot.jpg"
 
 #: xmlboot.config:17(config/text)
 msgid "Language"
@@ -225,7 +225,7 @@ msgstr "démarrage du Lernstick"
 
 #: xmlboot.config:235(start/splash) xmlboot.config:297(start/splash)
 msgid "splash_linux.jpg"
-msgstr "splash_linux_de.jpg"
+msgstr "splash_linux.jpg"
 
 #: xmlboot.config:268(submenu/text)
 msgid "More Configuration"
@@ -253,4 +253,4 @@ msgstr "informations matériel interne"
 
 #: xmlboot.config:304(start/splash)
 msgid "splash_hdt.jpg"
-msgstr "splash_hdt_de.jpg"
+msgstr "splash_hdt.jpg"
