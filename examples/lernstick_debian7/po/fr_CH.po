@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"POT-Creation-Date: 2013-05-06 18:21+0200\n"
+"POT-Creation-Date: 2014-06-06 09:42+0200\n"
 "PO-Revision-Date: 2012-12-05 23:00+100\n"
 "Last-Translator: Ronny Standtke <ronny.standtke@fhnw.ch>\n"
 "Language-Team: DE <DE@li.org>\n"
@@ -172,12 +172,12 @@ msgid "prefer removable storage devices"
 msgstr "préfère un support de stockage amovible"
 
 #: xmlboot.config:171(option/text)
-msgid "removable USB device"
-msgstr "clé USB amovible"
+msgid "USB device"
+msgstr "clé USB"
 
 #: xmlboot.config:172(option/description)
-msgid "prefer removable USB storage devices"
-msgstr "préfère clés USB amovibles"
+msgid "prefer USB storage devices"
+msgstr "préfère clés USB"
 
 #: xmlboot.config:177(options/option)
 msgid "Use swap partition"
@@ -188,69 +188,65 @@ msgid "Use swap file"
 msgstr "utiliser fichier de transfert"
 
 #: xmlboot.config:179(options/option)
-msgid "more than 4 GB RAM"
-msgstr "plus de 4 Go de mémoire vive"
-
-#: xmlboot.config:180(options/option)
 msgid "Use local APIC timer"
 msgstr "utiliser APIC-Timer de bord"
 
-#: xmlboot.config:181(options/option)
+#: xmlboot.config:180(options/option)
 msgid "Dynamic timer tick"
 msgstr "utiliser les impulsions du compteur dynamique"
 
-#: xmlboot.config:182(options/option)
+#: xmlboot.config:181(options/option)
 msgid "Show boot messages"
 msgstr "indiquer les messages de démarrage"
 
-#: xmlboot.config:183(options/option)
+#: xmlboot.config:182(options/option)
 msgid "Show debug messages"
 msgstr "indiquer les messages de débogage"
 
-#: xmlboot.config:201(timeout/format_singular)
+#: xmlboot.config:200(timeout/format_singular)
 msgid "Automatic boot in %u second..."
 msgstr "démarrage automatique en ... secondes"
 
-#: xmlboot.config:202(timeout/format_plural)
+#: xmlboot.config:201(timeout/format_plural)
 msgid "Automatic boot in %u seconds..."
 msgstr "démarrage automatique en ... secondes"
 
-#: xmlboot.config:211(system/text)
+#: xmlboot.config:210(system/text)
 msgid "Lernstick Debian 7"
 msgstr ""
 
-#: xmlboot.config:234(start/text)
+#: xmlboot.config:233(start/text)
 msgid "Start Lernstick"
 msgstr "démarrage du Lernstick"
 
-#: xmlboot.config:235(start/splash) xmlboot.config:297(start/splash)
+#: xmlboot.config:234(start/splash) xmlboot.config:295(start/splash)
 msgid "splash_linux.jpg"
 msgstr "splash_linux.jpg"
 
-#: xmlboot.config:268(submenu/text)
+#: xmlboot.config:267(submenu/text)
 msgid "More Configuration"
 msgstr "Autres réglages"
 
-#: xmlboot.config:269(submenu/edit_prompt)
+#: xmlboot.config:268(submenu/edit_prompt)
 msgid "Custom options:"
 msgstr "options individuelles :"
 
-#: xmlboot.config:270(submenu/back)
+#: xmlboot.config:269(submenu/back)
 msgid "Back to main menu"
 msgstr "Retour au menu principal"
 
-#: xmlboot.config:296(start/text)
+#: xmlboot.config:294(start/text)
 msgid "Check integrity of boot medium"
 msgstr "vérifier l'intégrité du média de démarage"
 
-#: xmlboot.config:300(start/text)
+#: xmlboot.config:298(start/text)
 msgid "Boot from hard drive"
 msgstr "démarrage du disque dur"
 
-#: xmlboot.config:303(start/text)
+#: xmlboot.config:301(start/text)
 msgid "Hardware info"
 msgstr "informations matériel interne"
 
-#: xmlboot.config:304(start/splash)
+#: xmlboot.config:302(start/splash)
 msgid "splash_hdt.jpg"
 msgstr "splash_hdt.jpg"

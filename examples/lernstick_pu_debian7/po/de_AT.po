@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"POT-Creation-Date: 2013-04-23 18:58+0200\n"
+"POT-Creation-Date: 2014-06-06 09:47+0200\n"
 "PO-Revision-Date: 2012-12-05 23:00+100\n"
 "Last-Translator: Ronny Standtke <ronny.standtke@fhnw.ch>\n"
 "Language-Team: DE <DE@li.org>\n"
@@ -139,69 +139,65 @@ msgid "prefer removable storage devices"
 msgstr "bevorzuge entfernbare Speichermedien"
 
 #: xmlboot.config:131(option/text)
-msgid "removable USB device"
-msgstr "entfernbares USB-Speichermedium"
+msgid "USB device"
+msgstr "USB-Speichermedium"
 
 #: xmlboot.config:132(option/description)
-msgid "prefer removable USB storage devices"
-msgstr "bevorzuge entfernbare USB-Speichermedien"
+msgid "prefer USB storage devices"
+msgstr "bevorzuge USB-Speichermedien"
 
 #: xmlboot.config:137(options/option)
 msgid "Use swap partition"
 msgstr "Auslagerungspartition verwenden"
 
 #: xmlboot.config:138(options/option)
-msgid "more than 4 GB RAM"
-msgstr "mehr als 4 GB RAM"
-
-#: xmlboot.config:139(options/option)
 msgid "Use local APIC timer"
 msgstr "Lokalen APIC-Timer verwenden"
 
-#: xmlboot.config:140(options/option)
+#: xmlboot.config:139(options/option)
 msgid "Dynamic timer tick"
 msgstr "Dynamische Timer-Ticks verwenden"
 
-#: xmlboot.config:141(options/option)
+#: xmlboot.config:140(options/option)
 msgid "Show boot messages"
 msgstr "Startmeldungen anzeigen"
 
-#: xmlboot.config:142(options/option)
+#: xmlboot.config:141(options/option)
 msgid "Show debug messages"
 msgstr "Debugmeldungen anzeigen"
 
-#: xmlboot.config:160(timeout/format_singular)
+#: xmlboot.config:159(timeout/format_singular)
 msgid "Automatic boot in %u second..."
 msgstr "Automatischer Start in %u Sekunde..."
 
-#: xmlboot.config:161(timeout/format_plural)
+#: xmlboot.config:160(timeout/format_plural)
 msgid "Automatic boot in %u seconds..."
 msgstr "Automatischer Start in %u Sekunden..."
 
-#: xmlboot.config:170(system/text)
+#: xmlboot.config:169(system/text)
 msgid "Lernstick exam environment Debian 7"
 msgstr "Lernstick-Prüfungsumgebung Debian 7"
 
-#: xmlboot.config:193(start/text)
+#: xmlboot.config:192(start/text)
 msgid "Start Lernstick"
 msgstr "Lernstick starten"
 
-#: xmlboot.config:194(start/splash) xmlboot.config:255(start/splash)
+#: xmlboot.config:193(start/splash) xmlboot.config:253(start/splash)
 msgid "splash_linux.jpg"
 msgstr "splash_linux_de.jpg"
 
-#: xmlboot.config:227(submenu/text)
+#: xmlboot.config:226(submenu/text)
 msgid "More Configuration"
 msgstr "Weitere Einstellungen"
 
-#: xmlboot.config:228(submenu/edit_prompt)
+#: xmlboot.config:227(submenu/edit_prompt)
 msgid "Custom options:"
 msgstr "Eigene Optionen:"
 
-#: xmlboot.config:229(submenu/back)
+#: xmlboot.config:228(submenu/back)
 msgid "Back to main menu"
 msgstr "Zurück zum Hauptmenü"
 
-#: xmlboot.config:254(start/text)
+#: xmlboot.config:252(start/text)
 msgid "Check integrity of boot medium"
 msgstr "Integrität des Startmediums überprüfen"
