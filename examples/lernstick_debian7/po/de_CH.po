@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"POT-Creation-Date: 2014-06-06 09:42+0200\n"
+"POT-Creation-Date: 2014-10-08 14:23+0200\n"
 "PO-Revision-Date: 2012-12-05 23:00+100\n"
 "Last-Translator: Ronny Standtke <ronny.standtke@fhnw.ch>\n"
 "Language-Team: DE <DE@li.org>\n"
@@ -111,14 +111,55 @@ msgid "No desktop"
 msgstr "Kein Desktop"
 
 #: xmlboot.config:146(config/text)
+msgid "System device"
+msgstr "Systemgerät"
+
+#: xmlboot.config:148(option/text) xmlboot.config:163(option/text)
+msgid "any"
+msgstr "beliebig"
+
+#: xmlboot.config:149(option/description)
+#: xmlboot.config:164(option/description)
+msgid "use any storage device"
+msgstr "verwende beliebiges Speichermedium"
+
+#: xmlboot.config:152(option/text) xmlboot.config:167(option/text)
+msgid "removable device"
+msgstr "entfernbares Speichermedium"
+
+#: xmlboot.config:153(option/description)
+msgid "prefer removable storage devices"
+msgstr "bevorzuge entfernbare Speichermedien"
+
+#: xmlboot.config:156(option/text) xmlboot.config:171(option/text)
+msgid "USB device"
+msgstr "USB-Speichermedium"
+
+#: xmlboot.config:157(option/description)
+msgid "prefer USB storage devices"
+msgstr "bevorzuge USB-Speichermedien"
+
+#: xmlboot.config:161(config/text)
+msgid "Data device"
+msgstr "Datengerät"
+
+#: xmlboot.config:168(option/description)
+msgid "use removable storage devices"
+msgstr "verwende entfernbare Speichermedien"
+
+#: xmlboot.config:172(option/description)
+msgid "use USB storage devices"
+msgstr "verwende USB-Speichermedien"
+
+#: xmlboot.config:176(config/text)
 msgid "Data partition"
 msgstr "Datenpartition"
 
-#: xmlboot.config:148(option/text)
+#: xmlboot.config:178(option/text)
 msgid "Read-write"
 msgstr "lesen und schreiben"
 
-#: xmlboot.config:149(option/description)
+#: xmlboot.config:179(option/description)
 msgid ""
 "All previous changes are visible, all new changes will be written to the "
 "data partition."
@@ -126,11 +167,11 @@ msgstr ""
 "Alle bereits vorgenommenen Änderungen sind sichtbar, alle neuen Änderungen "
 "werden dauerhaft auf die Datenpartition geschrieben."
 
-#: xmlboot.config:152(option/text)
+#: xmlboot.config:182(option/text)
 msgid "Read-only"
 msgstr "nur lesen"
 
-#: xmlboot.config:153(option/description)
+#: xmlboot.config:183(option/description)
 msgid ""
 "All previous changes are visible, all new changes will be only written to "
 "RAM."
@@ -138,11 +179,11 @@ msgstr ""
 "Alle bereits vorgenommenen Änderungen sind sichtbar, alle neuen Änderungen "
 "werden nur temporär in den Arbeitsspeicher geschrieben."
 
-#: xmlboot.config:156(option/text)
+#: xmlboot.config:186(option/text)
 msgid "Not used"
 msgstr "nicht verwenden"
 
-#: xmlboot.config:157(option/description)
+#: xmlboot.config:187(option/description)
 msgid ""
 "All previous changes are invisible, all new changes will be only written to "
 "RAM."
@@ -150,102 +191,74 @@ msgstr ""
 "Alle bereits vorgenommenen Änderungen sind nicht sichtbar, alle neuen "
 "Änderungen werden nur temporär in den Arbeitsspeicher geschrieben."
 
-#: xmlboot.config:161(config/text)
-msgid "System device"
-msgstr "Systemgerät"
-
-#: xmlboot.config:163(option/text)
-msgid "any"
-msgstr "beliebig"
-
-#: xmlboot.config:164(option/description)
-msgid "use any storage device"
-msgstr "verwende beliebiges Speichermedium"
-
-#: xmlboot.config:167(option/text)
-msgid "removable device"
-msgstr "entfernbares Speichermedium"
-
-#: xmlboot.config:168(option/description)
-msgid "prefer removable storage devices"
-msgstr "bevorzuge entfernbare Speichermedien"
-
-#: xmlboot.config:171(option/text)
-msgid "USB device"
-msgstr "USB-Speichermedium"
-
-#: xmlboot.config:172(option/description)
-msgid "prefer USB storage devices"
-msgstr "bevorzuge USB-Speichermedien"
-
-#: xmlboot.config:177(options/option)
+#: xmlboot.config:192(options/option)
 msgid "Use swap partition"
 msgstr "Auslagerungspartition verwenden"
 
-#: xmlboot.config:178(options/option)
+#: xmlboot.config:193(options/option)
 msgid "Use swap file"
 msgstr "Auslagerungsdatei verwenden"
 
-#: xmlboot.config:179(options/option)
+#: xmlboot.config:194(options/option)
 msgid "Use local APIC timer"
 msgstr "Lokalen APIC-Timer verwenden"
 
-#: xmlboot.config:180(options/option)
+#: xmlboot.config:195(options/option)
 msgid "Dynamic timer tick"
 msgstr "Dynamische Timer-Ticks verwenden"
 
-#: xmlboot.config:181(options/option)
+#: xmlboot.config:196(options/option)
 msgid "Show boot messages"
 msgstr "Startmeldungen anzeigen"
 
-#: xmlboot.config:182(options/option)
+#: xmlboot.config:197(options/option)
 msgid "Show debug messages"
 msgstr "Debugmeldungen anzeigen"
 
-#: xmlboot.config:200(timeout/format_singular)
+#: xmlboot.config:215(timeout/format_singular)
 msgid "Automatic boot in %u second..."
 msgstr "Automatischer Start in %u Sekunde..."
 
-#: xmlboot.config:201(timeout/format_plural)
+#: xmlboot.config:216(timeout/format_plural)
 msgid "Automatic boot in %u seconds..."
 msgstr "Automatischer Start in %u Sekunden..."
 
-#: xmlboot.config:210(system/text)
+#: xmlboot.config:225(system/text)
 msgid "Lernstick Debian 7"
 msgstr ""
 
-#: xmlboot.config:233(start/text)
+#: xmlboot.config:248(start/text)
 msgid "Start Lernstick"
 msgstr "Lernstick starten"
 
-#: xmlboot.config:234(start/splash) xmlboot.config:295(start/splash)
+#: xmlboot.config:249(start/splash) xmlboot.config:318(start/splash)
 msgid "splash_linux.jpg"
 msgstr "splash_linux_de.jpg"
 
-#: xmlboot.config:267(submenu/text)
+#: xmlboot.config:282(submenu/text)
 msgid "More Configuration"
 msgstr "Weitere Einstellungen"
 
-#: xmlboot.config:268(submenu/edit_prompt)
+#: xmlboot.config:283(submenu/edit_prompt)
 msgid "Custom options:"
 msgstr "Eigene Optionen:"
 
-#: xmlboot.config:269(submenu/back)
+#: xmlboot.config:284(submenu/back)
 msgid "Back to main menu"
 msgstr "Zurück zum Hauptmenü"
 
-#: xmlboot.config:294(start/text)
+#: xmlboot.config:317(start/text)
 msgid "Check integrity of boot medium"
 msgstr "Integrität des Startmediums überprüfen"
 
-#: xmlboot.config:298(start/text)
+#: xmlboot.config:321(start/text)
 msgid "Boot from hard drive"
 msgstr "Von Festplatte starten"
 
-#: xmlboot.config:301(start/text)
+#: xmlboot.config:324(start/text)
 msgid "Hardware info"
 msgstr "Hardware-Informationen"
 
-#: xmlboot.config:302(start/splash)
+#: xmlboot.config:325(start/splash)
 msgid "splash_hdt.jpg"
 msgstr "splash_hdt_de.jpg"
