@@ -1045,7 +1045,10 @@
 
   % paint focus rectangle
   dup strsize
-  8 mul 10 div
+
+  % special handling for syslinux 4
+  % 8 mul 10 div
+
   exch
   10 add
   exch
@@ -1109,6 +1112,7 @@
   current.menu menu.index.entries get exch get
   menu_to_text
   dup strsize
+  1 add
   exch
   11 add
   exch
@@ -1492,11 +1496,17 @@
           % set the image (temporarily) to the icon file
           find_cached_file setimage
           % get text height
-          dup strsize exch pop 7 mul 10 div
+          dup strsize exch pop
+
+          % special handling for syslinux 4
+          % 7 mul 10 div
+
           % get icon height
           image.size exch pop
-          % get offset
+          % set y offset of the icon so that it is horizontally
+          % centered with the text
           sub
+          2 div
           % move to a good position
           left_align_x indention add y_offset moveto
           image.size pop menu.icon_inset add neg exch rmoveto
