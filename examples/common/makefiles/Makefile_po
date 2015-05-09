@@ -1,0 +1,23 @@
+po_files := $(wildcard *.po)
+translations := $(subst po,translation,${po_files})
+
+all: $(po_files) $(translations)
+
+$(po_files): xmlboot.pot
+	msgmerge -U $@ xmlboot.pot
+	touch $@
+
+$(translations): %.translation: %.po
+	po2csv -i $< | \
+	sed '1,1d' | \
+	sed -e 's|"\(.*\)","\(.*\)","\(.*\)"|\2\x00\3|' | \
+	tr '\n' '\000' | \
+	tr -d '\r' > $@
+
+xmlboot.pot: ../xmlboot.config
+	itstool -o xmlboot.pot ../xmlboot.config
+
+clean:
+	rm -f *~ *translation xmlboot.pot
+
+distclean: clean

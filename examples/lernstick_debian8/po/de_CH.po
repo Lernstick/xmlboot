@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
-"POT-Creation-Date: 2014-11-12 15:18+0100\n"
+"POT-Creation-Date: 2015-05-09 16:28+0200\n"
 "PO-Revision-Date: 2012-12-05 23:00+100\n"
 "Last-Translator: Ronny Standtke <ronny.standtke@fhnw.ch>\n"
 "Language-Team: DE <DE@li.org>\n"
@@ -11,192 +11,182 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. (itstool) path: xmlboot/splash
-#: xmlboot.config:21
+#: ../xmlboot.config:21
 msgid "splash_xmlboot.jpg"
 msgstr "splash_xmlboot_de.jpg"
 
 #. (itstool) path: config/text
-#: xmlboot.config:25
+#: ../xmlboot.config:25
 msgid "Language"
 msgstr "Sprache"
 
 #. (itstool) path: config/text
-#: xmlboot.config:61
+#: ../xmlboot.config:61
 msgid "Keyboard"
 msgstr "Tastatur"
 
 #. (itstool) path: option/text
-#: xmlboot.config:63
+#: ../xmlboot.config:63
 msgid "Switzerland (German)"
 msgstr "Schweiz (Deutsch)"
 
 #. (itstool) path: option/text
-#: xmlboot.config:66
+#: ../xmlboot.config:66
 msgid "Switzerland (French)"
 msgstr "Schweiz (Französisch)"
 
 #. (itstool) path: option/text
-#: xmlboot.config:69
+#: ../xmlboot.config:69
 msgid "Germany"
 msgstr "Deutschland"
 
 #. (itstool) path: option/text
-#: xmlboot.config:72
+#: ../xmlboot.config:72
 msgid "Italy"
 msgstr "Italien"
 
 #. (itstool) path: option/text
-#: xmlboot.config:75
+#: ../xmlboot.config:75
 msgid "USA"
 msgstr ""
 
 #. (itstool) path: option/text
-#: xmlboot.config:78
+#: ../xmlboot.config:78
 msgid "Spain"
 msgstr "Spanien"
 
 #. (itstool) path: option/text
-#: xmlboot.config:81
+#: ../xmlboot.config:81
 msgid "Brazil"
 msgstr "Brasilien"
 
 #. (itstool) path: option/text
-#: xmlboot.config:84
+#: ../xmlboot.config:84
 msgid "Russia"
 msgstr "Russland"
 
 #. (itstool) path: option/text
-#: xmlboot.config:87
+#: ../xmlboot.config:87
 msgid "Albania"
 msgstr "Albanien"
 
 #. (itstool) path: config/text
-#: xmlboot.config:91
+#: ../xmlboot.config:91
 msgid "Desktop"
 msgstr ""
 
 #. (itstool) path: option/text
-#: xmlboot.config:93
+#: ../xmlboot.config:93
 msgid "KDE Plasma Desktop"
 msgstr ""
 
 #. (itstool) path: option/description
-#: xmlboot.config:94
+#: ../xmlboot.config:94
 msgid "Desktop for PCs and notebooks with extensive configurability"
 msgstr "Desktop für PCs und Notebooks mit hoher Konfigurierbarkeit"
 
 #. (itstool) path: option/text
-#: xmlboot.config:103
+#: ../xmlboot.config:103
 msgid "GNOME"
 msgstr ""
 
 #. (itstool) path: option/description
-#: xmlboot.config:104
+#: ../xmlboot.config:104
 msgid "Desktop with emphasis on simplicity and usability"
 msgstr "Desktop mit Gewichtung auf Einfachheit und Benutzbarkeit"
 
 #. (itstool) path: option/text
-#: xmlboot.config:113
+#: ../xmlboot.config:113
 msgid "XFCE"
 msgstr ""
 
 #. (itstool) path: option/description
-#: xmlboot.config:114
+#: ../xmlboot.config:114
 msgid "A lightweight and visually appealing desktop"
 msgstr "Leichtgewichtiger und optisch ansprechender Desktop"
 
 #. (itstool) path: option/text
-#: xmlboot.config:123
+#: ../xmlboot.config:123
 msgid "LXDE"
 msgstr ""
 
 #. (itstool) path: option/description
-#: xmlboot.config:124
+#: ../xmlboot.config:124
 msgid "A fast and energy efficient desktop"
 msgstr "Schneller und energieeffizienter Desktop"
 
 #. (itstool) path: option/text
-#: xmlboot.config:133
-msgid "Sugar"
-msgstr ""
-
-#. (itstool) path: option/description
-#: xmlboot.config:134
-msgid "A desktop for children and interactive learning"
-msgstr "Ein Desktop für Kinder und interaktives Lernen"
-
-#. (itstool) path: option/text
-#: xmlboot.config:143
+#: ../xmlboot.config:133
 msgid "Text console"
 msgstr "Textkonsole"
 
 #. (itstool) path: option/description
-#: xmlboot.config:144
+#: ../xmlboot.config:134
 msgid "No desktop"
 msgstr "Kein Desktop"
 
 #. (itstool) path: config/text
-#: xmlboot.config:154
+#: ../xmlboot.config:144
 msgid "System device"
 msgstr "Systemgerät"
 
 #. (itstool) path: option/text
-#: xmlboot.config:156 xmlboot.config:171
+#: ../xmlboot.config:146 ../xmlboot.config:161
 msgid "any"
 msgstr "beliebig"
 
 #. (itstool) path: option/description
-#: xmlboot.config:157 xmlboot.config:172
+#: ../xmlboot.config:147 ../xmlboot.config:162
 msgid "use any storage device"
 msgstr "verwende beliebiges Speichermedium"
 
 #. (itstool) path: option/text
-#: xmlboot.config:160 xmlboot.config:175
+#: ../xmlboot.config:150 ../xmlboot.config:165
 msgid "removable device"
 msgstr "entfernbares Speichermedium"
 
 #. (itstool) path: option/description
-#: xmlboot.config:161
+#: ../xmlboot.config:151
 msgid "prefer removable storage devices"
 msgstr "bevorzuge entfernbare Speichermedien"
 
 #. (itstool) path: option/text
-#: xmlboot.config:164 xmlboot.config:179
+#: ../xmlboot.config:154 ../xmlboot.config:169
 msgid "USB device"
 msgstr "USB-Speichermedium"
 
 #. (itstool) path: option/description
-#: xmlboot.config:165
+#: ../xmlboot.config:155
 msgid "prefer USB storage devices"
 msgstr "bevorzuge USB-Speichermedien"
 
 #. (itstool) path: config/text
-#: xmlboot.config:169
+#: ../xmlboot.config:159
 msgid "Data device"
 msgstr "Datengerät"
 
 #. (itstool) path: option/description
-#: xmlboot.config:176
+#: ../xmlboot.config:166
 msgid "use removable storage devices"
 msgstr "verwende entfernbare Speichermedien"
 
 #. (itstool) path: option/description
-#: xmlboot.config:180
+#: ../xmlboot.config:170
 msgid "use USB storage devices"
 msgstr "verwende USB-Speichermedien"
 
 #. (itstool) path: config/text
-#: xmlboot.config:184
+#: ../xmlboot.config:174
 msgid "Data partition"
 msgstr "Datenpartition"
 
 #. (itstool) path: option/text
-#: xmlboot.config:186
+#: ../xmlboot.config:176
 msgid "Read-write"
 msgstr "lesen und schreiben"
 
 #. (itstool) path: option/description
-#: xmlboot.config:187
+#: ../xmlboot.config:177
 msgid ""
 "All previous changes are visible, all new changes will be written to the "
 "data partition."
@@ -205,12 +195,12 @@ msgstr ""
 "werden dauerhaft auf die Datenpartition geschrieben."
 
 #. (itstool) path: option/text
-#: xmlboot.config:190
+#: ../xmlboot.config:180
 msgid "Read-only"
 msgstr "nur lesen"
 
 #. (itstool) path: option/description
-#: xmlboot.config:191
+#: ../xmlboot.config:181
 msgid ""
 "All previous changes are visible, all new changes will be only written to "
 "RAM."
@@ -219,12 +209,12 @@ msgstr ""
 "werden nur temporär in den Arbeitsspeicher geschrieben."
 
 #. (itstool) path: option/text
-#: xmlboot.config:194
+#: ../xmlboot.config:184
 msgid "Not used"
 msgstr "nicht verwenden"
 
 #. (itstool) path: option/description
-#: xmlboot.config:195
+#: ../xmlboot.config:185
 msgid ""
 "All previous changes are invisible, all new changes will be only written to "
 "RAM."
@@ -233,91 +223,94 @@ msgstr ""
 "Änderungen werden nur temporär in den Arbeitsspeicher geschrieben."
 
 #. (itstool) path: options/option
-#: xmlboot.config:200
+#: ../xmlboot.config:190
 msgid "Use swap partition"
 msgstr "Auslagerungspartition verwenden"
 
 #. (itstool) path: options/option
-#: xmlboot.config:201
+#: ../xmlboot.config:191
 msgid "Use swap file"
 msgstr "Auslagerungsdatei verwenden"
 
 #. (itstool) path: options/option
-#: xmlboot.config:202
+#: ../xmlboot.config:192
 msgid "Use local APIC timer"
 msgstr "Lokalen APIC-Timer verwenden"
 
 #. (itstool) path: options/option
-#: xmlboot.config:203
+#: ../xmlboot.config:193
 msgid "Dynamic timer tick"
 msgstr "Dynamische Timer-Ticks verwenden"
 
 #. (itstool) path: options/option
-#: xmlboot.config:204
+#: ../xmlboot.config:194
 msgid "Show boot messages"
 msgstr "Startmeldungen anzeigen"
 
 #. (itstool) path: options/option
-#: xmlboot.config:205
+#: ../xmlboot.config:195
 msgid "Show debug messages"
 msgstr "Debugmeldungen anzeigen"
 
 #. (itstool) path: timeout/format_singular
-#: xmlboot.config:223
+#: ../xmlboot.config:213
 msgid "Automatic boot in %u second..."
 msgstr "Automatischer Start in %u Sekunde..."
 
 #. (itstool) path: timeout/format_plural
-#: xmlboot.config:224
+#: ../xmlboot.config:214
 msgid "Automatic boot in %u seconds..."
 msgstr "Automatischer Start in %u Sekunden..."
 
 #. (itstool) path: system/text
-#: xmlboot.config:233
-msgid "Lernstick Debian 7"
+#: ../xmlboot.config:223
+msgid "Lernstick Debian 8"
 msgstr ""
 
 #. (itstool) path: start/text
-#: xmlboot.config:256
+#: ../xmlboot.config:246
 msgid "Start Lernstick"
 msgstr "Lernstick starten"
 
 #. (itstool) path: start/splash
-#: xmlboot.config:257 xmlboot.config:326
+#: ../xmlboot.config:247 ../xmlboot.config:316
 msgid "splash_linux.jpg"
 msgstr "splash_linux_de.jpg"
 
 #. (itstool) path: submenu/text
-#: xmlboot.config:290
+#: ../xmlboot.config:280
 msgid "More Configuration"
 msgstr "Weitere Einstellungen"
 
 #. (itstool) path: submenu/edit_prompt
-#: xmlboot.config:291
+#: ../xmlboot.config:281
 msgid "Custom options:"
 msgstr "Eigene Optionen:"
 
 #. (itstool) path: submenu/back
-#: xmlboot.config:292
+#: ../xmlboot.config:282
 msgid "Back to main menu"
 msgstr "Zurück zum Hauptmenü"
 
 #. (itstool) path: start/text
-#: xmlboot.config:325
+#: ../xmlboot.config:315
 msgid "Check integrity of boot medium"
 msgstr "Integrität des Startmediums überprüfen"
 
 #. (itstool) path: start/text
-#: xmlboot.config:329
+#: ../xmlboot.config:319
 msgid "Boot from hard drive"
 msgstr "Von Festplatte starten"
 
 #. (itstool) path: start/text
-#: xmlboot.config:332
+#: ../xmlboot.config:322
 msgid "Hardware info"
 msgstr "Hardware-Informationen"
 
 #. (itstool) path: start/splash
-#: xmlboot.config:333
+#: ../xmlboot.config:323
 msgid "splash_hdt.jpg"
 msgstr "splash_hdt_de.jpg"
+
+#~ msgid "A desktop for children and interactive learning"
+#~ msgstr "Ein Desktop für Kinder und interaktives Lernen"
