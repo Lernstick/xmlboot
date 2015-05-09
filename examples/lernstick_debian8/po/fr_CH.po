@@ -315,6 +315,3 @@ msgstr "informations matériel interne"
 #: ../xmlboot.config:323
 msgid "splash_hdt.jpg"
 msgstr "splash_hdt.jpg"
-
-#~ msgid "A desktop for children and interactive learning"
-#~ msgstr "bureau destiné aux enfants et à l'apprentissage interactif"
