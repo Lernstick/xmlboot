@@ -2,7 +2,7 @@
 
 all: bootlogo
 
-bootlogo:
+bootlogo: xmlboot.config
 	rm -rf bootlogo.dir
 	$(MAKE) -C po
 	$(MAKE) -C ../common/fonts
