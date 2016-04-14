@@ -1,0 +1,30 @@
+--- /usr/bin/gfxboot	2014-07-25 21:00:32.000000000 +0200
++++ /home/lernstick/Programme/xmlboot/gfxboot	2016-04-14 21:55:07.724197249 +0200
+@@ -989,7 +989,7 @@
+ my %bl_list = (
+   grub     => '/usr/sbin/grub',
+   lilo     => '/sbin/lilo',
+-  isolinux => '/usr/lib/syslinux/isolinux.bin',
++  isolinux => '/usr/lib/ISOLINUX/isolinux.bin',
+   syslinux => '/usr/bin/syslinux',
+   pxelinux => '/usr/lib/syslinux/pxelinux.0',
+   bd       => '/usr/bin/bd',
+@@ -1854,7 +1854,7 @@
+       }
+     }
+ 
+-    print F $comboot ? "ui gfxboot bootlogo message\n" : "gfxboot bootlogo\ndisplay message\n";
++    print F $comboot ? "ui gfxboot bootlogo message\n" : "ui gfxboot bootlogo\ndisplay message\n";
+ 
+     print F
+       "implicit 1\n" .
+@@ -1864,7 +1864,8 @@
+     close F;
+   }
+ 
+-  system "cp $opt_syslinux/usr/lib/syslinux/isolinux.bin $dst/$loader" and die "error: no isolinux\n";
++  system "cp $opt_syslinux/usr/lib/syslinux/modules/bios/* $dst/$loader" and die "error: no ldlinux.c32\n";
++  system "cp $opt_syslinux/usr/lib/ISOLINUX/isolinux.bin $dst/$loader" and die "error: no isolinux\n";
+   system "cp $comboot $dst/$loader" if $comboot;
+ 
+   for (@opt_test_addfiles) {
