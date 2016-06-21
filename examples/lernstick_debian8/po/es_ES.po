@@ -13,7 +13,7 @@ msgstr ""
 #. (itstool) path: xmlboot/splash
 #: ../xmlboot.config:21
 msgid "splash_xmlboot.jpg"
-msgstr "splash_xmlboot_de.jpg"
+msgstr ""
 
 #. (itstool) path: config/text
 #: ../xmlboot.config:25
