@@ -3,7 +3,8 @@ bootlogo
 bootlogo.dir/
 bootlogo.log
 *.directory
-test.iso
+examples/common/fonts/font_size*
 font.log
+test.iso
 *.translation
 .xmlboot.config.swp
